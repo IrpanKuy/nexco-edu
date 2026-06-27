@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -86,12 +86,12 @@
     class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
 
     <!-- GLOBAL INITIAL LOADING SCREEN -->
-    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-dark">
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
         <div class="relative flex items-center justify-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
-            <i class="fa-solid fa-graduation-cap text-brand-platinum absolute text-xl"></i>
+            <i class="fa-solid fa-graduation-cap text-brand-accent absolute text-xl"></i>
         </div>
-        <h3 class="text-lg font-semibold mt-4 text-brand-platinum tracking-wide animate-pulse">Sinkronisasi Database
+        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">Sinkronisasi Database
             Nexco Edu...</h3>
     </div>
 
@@ -113,7 +113,7 @@
                     AI Instan</p>
             </div>
 
-            <form id="login-form" class="space-y-5 relative z-10">
+            <form id="login-form" class="space-y-5 relative z-10" autocomplete="off">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Email
                         Pengguna</label>
@@ -121,7 +121,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
                             <i class="fa-solid fa-envelope"></i>
                         </span>
-                        <input type="email" id="login-email" required
+                        <input type="email" id="login-email" required autocomplete="off"
                             class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
                             placeholder="name@domain.com">
                     </div>
@@ -134,9 +134,12 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
                             <i class="fa-solid fa-lock"></i>
                         </span>
-                        <input type="password" id="login-password" required
-                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
-                            placeholder="••••••••">
+                        <input type="text" id="login-password" required autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                            class="w-full pl-10 pr-10 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
+                            placeholder="••••••••" style="-webkit-text-security: disc; -moz-text-security: disc;">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-colors" title="Lihat/Sembunyikan Kata Sandi">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -527,11 +530,13 @@
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar Banner/Logo
+                                <label class="block text-xs font-semibold mb-1 text-brand-slate">URL Gambar Banner/Logo
                                     Tools</label>
-                                <input type="url" id="crud-gem-image"
+                                <input type="text" id="crud-gem-image"
                                     placeholder="https://images.unsplash.com/... atau logo url" required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                <span class="text-[10px] text-brand-slate/80 mt-1 block">Rekomendasi format gambar:
+                                    1920x1080 px (aspek rasio 16:9).</span>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat
@@ -730,25 +735,7 @@
                     </button>
                 </form>
 
-                <!-- GAS URL Config Section (Hanya tampil jika hosting eksternal) -->
-                <div id="settings-gas-url-section"
-                    class="hidden glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-4 shadow-sm text-brand-navy dark:text-brand-platinum">
-                    <h3 class="text-sm font-bold text-brand-slate dark:text-brand-slate/80">Koneksi Apps Script (Deploy
-                        Eksternal)</h3>
-                    <p class="text-xs text-brand-slate">Bagian ini hanya aktif bila aplikasi berjalan di luar domain
-                        Apps Script (hosting eksternal/lokal).</p>
-                    <div>
-                        <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Web App Google Apps Script
-                            (GAS_URL)</label>
-                        <input type="text" id="settings-gas-url"
-                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum"
-                            placeholder="https://script.google.com/macros/s/.../exec">
-                    </div>
-                    <button type="button" onclick="saveSettingsGasUrl()"
-                        class="w-full py-2.5 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
-                        <i class="fa-solid fa-link"></i> Perbarui URL Koneksi
-                    </button>
-                </div>
+
             </section>
 
         </main>
@@ -757,18 +744,12 @@
     <!-- ================= RUNTIME APP LOGIC (JAVASCRIPT) ================= -->
     <script>
         // ================= CONFIGURATION FOR EXTERNAL HOSTING =================
-        let GAS_URL = "https://script.google.com/macros/s/AKfycbxLwn5hfJ2Gc59vr3s0jjY5OQC4ZDnqAgGSs0A3q6sOoWWIhtNoL8rttMsIZ1qCvbbESw/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxLwn5hfJ2Gc59vr3s0jjY5OQC4ZDnqAgGSs0A3q6sOoWWIhtNoL8rttMsIZ1qCvbbESw/exec";
 
         // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
         const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
 
         if (isExternalHosting) {
-            // Ambil dari localStorage jika ada
-            const savedGasUrl = localStorage.getItem('gas_url');
-            if (savedGasUrl) {
-                GAS_URL = savedGasUrl;
-            }
-
             console.log("Nexco Edu: Berjalan dalam mode HOSTING EKSTERNAL.");
             window.google = {
                 script: {
@@ -842,48 +823,9 @@
             console.log("Nexco Edu: Berjalan dalam mode HOSTING INTERNAL GAS.");
         }
 
-        // Fungsi pembantu untuk memvalidasi dan meminta input GAS_URL secara interaktif
+        // Fungsi pembantu koneksi backend Apps Script
         function validateOrPromptGasUrl(callback) {
-            if (isExternalHosting && (!GAS_URL || GAS_URL === "MASUKKAN_URL_WEB_APP_GAS_ANDA_DISINI" || !GAS_URL.startsWith("https://script.google.com"))) {
-                Swal.fire({
-                    title: 'Hubungkan ke Backend Apps Script',
-                    text: 'Aplikasi berjalan secara eksternal. Harap masukkan URL Web App Google Apps Script (GAS_URL) Anda untuk menghubungkan data:',
-                    input: 'text',
-                    inputPlaceholder: 'https://script.google.com/macros/s/.../exec',
-                    inputValue: localStorage.getItem('gas_url') || '',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    confirmButtonText: 'Hubungkan',
-                    confirmButtonColor: '#4F46E5',
-                    background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
-                    color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B',
-                    inputValidator: (value) => {
-                        if (!value || !value.trim().startsWith('https://script.google.com')) {
-                            return 'Harap masukkan URL Web App Google Apps Script yang valid!';
-                        }
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const url = result.value.trim();
-                        localStorage.setItem('gas_url', url);
-                        GAS_URL = url;
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Tersambung!',
-                            text: 'Koneksi ke backend Apps Script berhasil disimpan.',
-                            timer: 1500,
-                            showConfirmButton: false,
-                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
-                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
-                        }).then(() => {
-                            if (callback) callback();
-                            else window.location.reload();
-                        });
-                    }
-                });
-            } else {
-                if (callback) callback();
-            }
+            if (callback) callback();
         }
 
         // Penampung State Aplikasi
@@ -899,8 +841,8 @@
             charts: {}
         };
 
-        // Preferensi Tema Gelap/Terang
-        const savedTheme = localStorage.getItem('edu_theme') || 'dark';
+        // Preferensi Tema Gelap/Terang (Default: Terang)
+        const savedTheme = localStorage.getItem('edu_theme') || 'light';
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
@@ -915,6 +857,21 @@
             } else {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('edu_theme', 'dark');
+            }
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            const isSecured = input.style.webkitTextSecurity !== 'none' && input.style.mozTextSecurity !== 'none';
+            if (isSecured) {
+                input.style.webkitTextSecurity = 'none';
+                input.style.mozTextSecurity = 'none';
+                icon.className = 'fa-solid fa-eye';
+            } else {
+                input.style.webkitTextSecurity = 'disc';
+                input.style.mozTextSecurity = 'disc';
+                icon.className = 'fa-solid fa-eye-slash';
             }
         }
 
@@ -1019,33 +976,6 @@
             document.getElementById('settings-name').value = appState.currentUser.nama;
             document.getElementById('settings-email').value = appState.currentUser.email;
 
-            // Jika dalam mode hosting eksternal, tampilkan konfigurasi GAS URL
-            if (isExternalHosting) {
-                const section = document.getElementById('settings-gas-url-section');
-                if (section) section.classList.remove('hidden');
-                const urlInput = document.getElementById('settings-gas-url');
-                if (urlInput) urlInput.value = GAS_URL;
-            }
-        }
-
-        function saveSettingsGasUrl() {
-            const url = document.getElementById('settings-gas-url').value.trim();
-            if (!url || !url.startsWith('https://script.google.com')) {
-                showErrorAlert('Harap masukkan URL Web App Google Apps Script yang valid!');
-                return;
-            }
-            localStorage.setItem('gas_url', url);
-            Swal.fire({
-                icon: 'success',
-                title: 'Koneksi Diperbarui!',
-                text: 'Halaman akan dimuat ulang untuk menggunakan koneksi baru.',
-                timer: 1500,
-                showConfirmButton: false,
-                background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
-                color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
-            }).then(() => {
-                window.location.reload();
-            });
         }
 
         function generateNavbars() {
@@ -1499,7 +1429,7 @@
                 const htmlStr = [
                     '<div class="aspect-video w-full overflow-hidden bg-slate-100 dark:bg-brand-navy border-b border-brand-slate/10 relative">',
                     '<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>',
-                    '<img src="', gem.image_url, '" alt="', safeNama, '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src=\'https://placehold.co/600x338/1b263b/ffffff?text=AI+Tools\'">',
+                    '<img src="', gem.image_url, '" alt="', safeNama, '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src=\'https://placehold.co/1920x1080/1b263b/ffffff?text=AI+Tools\'">',
                     '</div>',
                     '<div class="p-5 flex-1 flex flex-col justify-between">',
                     '<div class="space-y-2 mb-4">',

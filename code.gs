@@ -136,7 +136,7 @@ function setupDatabase() {
     // Seeder Tools AI Default
     const gemSheet = ss.getSheetByName('gems');
     if (gemSheet.getLastRow() <= 1) {
-      gemSheet.appendRow(['g1', 'ChatGPT Workspace', 'https://chat.openai.com', 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=400', 'Gunakan ChatGPT Workspace untuk membantu koding terstruktur.', new Date().toISOString()]);
+      gemSheet.appendRow(['g1', 'ChatGPT Workspace', 'https://chat.openai.com', 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=1920&h=1080&fit=crop', 'Gunakan ChatGPT Workspace untuk membantu koding terstruktur.', new Date().toISOString()]);
     }
 
     return "Database Nexco Edu Berhasil Dikonfigurasi!";
