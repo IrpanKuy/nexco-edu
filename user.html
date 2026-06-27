@@ -1004,7 +1004,7 @@
         /* ================= VUE 3 APP MOUNTING (PROMPT BUILDER FULL VERSION) ================= */
         const { createApp, ref, computed } = Vue;
 
-        const defaultApiKey = "AQ.Ab8RN6LgoabnbH5s_-gL_P-zw192bYS582C6cTCabfQl7M5LwQ";
+        const defaultApiKey = "";
 
         const app = createApp({
             setup() {
@@ -1204,6 +1204,13 @@
 
                 const processAIChat = async () => {
                     const apiKey = (window.appState && window.appState.aiApiKey ? window.appState.aiApiKey : defaultApiKey).trim();
+                    if (!apiKey) {
+                        showErrorModal(
+                            "API Key Belum Dikonfigurasi",
+                            "Admin belum mengonfigurasi AI API Key di Pengaturan Admin. Silakan minta Admin mengisi API Key pada dashboard Admin terlebih dahulu."
+                        );
+                        return;
+                    }
                     const promptText = chatInput.value.trim();
                     if (!promptText) return;
 
