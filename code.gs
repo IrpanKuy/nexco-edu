@@ -1,7 +1,6 @@
 /**
- * Nexco Edu - Backend Server (Overhauled & Restructured)
- * Sinkronisasi 100% dengan fungsi pemanggilan di Index.html
- * * Sesi dikelola sepenuhnya oleh Client (Stateless) guna mencegah session bleeding pada eksekusi server terpusat.
+ * Nexco Edu - Backend Server (External API Mode)
+ * Sesi dikelola sepenuhnya secara stateless oleh Client eksternal.
  */
 
 // Mengambil Spreadsheet aktif secara aman (skrip harus terikat/bound dengan Spreadsheet)
@@ -13,13 +12,12 @@ function getActiveSS() {
   return ss;
 }
 
-// 1. WEB APP ENTRY POINT (Menyajikan Tampilan HTML)
+// 1. WEB APP ENTRY POINT (API Endpoint Cek Status untuk External Deploy)
 function doGet() {
-  return HtmlService.createTemplateFromFile('Index')
-    .evaluate()
-    .setTitle('Nexco Edu')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "active",
+    message: "Nexco Edu API Server Active (External Mode)"
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 // FUNGSI MENERIMA PERMINTAAN API DARI HOSTING EKSTERNAL (Fungsionalitas Integrasi Baru)
@@ -89,13 +87,13 @@ function setupDatabase() {
   try {
     const ss = getActiveSS();
     
-    // Skema Struktur Database Google Sheets (Kolom allowed_tools tetap dijaga untuk validitas struktur, namun nilainya diabaikan)
+    // Skema Struktur Database Google Sheets (Bersih & Sesuai Kebutuhan Aktif)
     const tables = {
       'users': ['id', 'email', 'password_hash', 'nama', 'role', 'allowed_tools', 'created_at'],
       'videos': ['id', 'judul', 'deskripsi', 'video_url', 'ebook_url', 'kategori_id', 'urutan', 'created_at'],
       'gems': ['id', 'nama', 'akses_url', 'image_url', 'deskripsi', 'created_at'],
       'categories': ['id', 'nama', 'created_at'],
-      'progress': ['id', 'user_id', 'video_id', 'is_completed', 'is_bookmarked', 'updated_at']
+      'settings': ['key', 'value', 'updated_at']
     };
 
     // Buat sheet secara otomatis jika belum terkonfigurasi
@@ -159,12 +157,7 @@ function readSheetData(sheetName) {
     let obj = {};
     headers.forEach((header, index) => {
       if (header) {
-        let val = row[index];
-        // Cast boolean secara eksplisit agar dikenali dengan benar di frontend
-        if (header === 'is_completed' || header === 'is_bookmarked') {
-          val = (val === true || val === 'true' || val === 1);
-        }
-        obj[header] = val;
+        obj[header] = row[index];
       }
     });
     return obj;
@@ -247,106 +240,86 @@ function logoutUser() {
   return { success: true };
 }
 
-// 4. PEMUATAN DATA UTAMA (REVISI SISI SERVER: Berdasarkan payload userId dari parameter browser pengakses)
+// 4. PEMUATAN DATA UTAMA
 function fetchInitialBundledData(userId) {
   try {
     const videos = sanitizeData(readSheetData('videos'));
     const gems = sanitizeData(readSheetData('gems'));
     const categories = sanitizeData(readSheetData('categories'));
-    const allProgress = sanitizeData(readSheetData('progress'));
     
-    let userProgress = [];
     let users = [];
     
     if (userId) {
       const allUsers = readSheetData('users');
       const currentUserRecord = allUsers.find(u => u.id === userId);
-      if (currentUserRecord) {
-        if (currentUserRecord.role === 'admin') {
-          // Admin berhak melihat progres belajar seluruh pengguna
-          userProgress = allProgress;
-          // Hapus hash password demi standar proteksi data pengguna
-          users = allUsers.map(u => {
-            const { password_hash, ...safeUser } = u;
-            return safeUser;
-          });
-        } else {
-          // Pengguna biasa hanya bisa melihat progresnya sendiri
-          userProgress = allProgress.filter(p => p.user_id === userId);
-        }
+      if (currentUserRecord && currentUserRecord.role === 'admin') {
+        // Hapus hash password demi standar proteksi data pengguna
+        users = allUsers.map(u => {
+          const { password_hash, ...safeUser } = u;
+          return safeUser;
+        });
       }
     }
+
+    const aiApiKey = getAiApiKeyFromServer();
 
     return {
       success: true,
       videos: videos,
       gems: gems,
       categories: categories,
-      progress: userProgress,
-      users: users
+      users: users,
+      aiApiKey: aiApiKey
     };
   } catch (err) {
     return { success: false, message: "Gagal memuat bundel data utama: " + err.toString() };
   }
 }
 
-// 5. UPDATE PROGRES BELAJAR (SINKRON DENGAN INDEX.HTML OPTIMISTIC UI)
-function syncUserProgressOnServer(userId, videoId, statusType, statusValue) {
+// Helper & Server Functions untuk AI API Key
+function getAiApiKeyFromServer() {
   try {
-    const ss = getActiveSS();
-    const sheet = ss.getSheetByName('progress');
-    const rows = sheet.getDataRange().getValues();
-
-    let recordFound = false;
-    let targetRowNum = -1;
-    let currentData = null;
-
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i][1] === userId && rows[i][2] === videoId) {
-        recordFound = true;
-        targetRowNum = i + 1;
-        
-        const colIdx = statusType === 'is_completed' ? 4 : 5;
-        sheet.getRange(targetRowNum, colIdx).setValue(statusValue);
-        sheet.getRange(targetRowNum, 6).setValue(new Date().toISOString());
-        
-        currentData = {
-          id: rows[i][0],
-          user_id: userId,
-          video_id: videoId,
-          is_completed: statusType === 'is_completed' ? statusValue : (rows[i][3] === true || rows[i][3] === 'true'),
-          is_bookmarked: statusType === 'is_bookmarked' ? statusValue : (rows[i][4] === true || rows[i][4] === 'true'),
-          updated_at: new Date().toISOString()
-        };
-        break;
-      }
-    }
-
-    if (!recordFound) {
-      const newId = 'p_' + new Date().getTime();
-      const isCompleted = statusType === 'is_completed' ? statusValue : false;
-      const isBookmarked = statusType === 'is_bookmarked' ? statusValue : false;
-      const timestamp = new Date().toISOString();
-
-      sheet.appendRow([newId, userId, videoId, isCompleted, isBookmarked, timestamp]);
-      currentData = {
-        id: newId,
-        user_id: userId,
-        video_id: videoId,
-        is_completed: isCompleted,
-        is_bookmarked: isBookmarked,
-        updated_at: timestamp
-      };
-    }
-
-    SpreadsheetApp.flush();
-    return { success: true, data: currentData };
-  } catch (err) {
-    return { success: false, message: "Gagal mensinkronisasikan progress ke server: " + err.toString() };
+    const settings = readSheetData('settings');
+    const record = settings.find(s => s.key === 'ai_api_key');
+    return record ? record.value : '';
+  } catch (e) {
+    return '';
   }
 }
 
-// 6. MANAJEMEN CRUD VIDEO (SINKRON DENGAN INDEX.HTML)
+function saveAiApiKeyOnServer(apiKey) {
+  try {
+    const ss = getActiveSS();
+    let sheet = ss.getSheetByName('settings');
+    if (!sheet) {
+      sheet = ss.insertSheet('settings');
+      sheet.appendRow(['key', 'value', 'updated_at']);
+    }
+    
+    const rows = sheet.getDataRange().getValues();
+    const timestamp = new Date().toISOString();
+    let found = false;
+    
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === 'ai_api_key') {
+        sheet.getRange(i + 1, 2).setValue(apiKey);
+        sheet.getRange(i + 1, 3).setValue(timestamp);
+        found = true;
+        break;
+      }
+    }
+    
+    if (!found) {
+      sheet.appendRow(['ai_api_key', apiKey, timestamp]);
+    }
+    SpreadsheetApp.flush();
+    return { success: true, aiApiKey: apiKey };
+  } catch (err) {
+    return { success: false, message: "Gagal menyimpan AI API Key: " + err.toString() };
+  }
+}
+
+// 5. MANAJEMEN CRUD VIDEO
 function saveVideoOnServer(payload) {
   try {
     const ss = getActiveSS();
@@ -410,15 +383,6 @@ function deleteVideoOnServer(id) {
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][0] === id) {
         sheet.deleteRow(i + 1);
-        
-        // Hapus sisa progress user terkait video ini agar spreadsheet tidak kotor
-        const progSheet = ss.getSheetByName('progress');
-        const progRows = progSheet.getDataRange().getValues();
-        for (let j = progRows.length - 1; j >= 1; j--) {
-          if (progRows[j][2] === id) {
-            progSheet.deleteRow(j + 1);
-          }
-        }
         SpreadsheetApp.flush();
         return { success: true };
       }
@@ -429,7 +393,7 @@ function deleteVideoOnServer(id) {
   }
 }
 
-// 7. MANAJEMEN CRUD KATEGORI (SINKRON DENGAN INDEX.HTML)
+// 6. MANAJEMEN CRUD KATEGORI
 function saveCategoryOnServer(payload) {
   try {
     const ss = getActiveSS();
@@ -479,7 +443,7 @@ function deleteCategoryOnServer(id) {
   }
 }
 
-// 8. MANAJEMEN CRUD TOOLS AI (SINKRON DENGAN INDEX.HTML)
+// 7. MANAJEMEN CRUD TOOLS AI
 function saveGemOnServer(payload) {
   try {
     const ss = getActiveSS();
@@ -545,7 +509,7 @@ function deleteGemOnServer(id) {
   }
 }
 
-// 9. UPDATE PROFIL PENGGUNA (SINKRON DENGAN INDEX.HTML)
+// 8. UPDATE PROFIL PENGGUNA
 function updateProfileOnServer(userId, nama, pass) {
   try {
     const ss = getActiveSS();
@@ -570,7 +534,7 @@ function updateProfileOnServer(userId, nama, pass) {
   }
 }
 
-// 10. MANAJEMEN CRUD PENGGUNA (REVISI SISI SERVER: Kolom allowed_tools dikirim kosong karena semua pengguna mendapatkan semua akses)
+// 9. MANAJEMEN CRUD PENGGUNA
 function saveUserOnServer(payload) {
   try {
     const ss = getActiveSS();
@@ -582,7 +546,7 @@ function saveUserOnServer(payload) {
       nama: payload.nama,
       email: payload.email,
       role: payload.role,
-      allowed_tools: "" // Default kosong (Tidak ada batasan selektif tools lagi)
+      allowed_tools: "" // Default kosong
     };
 
     // Jika kata sandi diisi/diubah
@@ -615,7 +579,7 @@ function saveUserOnServer(payload) {
       }
       throw new Error("Akun tidak ditemukan di server.");
     } else {
-      // Mode Tambah Pengguna Baru (Deteksi Duplikasi Email)
+      // Mode Tambah Pengguna Baru
       const emailIdx = headers.indexOf('email');
       for (let i = 1; i < rows.length; i++) {
         if (rows[i][emailIdx] === payload.email) {
@@ -626,7 +590,6 @@ function saveUserOnServer(payload) {
       const newId = 'u_' + new Date().getTime();
       const timestamp = new Date().toISOString();
       
-      // Jika kata sandi kosong pada user baru, set default
       if (!mappedData.password_hash) {
         mappedData.password_hash = hashPassword('user123');
       }
@@ -655,7 +618,6 @@ function saveUserOnServer(payload) {
   }
 }
 
-// REVISI SISI SERVER: Menggunakan payload activeUserId dari parameter klien browser untuk membatasi aksi self-delete
 function deleteUserOnServer(id, activeUserId) {
   try {
     if (activeUserId === id) {
@@ -669,15 +631,6 @@ function deleteUserOnServer(id, activeUserId) {
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][0] === id) {
         sheet.deleteRow(i + 1);
-        
-        // Hapus sisa progres agar spreadsheet tetap bersih
-        const progSheet = ss.getSheetByName('progress');
-        const progRows = progSheet.getDataRange().getValues();
-        for (let j = progRows.length - 1; j >= 1; j--) {
-          if (progRows[j][1] === id) {
-            progSheet.deleteRow(j + 1);
-          }
-        }
         SpreadsheetApp.flush();
         return { success: true };
       }

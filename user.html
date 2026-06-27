@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexco Edu - Dashboard Siswa</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Vue 3 & Fonts for Prompt Builder -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#1B263B',
+                            slate: '#415A77',
+                            platinum: '#E0E1DD',
+                            dark: '#0E131F',
+                            accent: '#4F46E5',
+                            success: '#10B981',
+                            danger: '#EF4444'
+                        },
+                        ocean: {
+                            abyss: "#020B1A",
+                            depths: "#051A3A",
+                            primary: "#0D47A1",
+                            cyan: "#00BCD4",
+                            light: "#80DEEA",
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(65, 90, 119, 0.15);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .dark .glass-panel {
+            background: rgba(27, 38, 59, 0.75);
+            border: 1px solid rgba(65, 90, 119, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(65, 90, 119, 0.15);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F4F5F7;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #0E131F;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #415A77;
+            border-radius: 3px;
+        }
+
+        [v-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <script src="data.js"></script>
+</head>
+
+<body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
+
+    <!-- GLOBAL INITIAL LOADING SCREEN -->
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
+        <div class="relative flex items-center justify-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
+            <i class="fa-solid fa-graduation-cap text-brand-accent absolute text-xl"></i>
+        </div>
+        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">Memuat Ruang Belajar...</h3>
+    </div>
+
+    <!-- ================= MAIN USER DASHBOARD CONTAINER ================= -->
+    <div id="main-app" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
+
+        <header class="glass-panel mt-4 rounded-2xl sticky top-4 z-40 px-4 py-3 shadow-lg text-brand-navy dark:text-brand-platinum">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brand-accent/20 rounded-xl border border-brand-accent/40 overflow-hidden flex items-center justify-center">
+                        <img src="/image/nexco.jpg" alt="Logo" class="w-full h-full object-cover"
+                            onerror="this.src='https://placehold.co/80x80/1b263b/ffffff?text=NE'">
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold tracking-tight">Nexco Edu</h1>
+                        <span class="text-[10px] bg-brand-slate/30 dark:bg-brand-slate/50 px-2 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold" id="user-badge">SISWA</span>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-1.5 animate-fade-in" id="desktop-nav">
+                    <!-- Dipopulasikan secara dinamis oleh JS -->
+                </nav>
+
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="toggleTheme()"
+                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 dark:hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all shadow-sm"
+                        title="Ubah Tema">
+                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
+                    </button>
+                    <div class="text-right">
+                        <p class="text-xs font-semibold" id="profile-name">Nama Pengguna</p>
+                        <p class="text-[10px] text-brand-slate" id="profile-email">email@domain.com</p>
+                    </div>
+                    <button onclick="handleLogout()"
+                        class="p-2.5 bg-brand-danger/10 hover:bg-brand-danger text-brand-danger hover:text-white rounded-xl border border-brand-danger/20 transition-all shadow-md"
+                        title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 md:hidden">
+                    <button onclick="toggleTheme()"
+                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all"
+                        title="Ubah Tema">
+                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()"
+                        class="p-2.5 hover:bg-brand-slate/20 rounded-xl border border-brand-slate/30 transition-all">
+                        <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-drawer"
+                class="hidden md:hidden mt-4 pt-3 border-t border-brand-slate/30 flex flex-col gap-2 transition-all">
+                <div id="mobile-nav" class="flex flex-col gap-1">
+                    <!-- Navigasi Dinamis Mobile -->
+                </div>
+                <div class="border-t border-brand-slate/20 mt-2 pt-3 flex items-center justify-between px-2">
+                    <div>
+                        <p class="text-xs font-semibold" id="profile-name-mobile">Nama Pengguna</p>
+                        <p class="text-[10px] text-brand-slate" id="profile-email-mobile">email@domain.com</p>
+                    </div>
+                    <button onclick="handleLogout()"
+                        class="px-3 py-1.5 bg-brand-danger/20 text-brand-danger text-xs font-semibold rounded-lg border border-brand-danger/30 flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="mt-6 flex-1 text-brand-navy dark:text-brand-platinum">
+
+            <!-- ================= VIEW: USER KATALOG VIDEO ================= -->
+            <section id="view-user-videos" class="hidden space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-extrabold tracking-tight">Katalog Pembelajaran AI</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Eksplorasi modul video interaktif dan e-book pendukung untuk meningkatkan efisiensi kerja Anda.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="category-filters-container">
+                    <!-- Filter Kategori Dinamis -->
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-videos-grid">
+                    <!-- Kartu Video Dinamis -->
+                </div>
+            </section>
+
+            <!-- ================= PEMUTAR VIDEO MODAL (NON-REDIRECT) ================= -->
+            <div id="video-player-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                    <div class="flex justify-between items-center p-4 border-b border-brand-slate/20">
+                        <h3 class="font-bold text-base line-clamp-1" id="player-modal-title">Pemutar Video Pembelajaran</h3>
+                        <button onclick="closeVideoPlayerModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-2xl px-2">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="relative aspect-video w-full bg-black">
+                        <iframe id="player-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed" id="player-modal-desc"></p>
+                        <div id="player-modal-ebook-link"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: USER TOOLS AI WORKSPACE ================= -->
+            <section id="view-user-gems" class="hidden space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cyan-500/10 dark:bg-cyan-500/20 p-6 rounded-3xl border border-cyan-500/30 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-extrabold tracking-tight text-cyan-700 dark:text-cyan-400">Tools AI Workspace</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Akses cepat ke jajaran asisten pintar AI resmi untuk mempercepat alur kerja harian Anda.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-gems-grid">
+                    <!-- Kartu Tools AI Dinamis -->
+                </div>
+            </section>
+
+            <!-- ================= VIEW: USER PROMPT BUILDER ================= -->
+            <section id="view-user-prompt-builder" class="hidden space-y-6">
+                <div id="prompt-builder-vue-app" v-cloak class="w-full relative">
+
+                    <!-- DYNAMIC MODE HEADER BANNER WITH THEMATIC COLOR -->
+                    <div class="p-6 rounded-3xl mb-6 shadow-xl text-white transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                        :class="{
+                            'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-700 dark:via-blue-600 dark:to-indigo-800 border border-blue-400/40 shadow-blue-500/20': activeTab === 'webapp',
+                            'bg-gradient-to-r from-purple-600 via-purple-500 to-violet-600 dark:from-purple-700 dark:via-purple-600 dark:to-violet-800 border border-purple-400/40 shadow-purple-500/20': activeTab === 'ai',
+                            'bg-gradient-to-r from-emerald-600 via-teal-500 to-green-600 dark:from-emerald-700 dark:via-teal-600 dark:to-green-800 border border-emerald-400/40 shadow-emerald-500/20': activeTab === 'landing'
+                        }">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+                                <i v-if="activeTab === 'webapp'" class="fa-solid fa-rocket"></i>
+                                <i v-else-if="activeTab === 'ai'" class="fa-solid fa-robot animate-pulse"></i>
+                                <i v-else class="fa-solid fa-globe"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">
+                                    {{ activeTab === 'webapp' ? 'Mode Web App (Biru)' : (activeTab === 'ai' ? 'Mode Chatbot AI (Ungu)' : 'Mode Landing Page (Hijau)') }}
+                                </span>
+                                <h2 class="text-xl font-black tracking-tight mt-1">
+                                    {{ activeTab === 'webapp' ? 'Web App Architecture Builder' : (activeTab === 'ai' ? 'Smart Chatbot AI Mode Builder' : 'Landing Page Campaign Builder') }}
+                                </h2>
+                                <p class="text-xs text-white/80 mt-0.5">
+                                    {{ activeTab === 'webapp' ? 'Rancang arsitektur aplikasi web full-stack, struktur role, dan sistem data.' : (activeTab === 'ai' ? 'Rancang aplikasi berbasis AI Assistant dengan konfirmasi CRUD dinamis.' : 'Susun struktur section halaman kampanye marketing dan elemen konversi tinggi.') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IDENTITAS PROYEK -->
+                    <div class="p-6 rounded-3xl space-y-4 mb-6 shadow-xl border backdrop-blur-md transition-all duration-300"
+                        :class="{
+                            'bg-gradient-to-br from-blue-50/90 via-indigo-50/40 to-white dark:from-[#081229] dark:via-[#0f1d3f] dark:to-[#081229] dark:border-blue-500/60 dark:shadow-[0_0_25px_rgba(37,99,235,0.2)] border-blue-400/30': activeTab === 'webapp',
+                            'bg-gradient-to-br from-purple-50/90 via-violet-50/40 to-white dark:from-[#13072b] dark:via-[#200c47] dark:to-[#13072b] dark:border-purple-500/60 dark:shadow-[0_0_25px_rgba(147,51,234,0.2)] border-purple-400/30': activeTab === 'ai',
+                            'bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30': activeTab === 'landing'
+                        }">
+                        <div class="flex items-center gap-2 border-b border-brand-slate/20 pb-3">
+                            <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
+                            <h3 class="text-sm font-extrabold text-brand-navy dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i> Identitas Proyek
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                    :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                    <i class="fa-solid fa-laptop-code"></i> Nama Aplikasi / Produk
+                                </label>
+                                <input type="text" v-model="appName" placeholder="Contoh: Nexco Smart Dashboard"
+                                    :class="{
+                                        'bg-white dark:bg-[#070e24] dark:border-blue-500/50 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/30': activeTab === 'webapp',
+                                        'bg-white dark:bg-[#0e0421] dark:border-purple-500/50 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400 focus:ring-purple-500/20 dark:focus:ring-violet-500/30': activeTab === 'ai',
+                                        'bg-white dark:bg-[#03140e] dark:border-emerald-500/50 text-brand-navy dark:text-white focus:border-emerald-500 dark:focus:border-teal-400 focus:ring-emerald-500/20 dark:focus:ring-teal-500/30': activeTab === 'landing'
+                                    }"
+                                    class="w-full px-4 py-3 border-2 border-brand-slate/20 rounded-2xl outline-none text-xs font-bold shadow-sm focus:ring-4 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                    :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                    <i class="fa-solid fa-align-left"></i> Deskripsi Proyek
+                                </label>
+                                <input type="text" v-model="appDescription" placeholder="Jelaskan visi dan tujuan proyek ini..."
+                                    :class="{
+                                        'bg-white dark:bg-[#070e24] dark:border-blue-500/50 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/30': activeTab === 'webapp',
+                                        'bg-white dark:bg-[#0e0421] dark:border-purple-500/50 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400 focus:ring-purple-500/20 dark:focus:ring-violet-500/30': activeTab === 'ai',
+                                        'bg-white dark:bg-[#03140e] dark:border-emerald-500/50 text-brand-navy dark:text-white focus:border-emerald-500 dark:focus:border-teal-400 focus:ring-emerald-500/20 dark:focus:ring-teal-500/30': activeTab === 'landing'
+                                    }"
+                                    class="w-full px-4 py-3 border-2 border-brand-slate/20 rounded-2xl outline-none text-xs font-bold shadow-sm focus:ring-4 transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MAIN CONFIGURATION INTERFACE -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- KOLOM KIRI: STRUKTUR DINAMIS -->
+                        <section class="lg:col-span-6 space-y-6">
+                            <!-- WEBAPP / AI MODE ROLES -->
+                            <div v-if="activeTab === 'webapp' || activeTab === 'ai'" class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300"
+                                :class="activeTab === 'webapp' ? 'bg-gradient-to-br from-blue-50/90 via-indigo-50/30 to-white dark:from-[#081229] dark:via-[#0f1d3f] dark:to-[#081229] dark:border-blue-500/60 dark:shadow-[0_0_25px_rgba(37,99,235,0.2)] border-blue-400/30' : 'bg-gradient-to-br from-purple-50/90 via-violet-50/30 to-white dark:from-[#13072b] dark:via-[#200c47] dark:to-[#13072b] dark:border-purple-500/60 dark:shadow-[0_0_25px_rgba(147,51,234,0.2)] border-purple-400/30'">
+                                <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
+                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                        <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : 'bg-purple-600 dark:bg-violet-400'"></span>
+                                        <i class="fa-solid fa-users-gear text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'"></i> Struktur Role & Hak Akses
+                                    </h3>
+                                    <button @click="addRole"
+                                        :class="activeTab === 'webapp' ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/20' : 'bg-purple-600 text-white hover:bg-purple-700 shadow-md shadow-purple-500/20'"
+                                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                        <i class="fa-solid fa-plus"></i> Tambah Role
+                                    </button>
+                                </div>
+
+                                <div v-if="roles.length === 0" class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
+                                    <p class="text-xs text-brand-slate font-medium">Belum ada role sistem ditambahkan.</p>
+                                    <button @click="addRole" class="text-xs font-bold underline" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'">Klik untuk membuat role pertama</button>
+                                </div>
+
+                                <div v-else class="space-y-4 max-h-[520px] overflow-y-auto pr-1">
+                                    <div v-for="(role, rIndex) in roles" :key="role.id"
+                                        :class="activeTab === 'webapp' ? 'border-l-4 border-l-blue-600 dark:border-l-cyan-400 border-blue-200/60 dark:border-blue-500/40 bg-white/90 dark:bg-[#0f1a38]' : 'border-l-4 border-l-purple-600 dark:border-l-violet-400 border-purple-200/60 dark:border-purple-500/40 bg-white/90 dark:bg-[#1c0b3b]'"
+                                        class="p-4 rounded-2xl border-2 shadow-sm hover:shadow-md transition-all relative space-y-3">
+                                        <button @click="removeRole(rIndex)" class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors" title="Hapus Role"><i class="fa-solid fa-trash-can"></i></button>
+                                        <div class="relative">
+                                            <label class="block text-[10px] font-extrabold uppercase mb-1 flex items-center gap-1" :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
+                                                <i class="fa-solid fa-user-tag text-[9px]"></i> Nama Role
+                                            </label>
+                                            <input type="text" v-model="role.name" @focus="activeDropdown = 'roleName_' + rIndex" @blur="closeDropdownDelayed" placeholder="Contoh: Admin, Guru, Siswa"
+                                                :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400'"
+                                                class="bg-white text-xs font-bold outline-none border-2 border-brand-slate/20 rounded-xl px-3 py-2 w-full shadow-inner">
+                                            <div v-show="activeDropdown === 'roleName_' + rIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#0b132b] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                <div v-for="opt in roleNameOptions" :key="opt" @mousedown="selectOption('roleName', rIndex, opt)" class="px-3 py-2 text-xs hover:bg-blue-500/20 dark:hover:bg-cyan-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1" :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
+                                                <i class="fa-solid fa-list-check text-[9px]"></i> Daftar Fitur / Menu Akses
+                                            </label>
+                                            <div class="space-y-2">
+                                                <div v-for="(feat, fIndex) in role.features" :key="fIndex" class="flex items-center gap-2">
+                                                    <input type="text" v-model="role.features[fIndex]"
+                                                        :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white'"
+                                                        class="flex-1 px-3 py-1.5 bg-white border-2 border-brand-slate/20 rounded-xl text-xs font-semibold outline-none shadow-sm">
+                                                    <button @click="removeFeature(rIndex, fIndex)" class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                <div class="flex items-center gap-2 pt-1">
+                                                    <input type="text" v-model="role.newFeature" @keyup.enter="addFeature(rIndex)" placeholder="Tambah fitur baru..."
+                                                        :class="activeTab === 'webapp' ? 'dark:bg-[#070e24]/60 dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421]/60 dark:border-purple-500/40 text-brand-navy dark:text-white'"
+                                                        class="flex-1 px-3 py-1.5 bg-white/70 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs outline-none">
+                                                    <button @click="addFeature(rIndex)" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 text-white' : 'bg-purple-600 dark:bg-violet-500 text-white'" class="px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="activeTab === 'ai'" class="pt-2 flex items-center justify-between border-t border-brand-slate/20">
+                                            <span class="text-[11px] font-extrabold text-purple-700 dark:text-violet-300 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-robot"></i> Akses AI Assistant untuk Role Ini
+                                            </span>
+                                            <button @click="role.aiAssistant = !role.aiAssistant" :class="role.aiAssistant ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                                <div :class="role.aiAssistant ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Toggle Konfirmasi CRUD (AI Mode Only) -->
+                                <div v-if="activeTab === 'ai'" class="pt-3 border-t border-brand-slate/20">
+                                    <div class="p-4 rounded-2xl bg-purple-100/70 dark:bg-[#230d45] border-2 border-purple-300/60 dark:border-purple-500/50 flex items-center justify-between shadow-sm">
+                                        <span class="text-xs font-extrabold text-purple-900 dark:text-purple-200 flex items-center gap-2">
+                                            <i class="fa-solid fa-shield-halved text-purple-600 dark:text-violet-400"></i> Konfirmasi sebelum merubah data
+                                        </span>
+                                        <button @click="isConfirmCrud = !isConfirmCrud" :class="isConfirmCrud ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isConfirmCrud ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- LANDING PAGE SECTIONS -->
+                            <div v-if="activeTab === 'landing'" class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300 bg-gradient-to-br from-emerald-50/90 via-teal-50/30 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30">
+                                <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
+                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                        <span class="w-2.5 h-5 rounded-full bg-emerald-600 dark:bg-teal-400"></span>
+                                        <i class="fa-solid fa-layer-group text-xs text-emerald-600 dark:text-teal-400"></i> Struktur Section & Isi Halaman
+                                    </h3>
+                                    <button @click="addSection" class="px-4 py-2 rounded-xl bg-emerald-600 dark:bg-teal-500 text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                        <i class="fa-solid fa-plus"></i> Tambah Section
+                                    </button>
+                                </div>
+
+                                <div v-if="sections.length === 0" class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
+                                    <p class="text-xs text-brand-slate font-medium">Belum ada section yang ditambahkan.</p>
+                                    <button @click="addSection" class="text-xs font-bold text-emerald-600 dark:text-teal-400 underline">Klik untuk membuat section pertama</button>
+                                </div>
+
+                                <div v-else class="space-y-4 max-h-[520px] overflow-y-auto pr-1">
+                                    <div v-for="(sect, sIndex) in sections" :key="sect.id" class="p-4 rounded-2xl border-2 border-l-4 border-l-emerald-600 dark:border-l-teal-400 border-emerald-200/60 dark:border-emerald-500/40 bg-white/90 dark:bg-[#09291d] shadow-sm hover:shadow-md transition-all relative space-y-3">
+                                        <button @click="removeSection(sIndex)" class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors" title="Hapus Section"><i class="fa-solid fa-trash-can"></i></button>
+                                        
+                                        <div class="relative">
+                                            <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                <i class="fa-solid fa-heading text-[9px]"></i> Nama Section
+                                            </label>
+                                            <input type="text" v-model="sect.name" @focus="activeDropdown = 'sectionName_' + sIndex" @blur="closeDropdownDelayed" placeholder="Contoh: Hero Section, Fitur Unggulan" class="bg-white dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white text-xs font-bold outline-none border-2 border-brand-slate/20 focus:border-emerald-500 dark:focus:border-teal-400 rounded-xl px-3 py-2 w-full shadow-inner">
+                                            <div v-show="activeDropdown === 'sectionName_' + sIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                <div v-for="opt in sectionNameOptions" :key="opt" @mousedown="selectOption('sectionName', sIndex, opt)" class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div class="relative">
+                                                <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                    <i class="fa-solid fa-cubes text-[9px]"></i> Tipe Section
+                                                </label>
+                                                <input type="text" v-model="sect.type" @focus="activeDropdown = 'sectionType_' + sIndex" @blur="closeDropdownDelayed" class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
+                                                <div v-show="activeDropdown === 'sectionType_' + sIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                    <div v-for="opt in sectionTypeOptions" :key="opt" @mousedown="selectOption('sectionType', sIndex, opt)" class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                    <i class="fa-solid fa-circle-info text-[9px]"></i> Deskripsi Singkat
+                                                </label>
+                                                <input type="text" v-model="sect.description" placeholder="Inti section ini..." class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                <i class="fa-solid fa-elements text-[9px]"></i> Isi Elemen Konten
+                                            </label>
+                                            <div class="space-y-2">
+                                                <div v-for="(elem, eIndex) in sect.elements" :key="eIndex" class="flex items-center gap-2">
+                                                    <input type="text" v-model="sect.elements[eIndex]" class="flex-1 px-3 py-1.5 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none shadow-sm">
+                                                    <button @click="removeElement(sIndex, eIndex)" class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                <div class="flex items-center gap-2 pt-1">
+                                                    <input type="text" v-model="sect.newElement" @keyup.enter="addElement(sIndex)" placeholder="Tambah komponen isi baru..." class="flex-1 px-3 py-1.5 bg-white/70 dark:bg-[#03140e]/60 dark:border-emerald-500/40 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs text-brand-navy dark:text-white outline-none">
+                                                    <button @click="addElement(sIndex)" class="px-3 py-1.5 bg-emerald-600 dark:bg-teal-500 text-white text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- KOLOM KANAN: PARAMETER ESTETIKA VISUAL & PRESETS -->
+                        <section class="lg:col-span-6 space-y-6">
+                            <div class="p-6 rounded-3xl space-y-5 shadow-xl border backdrop-blur-md transition-all duration-300"
+                                :class="{
+                                    'bg-gradient-to-br from-blue-50/90 via-indigo-50/30 to-white dark:from-[#081229] dark:via-[#0f1d3f] dark:to-[#081229] dark:border-blue-500/60 dark:shadow-[0_0_25px_rgba(37,99,235,0.2)] border-blue-400/30': activeTab === 'webapp',
+                                    'bg-gradient-to-br from-purple-50/90 via-violet-50/30 to-white dark:from-[#13072b] dark:via-[#200c47] dark:to-[#13072b] dark:border-purple-500/60 dark:shadow-[0_0_25px_rgba(147,51,234,0.2)] border-purple-400/30': activeTab === 'ai',
+                                    'bg-gradient-to-br from-emerald-50/90 via-teal-50/30 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30': activeTab === 'landing'
+                                }">
+                                <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
+                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                        <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
+                                        <i class="fa-solid fa-palette text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i> Gaya & Estetika Visual
+                                    </h3>
+                                </div>
+
+                                <!-- PRESET THEMES LIST -->
+                                <div>
+                                    <label class="block text-xs font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                        :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                        <i class="fa-solid fa-wand-magic"></i> Preset Tema Dashboard / Halaman
+                                    </label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <button v-for="(themeData, tName) in themePresets" :key="tName" @click="applyThemePreset(tName)"
+                                            :class="design.styleDesign.includes(tName) || (tName === 'Corporate Clean' && design.styleDesign === 'Corporate Design') ? (activeTab === 'webapp' ? 'border-2 border-blue-600 dark:border-cyan-400 bg-blue-100/80 dark:bg-[#15254e] shadow-md text-blue-950 dark:text-white font-extrabold' : (activeTab === 'ai' ? 'border-2 border-purple-600 dark:border-violet-400 bg-purple-100/80 dark:bg-[#281250] shadow-md text-purple-950 dark:text-white font-extrabold' : 'border-2 border-emerald-600 dark:border-teal-400 bg-emerald-100/80 dark:bg-[#0f3827] shadow-md text-emerald-950 dark:text-white font-extrabold')) : 'bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 text-brand-slate dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#12224d] shadow-sm'"
+                                            class="p-3.5 rounded-2xl text-left flex flex-col gap-1.5 transition-all text-xs active:scale-95">
+                                            <div class="flex gap-2">
+                                                <span v-for="color in splitPalette(themeData.palette)" :key="color" :style="{ backgroundColor: color }" class="w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-700 shadow-sm"></span>
+                                            </div>
+                                            <span class="font-extrabold text-[11px] uppercase tracking-wider mt-0.5">{{ tName }}</span>
+                                            <p class="text-[9.5px] line-clamp-1 italic font-medium opacity-80">{{ themeData.vibe }}</p>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- GRID TOGGLES TERPADU (KHUSUS WEBAPP & AI MODE) -->
+                                <div v-if="activeTab === 'webapp' || activeTab === 'ai'" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-brand-slate/20">
+                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
+                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-mobile-screen text-blue-500 dark:text-cyan-400"></i> Mobile Focus
+                                        </span>
+                                        <button @click="isMobileFocus = !isMobileFocus" :class="isMobileFocus ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isMobileFocus ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        </button>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
+                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bolt text-amber-500 dark:text-amber-400"></i> Optimistic UI
+                                        </span>
+                                        <button @click="isOptimisticUI = !isOptimisticUI" :class="isOptimisticUI ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isOptimisticUI ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        </button>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between sm:col-span-2 shadow-sm">
+                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bell text-pink-500 dark:text-pink-400"></i> Sweet Alert Integration
+                                        </span>
+                                        <button @click="isSweetAlert = !isSweetAlert" :class="isSweetAlert ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isSweetAlert ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- UNIFIED INPUTS FOR STYLING -->
+                                <div class="space-y-4 pt-2">
+                                    <div class="grid grid-cols-1 gap-4" :class="{'sm:grid-cols-2': activeTab === 'webapp' || activeTab === 'ai'}">
+                                        <div>
+                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                                :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                                <i class="fa-solid fa-compass"></i> Gaya Desain
+                                            </label>
+                                            <input type="text" v-model="design.styleDesign"
+                                                :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : (activeTab === 'ai' ? 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white')"
+                                                class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-bold outline-none shadow-sm">
+                                        </div>
+                                        <div v-if="activeTab === 'webapp' || activeTab === 'ai'">
+                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                                :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
+                                                <i class="fa-solid fa-bars-staggered"></i> Tipe Navigasi Menu
+                                            </label>
+                                            <select v-model="design.menuType"
+                                                :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white'"
+                                                class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-bold outline-none shadow-sm cursor-pointer">
+                                                <option value="sidebar">Sidebar (Samping)</option>
+                                                <option value="navbar">Navbar (Atas Header)</option>
+                                                <option value="bottom">Bottom Navigation (Mobile)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                            :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                            <i class="fa-solid fa-droplet"></i> Warna Palet HEX (Maks 3 HEX)
+                                        </label>
+                                        <input type="text" v-model="design.palette" placeholder="#0F172A, #1E293B, #F1F5F9"
+                                            :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : (activeTab === 'ai' ? 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white')"
+                                            class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-mono font-bold outline-none shadow-sm">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                            :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
+                                            <i class="fa-solid fa-note-sticky"></i> Deskripsi Khusus Gaya Visual
+                                        </label>
+                                        <textarea v-model="design.visualDescription" rows="2.5" placeholder="Detailkan gaya visual tambahan..."
+                                            :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : (activeTab === 'ai' ? 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white')"
+                                            class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-medium outline-none shadow-sm resize-none"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- TOMBOL GENERATE PROMPT -->
+                    <div class="mt-6">
+                        <button @click="generateAndShowPrompt"
+                            :class="{
+                                'from-blue-600 via-indigo-600 to-blue-700 border-blue-400/40 shadow-blue-500/25': activeTab === 'webapp',
+                                'from-purple-600 via-violet-600 to-purple-700 border-purple-400/40 shadow-purple-500/25': activeTab === 'ai',
+                                'from-emerald-600 via-teal-600 to-emerald-700 border-emerald-400/40 shadow-emerald-500/25': activeTab === 'landing'
+                            }"
+                            class="w-full py-4 px-6 rounded-2xl font-black text-sm bg-gradient-to-r hover:opacity-95 text-white transition-all flex items-center justify-center gap-2 shadow-2xl border active:scale-[0.99]">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Komparasikan & Buat Prompt Aplikasi
+                        </button>
+                    </div>
+
+                    <!-- MODAL POPUP: PROMPT OUTPUT GENERATOR -->
+                    <div v-if="showPromptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                        <div class="w-full max-w-3xl p-6 rounded-3xl bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 shadow-2xl space-y-4 text-brand-navy dark:text-brand-platinum">
+                            <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
+                                <h3 class="text-base font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-green-500"></i> Prompt Berhasil di-Generate!</h3>
+                                <button @click="showPromptModal = false" class="text-brand-slate hover:text-brand-navy dark:hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <p class="text-xs text-brand-slate dark:text-slate-300">Silakan salin seluruh teks prompt instruksi di bawah ini ke chatbot AI Anda (Claude, GPT, v0, atau Gemini):</p>
+                            <textarea readonly :value="generatedPrompt" class="w-full h-80 p-4 bg-slate-100 dark:bg-[#060d21] border border-brand-slate/30 dark:border-slate-700 rounded-2xl text-xs font-mono text-brand-navy dark:text-slate-200 outline-none resize-none focus:border-brand-accent"></textarea>
+                            <div class="flex justify-end gap-3">
+                                <button @click="copyPrompt"
+                                    :class="activeTab === 'webapp' ? 'bg-blue-600' : (activeTab === 'ai' ? 'bg-purple-600' : 'bg-emerald-600')"
+                                    class="px-5 py-2.5 rounded-xl text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 hover:opacity-90">
+                                    <i class="fa-solid fa-copy"></i> Salin Prompt ke Clipboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MODAL POPUP: DIAGNOSA ERROR KUSTOM -->
+                    <div v-if="errorModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                        <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-[#0c1633] border-2 border-red-500/60 shadow-2xl space-y-4 text-center text-brand-navy dark:text-white">
+                            <div class="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <h3 class="text-lg font-bold">{{ errorModal.title }}</h3>
+                            <p class="text-xs text-brand-slate italic">"{{ errorModal.message }}"</p>
+                            <button @click="errorModal.show = false" class="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider">Tutup</button>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CHATBOT FOR PROMPT BUILDER -->
+                    <div class="fixed bottom-6 right-6 z-50">
+                        <button @click="isChatOpen = !isChatOpen"
+                            :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 shadow-blue-500/30' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-500 shadow-purple-500/30' : 'bg-emerald-600 dark:bg-teal-500 shadow-emerald-500/30')"
+                            class="w-14 h-14 rounded-full hover:scale-105 text-white shadow-2xl flex items-center justify-center transition-all border-2 border-white/20 active:scale-95">
+                            <i v-if="!isChatOpen" class="fa-solid fa-robot text-xl"></i>
+                            <i v-else class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+
+                        <div v-show="isChatOpen" class="fixed bottom-24 right-6 w-96 max-w-[90vw] h-[520px] bg-white/95 dark:bg-[#0c1633]/95 backdrop-blur-xl border border-brand-slate/30 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-brand-navy dark:text-white">
+                            <div class="p-4 border-b border-brand-slate/20 flex items-center justify-between"
+                                :class="activeTab === 'webapp' ? 'bg-blue-600/10 dark:bg-cyan-500/20' : (activeTab === 'ai' ? 'bg-purple-600/10 dark:bg-violet-500/20' : 'bg-emerald-600/10 dark:bg-teal-500/20')">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md"
+                                        :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-500' : 'bg-emerald-600 dark:bg-teal-500')">
+                                        <i class="fa-solid fa-robot"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold">Nexco Assistant AI</h4>
+                                        <span class="text-[9px] font-semibold flex items-center gap-1"
+                                            :class="activeTab === 'webapp' ? 'text-blue-500 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-500 dark:text-violet-400' : 'text-emerald-500 dark:text-teal-400')">
+                                            <span class="w-1.5 h-1.5 rounded-full animate-pulse" :class="activeTab === 'webapp' ? 'bg-blue-500 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-500 dark:bg-violet-400' : 'bg-emerald-500 dark:bg-teal-400')"></span> Auto Data Builder Active
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+                                <div v-if="messages.length === 0" class="h-full flex flex-col items-center justify-center text-center text-brand-slate dark:text-slate-300 space-y-2 py-8">
+                                    <i class="fa-solid fa-comments text-3xl opacity-40"></i>
+                                    <p class="text-xs font-semibold">Tanyakan atau minta AI mengubah rancangan data Anda secara langsung!</p>
+                                    <p class="text-[10px] opacity-80">Contoh: "Buatkan role Guru dan Siswa dengan menu lengkap", "Ubah tema jadi Bento Grid"</p>
+                                </div>
+                                <div v-for="(m, idx) in messages" :key="idx" :class="m.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                                    <div :class="m.role === 'user' ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-600 text-white' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-600 text-white' : 'bg-emerald-600 dark:bg-teal-600 text-white')) + ' rounded-tr-none shadow-md' : 'bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 text-brand-navy dark:text-slate-200 rounded-tl-none'" class="px-4 py-2.5 rounded-2xl max-w-[85%] leading-relaxed shadow-sm">
+                                        {{ m.text }}
+                                    </div>
+                                </div>
+                                <div v-if="aiLoading" class="flex justify-start">
+                                    <div class="bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 px-4 py-2.5 rounded-2xl text-brand-slate dark:text-slate-300 text-xs animate-pulse">
+                                        Sedang merancang struktur data...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 border-t border-brand-slate/20 bg-slate-50 dark:bg-[#060d21] flex gap-2">
+                                <input type="text" v-model="chatInput" @keyup.enter="processAIChat()" placeholder="Ketik instruksi ubah data..." class="flex-1 px-3 py-2 bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:ring-1 focus:ring-brand-accent">
+                                <button @click="processAIChat()" :disabled="aiLoading || !chatInput.trim()"
+                                    :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-500' : 'bg-emerald-600 dark:bg-teal-500')"
+                                    class="px-3 py-2 hover:bg-opacity-90 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: UNIVERSAL SETTINGS ================= -->
+            <section id="view-settings" class="hidden space-y-6 max-w-xl mx-auto">
+                <div class="py-2 border-b border-brand-slate/20">
+                    <h2 class="text-lg font-bold">Pengaturan Pengguna</h2>
+                    <p class="text-xs text-brand-slate">Ubah kredensial akun dan preferensi profil Anda secara instan.</p>
+                </div>
+
+                <form id="settings-form" class="glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-5 shadow-sm text-brand-navy dark:text-brand-platinum">
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Lengkap</label>
+                        <input type="text" id="settings-name" required
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Email Terdaftar</label>
+                        <input type="email" id="settings-email" disabled
+                            class="w-full px-4 py-2.5 bg-slate-200 dark:bg-brand-dark/80 border border-brand-slate/30 rounded-xl text-xs text-brand-slate cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Kata Sandi Baru (Kosongkan jika tidak diubah)</label>
+                        <input type="password" id="settings-password"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-2.5 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-save"></i> Simpan Perubahan Profil
+                    </button>
+                </form>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= RUNTIME APP LOGIC (USER DASHBOARD) ================= -->
+    <script>
+        let vuePromptApp = null;
+
+        window.addEventListener('load', () => {
+            verifySessionAndInit('user', (user) => {
+                showLoader("Sinkronisasi Kurikulum & Data Siswa...");
+                loadSystemBundledData(user.id, () => {
+                    hideLoader();
+                    showMainApp();
+                });
+            });
+        });
+
+        function showMainApp() {
+            document.getElementById('main-app').classList.remove('hidden');
+            updateUIProfile();
+            generateNavbars();
+            navigateTo('user-videos');
+        }
+
+        function updateUIProfile() {
+            document.getElementById('user-badge').textContent = appState.currentUser.role.toUpperCase();
+            document.getElementById('profile-name').textContent = appState.currentUser.nama;
+            document.getElementById('profile-email').textContent = appState.currentUser.email;
+
+            document.getElementById('profile-name-mobile').textContent = appState.currentUser.nama;
+            document.getElementById('profile-email-mobile').textContent = appState.currentUser.email;
+
+            document.getElementById('settings-name').value = appState.currentUser.nama;
+            document.getElementById('settings-email').value = appState.currentUser.email;
+        }
+
+        function selectPromptMode(mode) {
+            navigateTo('user-prompt-builder');
+            if (vuePromptApp) {
+                vuePromptApp.activeTab = mode;
+            }
+        }
+
+        function generateNavbars() {
+            const dNav = document.getElementById('desktop-nav');
+            const mNav = document.getElementById('mobile-nav');
+            dNav.innerHTML = '';
+            mNav.innerHTML = '';
+
+            // 1. Katalog Video
+            const vBtn = createNavBtn('user-videos', 'fa-play-circle', 'Katalog Video');
+            dNav.appendChild(vBtn.desk);
+            mNav.appendChild(vBtn.mob);
+
+            // 2. Tools AI
+            const gBtn = createNavBtn('user-gems', 'fa-robot', 'Tools AI');
+            dNav.appendChild(gBtn.desk);
+            mNav.appendChild(gBtn.mob);
+
+            // 3. Prompt Builder (WITH DROPDOWN MENU FOR WEBAPP, CHATBOT, LANDING PAGE)
+            const pbDeskGroup = document.createElement('div');
+            pbDeskGroup.className = 'relative group';
+            pbDeskGroup.innerHTML = `
+                <button id="nav-btn-desk-user-prompt-builder" onclick="navigateTo('user-prompt-builder')" class="px-3 py-1.5 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all duration-200 text-brand-navy dark:text-brand-platinum hover:bg-brand-slate/10 dark:hover:bg-brand-slate/30">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Prompt Builder</span> <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
+                </button>
+                <div class="absolute left-0 top-full pt-1.5 w-52 hidden group-hover:block z-50">
+                    <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-2xl shadow-xl py-2 overflow-hidden">
+                        <button onclick="selectPromptMode('webapp')" class="w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center gap-2.5 transition-colors"><i class="fa-solid fa-rocket text-blue-500"></i> Web App Builder</button>
+                        <button onclick="selectPromptMode('ai')" class="w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center gap-2.5 transition-colors"><i class="fa-solid fa-robot text-purple-500"></i> Chatbot (AI Mode)</button>
+                        <button onclick="selectPromptMode('landing')" class="w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center gap-2.5 transition-colors"><i class="fa-solid fa-globe text-emerald-500"></i> Landing Page Builder</button>
+                    </div>
+                </div>
+            `;
+            dNav.appendChild(pbDeskGroup);
+
+            // Mobile Nav Dropdown Submenu
+            const pbMobGroup = document.createElement('div');
+            pbMobGroup.className = 'flex flex-col gap-1';
+            pbMobGroup.innerHTML = `
+                <button id="nav-btn-mob-user-prompt-builder" onclick="navigateTo('user-prompt-builder'); toggleMobileMenu();" class="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-wider text-brand-slate mt-1 flex items-center justify-between">
+                    <span>Prompt Builder</span> <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+                <button onclick="selectPromptMode('webapp'); toggleMobileMenu();" class="w-full text-left px-6 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10"><i class="fa-solid fa-rocket text-blue-500"></i> Web App Builder</button>
+                <button onclick="selectPromptMode('ai'); toggleMobileMenu();" class="w-full text-left px-6 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10"><i class="fa-solid fa-robot text-purple-500"></i> Chatbot (AI Mode)</button>
+                <button onclick="selectPromptMode('landing'); toggleMobileMenu();" class="w-full text-left px-6 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"><i class="fa-solid fa-globe text-emerald-500"></i> Landing Page Builder</button>
+            `;
+            mNav.appendChild(pbMobGroup);
+
+            // 4. Pengaturan
+            const sBtn = createNavBtn('settings', 'fa-user-gear', 'Pengaturan');
+            dNav.appendChild(sBtn.desk);
+            mNav.appendChild(sBtn.mob);
+        }
+
+        function createNavBtn(viewId, icon, label) {
+            const btnDesktop = document.createElement('button');
+            btnDesktop.id = 'nav-btn-desk-' + viewId;
+            btnDesktop.className = 'px-3 py-1.5 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all duration-200';
+            btnDesktop.innerHTML = '<i class="fa-solid ' + icon + ' text-inherit"></i> <span class="text-inherit">' + label + '</span>';
+            btnDesktop.onclick = function () { navigateTo(viewId); };
+
+            const btnMobile = document.createElement('button');
+            btnMobile.id = 'nav-btn-mob-' + viewId;
+            btnMobile.className = 'w-full text-left px-4 py-3 text-xs font-semibold rounded-xl flex items-center gap-3 transition-all hover:bg-brand-slate/20 text-brand-navy dark:text-brand-platinum';
+            btnMobile.innerHTML = '<i class="fa-solid ' + icon + ' text-inherit"></i> <span class="text-inherit">' + label + '</span>';
+            btnMobile.onclick = function () { navigateTo(viewId); toggleMobileMenu(); };
+
+            return { desk: btnDesktop, mob: btnMobile };
+        }
+
+        function navigateTo(viewId) {
+            appState.activeView = viewId;
+            const views = ['view-user-videos', 'view-user-gems', 'view-user-prompt-builder', 'view-settings'];
+            views.forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+
+            const navButtons = document.querySelectorAll('[id^="nav-btn-desk-"], [id^="nav-btn-mob-"]');
+            navButtons.forEach(btn => {
+                if (btn.id.endsWith(viewId)) {
+                    btn.classList.add('bg-brand-accent', 'text-white', 'shadow-md');
+                    btn.classList.remove('text-brand-navy', 'dark:text-brand-platinum', 'text-brand-slate', 'hover:bg-brand-slate/10', 'dark:hover:bg-brand-slate/30');
+                } else {
+                    btn.classList.remove('bg-brand-accent', 'text-white', 'shadow-md');
+                    btn.classList.add('text-brand-navy', 'dark:text-brand-platinum', 'hover:bg-brand-slate/10', 'dark:hover:bg-brand-slate/30');
+                }
+            });
+
+            if (viewId === 'user-videos') {
+                renderCategoryFilters();
+                renderVideosGrid();
+            } else if (viewId === 'user-gems') {
+                renderGemsGrid();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-drawer');
+            const icon = document.getElementById('menu-icon');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-lg';
+            } else {
+                drawer.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars text-lg';
+            }
+        }
+
+        /* --- NON-REDIRECT VIDEO MODAL PLAYER --- */
+        function playVideoModal(videoId) {
+            const vid = appState.videos.find(v => v.id === videoId);
+            if (!vid) return;
+            const ytbId = getYouTubeId(vid.video_url);
+            const iframe = document.getElementById('player-iframe');
+            if (ytbId) {
+                iframe.src = `https://www.youtube.com/embed/${ytbId}?autoplay=1`;
+            } else {
+                iframe.src = vid.video_url;
+            }
+            document.getElementById('player-modal-title').textContent = vid.judul;
+            document.getElementById('player-modal-desc').textContent = vid.deskripsi;
+            const ebookContainer = document.getElementById('player-modal-ebook-link');
+            if (vid.ebook_url) {
+                ebookContainer.innerHTML = `<a href="${vid.ebook_url}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-accent text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-all"><i class="fa-solid fa-file-pdf"></i> Buka E-Book Terkait</a>`;
+            } else {
+                ebookContainer.innerHTML = '';
+            }
+            document.getElementById('video-player-modal').classList.remove('hidden');
+        }
+
+        function closeVideoPlayerModal() {
+            const iframe = document.getElementById('player-iframe');
+            iframe.src = '';
+            document.getElementById('video-player-modal').classList.add('hidden');
+        }
+
+        /* --- RENDERING VIDEO KATALOG --- */
+        function renderCategoryFilters() {
+            const container = document.getElementById('category-filters-container');
+            container.innerHTML = '';
+
+            const categories = ['Semua', ...appState.categories.map(c => c.nama)];
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-xl text-xs font-semibold transition-all flex-shrink-0 ${appState.categoryFilter === cat ? 'bg-brand-accent text-white shadow-md' : 'glass-card text-brand-slate hover:bg-brand-slate/20'}`;
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    appState.categoryFilter = cat;
+                    renderCategoryFilters();
+                    renderVideosGrid();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderVideosGrid() {
+            const grid = document.getElementById('user-videos-grid');
+            grid.innerHTML = '';
+
+            let filtered = appState.videos;
+            if (appState.categoryFilter !== 'Semua') {
+                const selectedCat = appState.categories.find(c => c.nama === appState.categoryFilter);
+                if (selectedCat) {
+                    filtered = appState.videos.filter(v => v.kategori_id === selectedCat.id);
+                }
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-video-slash text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada video dalam kategori ini.</p></div>';
+                return;
+            }
+
+            filtered.sort((a, b) => a.urutan - b.urutan).forEach(vid => {
+                const videoId = getYouTubeId(vid.video_url);
+                const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : 'https://placehold.co/600x400/1b263b/ffffff?text=Video';
+                const cat = appState.categories.find(c => c.id === vid.kategori_id);
+
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
+                card.innerHTML = [
+                    '<div>',
+                    '  <div onclick="playVideoModal(\'', vid.id, '\')" class="relative aspect-video bg-black overflow-hidden cursor-pointer">',
+                    '    <img src="', thumbUrl, '" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">',
+                    '    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>',
+                    '    <span class="absolute top-3 left-3 px-2.5 py-1 bg-brand-dark/80 backdrop-blur-md rounded-lg text-[10px] font-bold text-white uppercase tracking-wider">', (cat ? cat.nama : 'UMUM'), '</span>',
+                    '    <div class="absolute inset-0 flex items-center justify-center">',
+                    '      <div class="w-12 h-12 rounded-full bg-brand-accent/90 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform"><i class="fa-solid fa-play text-lg ml-1"></i></div>',
+                    '    </div>',
+                    '  </div>',
+                    '  <div class="p-5">',
+                    '    <h3 onclick="playVideoModal(\'', vid.id, '\')" class="font-bold text-base line-clamp-1 text-brand-navy dark:text-brand-platinum mb-2 cursor-pointer hover:text-brand-accent transition-colors">', vid.judul.replace(/"/g, '&quot;'), '</h3>',
+                    '    <p class="text-xs text-brand-slate dark:text-brand-slate/80 line-clamp-2 leading-relaxed">', vid.deskripsi.replace(/"/g, '&quot;'), '</p>',
+                    '  </div>',
+                    '</div>',
+                    '<div class="px-5 pb-5 pt-2 border-t border-brand-slate/10 flex items-center justify-between">',
+                    '  <button onclick="playVideoModal(\'', vid.id, '\')" class="px-3.5 py-2 bg-brand-accent hover:bg-opacity-90 text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-play"></i> Tonton Video</button>',
+                    (vid.ebook_url ? `<a href="${vid.ebook_url}" target="_blank" class="px-3 py-2 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"><i class="fa-solid fa-file-pdf text-red-500"></i> E-Book</a>` : ''),
+                    '</div>'
+                ].join('');
+                grid.appendChild(card);
+            });
+        }
+
+        /* --- RENDERING TOOLS AI WORKSPACE --- */
+        function renderGemsGrid() {
+            const grid = document.getElementById('user-gems-grid');
+            grid.innerHTML = '';
+
+            if (!appState.gems || appState.gems.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-robot text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Belum ada Tools AI terdaftar.</p></div>';
+                return;
+            }
+
+            appState.gems.forEach(gem => {
+                const img = gem.image_url || 'https://placehold.co/600x400/1b263b/ffffff?text=AI+Tools';
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
+                card.innerHTML = [
+                    '<div>',
+                    '  <div class="relative aspect-video bg-black overflow-hidden">',
+                    '    <img src="', img, '" alt="Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">',
+                    '    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>',
+                    '  </div>',
+                    '  <div class="p-5">',
+                    '    <h3 class="font-bold text-base line-clamp-1 text-brand-navy dark:text-brand-platinum mb-2">', gem.nama.replace(/"/g, '&quot;'), '</h3>',
+                    '    <p class="text-xs text-brand-slate dark:text-brand-slate/80 line-clamp-2 leading-relaxed">', gem.deskripsi.replace(/"/g, '&quot;'), '</p>',
+                    '  </div>',
+                    '</div>',
+                    '<div class="px-5 pb-5 pt-2">',
+                    '  <a href="', gem.akses_url, '" target="_blank" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-md"><i class="fa-solid fa-up-right-from-square"></i> Buka Tools AI</a>',
+                    '</div>'
+                ].join('');
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nama = document.getElementById('settings-name').value.trim();
+            const pass = document.getElementById('settings-password').value.trim();
+
+            Swal.fire({ title: 'Mengamankan Profil...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        appState.currentUser.nama = res.nama;
+                        updateUIProfile();
+                        document.getElementById('settings-password').value = '';
+                        localStorage.setItem('edu_user', JSON.stringify(appState.currentUser));
+                        showSuccessAlert('Profil Diperbarui!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .updateProfileOnServer(appState.currentUser.id, nama, pass);
+        });
+
+        /* ================= VUE 3 APP MOUNTING (PROMPT BUILDER FULL VERSION) ================= */
+        const { createApp, ref, computed } = Vue;
+
+        const defaultApiKey = "AQ.Ab8RN6LgoabnbH5s_-gL_P-zw192bYS582C6cTCabfQl7M5LwQ";
+
+        const app = createApp({
+            setup() {
+                const activeTab = ref("webapp"); // 'webapp', 'ai', 'landing'
+                const showPromptModal = ref(false);
+                const isChatOpen = ref(false);
+                const activeDropdown = ref(null);
+
+                const errorModal = ref({ show: false, title: "", message: "" });
+                const showErrorModal = (title, message) => {
+                    errorModal.value.title = title;
+                    errorModal.value.message = message;
+                    errorModal.value.show = true;
+                };
+
+                const appName = ref("");
+                const appDescription = ref("");
+
+                const roles = ref([
+                    { id: 1, name: "Super Admin", features: ["Dashboard Utama", "Kelola Pengguna", "Analisis System"], newFeature: "", aiAssistant: true }
+                ]);
+
+                const sections = ref([
+                    { id: 1, name: "Hero Header", type: "Hero Section", description: "Menarik perhatian pengunjung", elements: ["Judul Utama", "CTA Register"], newElement: "" }
+                ]);
+
+                const design = ref({
+                    styleDesign: "Bento Grid",
+                    menuType: "sidebar",
+                    palette: "#1B263B, #415A77, #E0E1DD",
+                    visualDescription: "Tampilan modern padat informasi dengan sudut halus."
+                });
+
+                const isMobileFocus = ref(false);
+                const isOptimisticUI = ref(true);
+                const isSweetAlert = ref(true);
+                const isConfirmCrud = ref(true);
+
+                const chatInput = ref("");
+                const messages = ref([]);
+                const aiLoading = ref(false);
+
+                // Theme Presets Matching Example
+                const themePresets = {
+                    "Corporate Clean": { palette: "#FFFFFF, #1E293B, #2563EB", vibe: "Startup & Fintech Style: Bersih, terstruktur." },
+                    "Playful Vector": { palette: "#FFF7ED, #FB923C, #F97316", vibe: "Ceria & Ramah: Warna hangat, elemen melengkung." },
+                    "Bento Grid": { palette: "#0F172A, #1E293B, #F1F5F9", vibe: "Modern Info-Dense: Grid presisi, kotak padat." },
+                    "Aurora Glow": { palette: "#020617, #7C3AED, #2DD4BF", vibe: "Dark Futuristik: Background pekat pendaran neon." },
+                    "Claymorphism": { palette: "#EEF2FF, #818CF8, #FFFFFF", vibe: "3D Soft Volume: Tekstur lembut tanah liat digital." }
+                };
+
+                const splitPalette = (paletteStr) => {
+                    if (!paletteStr) return [];
+                    return paletteStr.split(",").map(c => c.trim());
+                };
+
+                const applyThemePreset = (name) => {
+                    const preset = themePresets[name];
+                    if (preset) {
+                        design.value.styleDesign = name === "Corporate Clean" ? "Corporate Design" : (name === "Playful Vector" ? "Playful" : name);
+                        design.value.palette = preset.palette;
+                        design.value.visualDescription = preset.vibe;
+                    }
+                };
+
+                const roleNameOptions = ref(["Super Admin", "Manager", "Operator", "End User", "Guest", "Teacher", "Student"]);
+                const sectionNameOptions = ref(["Hero Header", "Key Features", "Product Video", "Testimonials", "Pricing Table", "Simple Footer"]);
+                const sectionTypeOptions = ref(["Hero Section", "Services / Fitur", "Pricing / Paket", "Testimonials", "FAQ", "Footer"]);
+
+                const closeDropdownDelayed = () => { setTimeout(() => { activeDropdown.value = null; }, 300); };
+                const selectOption = (field, idx, val) => {
+                    if (field === "roleName") roles.value[idx].name = val;
+                    else if (field === "sectionName") sections.value[idx].name = val;
+                    else if (field === "sectionType") sections.value[idx].type = val;
+                    activeDropdown.value = null;
+                };
+
+                const addRole = () => {
+                    const nextId = roles.value.length > 0 ? Math.max(...roles.value.map(r => r.id)) + 1 : 1;
+                    roles.value.push({ id: nextId, name: `Role Baru #${nextId}`, features: ["Dashboard Utama"], newFeature: "", aiAssistant: false });
+                };
+
+                const removeRole = (index) => { roles.value.splice(index, 1); };
+
+                const addFeature = (roleIndex) => {
+                    const role = roles.value[roleIndex];
+                    if (role.newFeature && role.newFeature.trim()) {
+                        role.features.push(role.newFeature.trim());
+                        role.newFeature = "";
+                    }
+                };
+
+                const removeFeature = (roleIndex, featureIndex) => {
+                    roles.value[roleIndex].features.splice(featureIndex, 1);
+                };
+
+                const addSection = () => {
+                    const nextId = sections.value.length > 0 ? Math.max(...sections.value.map(s => s.id)) + 1 : 1;
+                    sections.value.push({ id: nextId, name: `Section Baru #${nextId}`, type: "Custom Section", description: "", elements: ["Komponen Baru"], newElement: "" });
+                };
+
+                const removeSection = (index) => { sections.value.splice(index, 1); };
+
+                const addElement = (sectionIndex) => {
+                    const section = sections.value[sectionIndex];
+                    if (section.newElement && section.newElement.trim()) {
+                        section.elements.push(section.newElement.trim());
+                        section.newElement = "";
+                    }
+                };
+
+                const removeElement = (sectionIndex, elementIndex) => {
+                    sections.value[sectionIndex].elements.splice(elementIndex, 1);
+                };
+
+                const generatedPrompt = computed(() => {
+                    let str = '';
+                    if (activeTab.value === "webapp") {
+                        str += `### 1. TARGET SISTEM & DESKRIPSI WEB APP\n`;
+                        str += `- **Nama Aplikasi**: ${appName.value || "(Belum Ditentukan)"}\n`;
+                        str += `- **Deskripsi Sistem**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
+                        str += `### 2. STRUKTUR ROLE & HAK AKSES MENU\n`;
+                        roles.value.forEach((role, idx) => {
+                            str += `${idx + 1}. **Role: ${role.name}**\n`;
+                            role.features.forEach((feat, fIdx) => { str += `   - Menu ${fIdx + 1}: ${feat}\n`; });
+                            str += `\n`;
+                        });
+                    } else if (activeTab.value === "ai") {
+                        str += `### 1. TARGET SISTEM WEB APP DENGAN INTEGRASI ASISTEN AI (AI MODE)\n`;
+                        str += `- **Nama Aplikasi**: ${appName.value || "(Belum Ditentukan)"}\n`;
+                        str += `- **Deskripsi Sistem**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
+                        str += `### 2. STRUKTUR ROLE, HAK AKSES, DAN AKSES ASISTEN AI\n`;
+                        roles.value.forEach((role, idx) => {
+                            str += `${idx + 1}. **Role: ${role.name}**\n`;
+                            role.features.forEach((feat, fIdx) => { str += `   - Menu ${fIdx + 1}: ${feat}\n`; });
+                            str += `   - **Akses AI Assistant**: ${role.aiAssistant ? 'AKTIF' : 'TIDAK AKTIF'}\n\n`;
+                        });
+                    } else {
+                        str += `### 1. TARGET PRODUK & MARKETING DESKRIPSI LANDING PAGE\n`;
+                        str += `- **Nama Produk**: ${appName.value || "(Belum Ditentukan)"}\n`;
+                        str += `- **Deskripsi Bisnis**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
+                        str += `### 2. STRUKTUR SECTIONS & ISI HALAMAN KAMPANYE\n`;
+                        sections.value.forEach((sect, idx) => {
+                            str += `${idx + 1}. **Section: ${sect.name}** (Tipe: ${sect.type})\n`;
+                            if (sect.description) str += `   - **Deskripsi/Tujuan**: ${sect.description}\n`;
+                            sect.elements.forEach((elem, eIdx) => { str += `   - Elemen ${eIdx + 1}: ${elem}\n`; });
+                            str += `\n`;
+                        });
+                    }
+
+                    str += `### 3. DETAIL ESTETIKA & GAYA DESAIN\n`;
+                    str += `- **Gaya Desain Khusus**: ${design.value.styleDesign || "None"}\n`;
+                    str += `- **Palet Warna HEX**: ${design.value.palette || "#0F172A, #1E293B, #F1F5F9"}\n`;
+                    if (activeTab.value === "webapp" || activeTab.value === "ai") {
+                        str += `- **Tipe Bar Menu**: ${design.value.menuType}\n`;
+                        if (isMobileFocus.value) str += `- **MOBILE FOCUS ON**: Fokus penuh ke desain Mobile View (Responsivitas maksimal).\n`;
+                    }
+                    str += `- **Deskripsi Tambahan**: ${design.value.visualDescription || "Bersih dan responsif."}\n\n`;
+
+                    let extraFeatures = '';
+                    if (isOptimisticUI.value) extraFeatures += `- **OPTIMISTIC UI ON**: Implementasikan mutasi state instan pada setiap operasi CRUD dengan Toast Notifications.\n`;
+                    if (isSweetAlert.value) extraFeatures += `- **SWEETALERT2 INTEGRATION**: Gunakan SweetAlert2 untuk modal dialog konfirmasi dan alert.\n`;
+                    if (activeTab.value === "ai" && isConfirmCrud.value) extraFeatures += `- **KONFIRMASI SEBELUM MERUBAH DATA**: AI wajib meminta konfirmasi sebelum melakukan aksi CRUD data.\n`;
+
+                    if (extraFeatures) {
+                        str += `### 4. FITUR TAMBAHAN\n` + extraFeatures + `\n### 5. INSTRUKSI TEKNIS PENGERJAAN KODE\n`;
+                    } else {
+                        str += `### 4. INSTRUKSI TEKNIS PENGERJAAN KODE\n`;
+                    }
+                    str += `- Satukan seluruh CSS, HTML, dan Javascript menjadi kode utuh siap jalankan.\n`;
+                    return str;
+                });
+
+                const selectedModel = "gemini-3.1-flash-lite";
+
+                const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
+                    try {
+                        const response = await fetch(url, options);
+                        if (!response.ok) {
+                            const errBody = await response.text();
+                            throw new Error(`HTTP_STATUS_${response.status}::${errBody}`);
+                        }
+                        return await response.json();
+                    } catch (error) {
+                        if (retries <= 0) throw error;
+                        await new Promise((resolve) => setTimeout(resolve, delay));
+                        return fetchWithRetry(url, options, retries - 1, delay * 2);
+                    }
+                };
+
+                const generateAndShowPrompt = () => { showPromptModal.value = true; };
+
+                const copyPrompt = () => {
+                    navigator.clipboard.writeText(generatedPrompt.value);
+                    Swal.fire({ icon: 'success', title: 'Tersalin!', text: 'Prompt berhasil disalin ke clipboard.', timer: 1500, showConfirmButton: false });
+                };
+
+                const processAIChat = async () => {
+                    const apiKey = (window.appState && window.appState.aiApiKey ? window.appState.aiApiKey : defaultApiKey).trim();
+                    const promptText = chatInput.value.trim();
+                    if (!promptText) return;
+
+                    aiLoading.value = true;
+                    messages.value.push({ role: 'user', text: promptText });
+                    chatInput.value = '';
+
+                    const currentState = {
+                        appName: appName.value,
+                        appDescription: appDescription.value,
+                        roles: roles.value,
+                        sections: sections.value,
+                        design: design.value,
+                        isMobileFocus: isMobileFocus.value,
+                        isOptimisticUI: isOptimisticUI.value,
+                        isSweetAlert: isSweetAlert.value,
+                        isConfirmCrud: isConfirmCrud.value
+                    };
+
+                    const systemPrompt = `Anda adalah AI Assistant cerdas yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? (activeTab.value === "ai" ? "Web Application Dashboard dengan Asisten AI" : "Web Application Dashboard") : "Marketing Landing Page"}. 
+Perbarui konfigurasi JSON berdasarkan instruksi pengguna.
+
+ATURAN KHUSUS MOBILE FOCUS:
+Pada mode WebApp dan AI Mode, analisis aplikasi/produk yang diminta pengguna. Jika aplikasi tersebut sangat berorientasi pada penggunaan perangkat seluler / smartphone (contoh: Ojek Online, Marketplace Mobile, E-Wallet / Mobile Banking, Kasir Mobile, Transportasi, Delivery, PPOB, Absensi Mobile, Ojek Online, Chat App, atau sejenisnya), tentukan "isMobileFocus": true secara otomatis dan jika cocok set "menuType": "bottom". Jika berupa dashboard admin/desktop kompleks, atur "isMobileFocus": false.
+
+STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
+{
+  "appName": "string (Bahasa Indonesia)",
+  "appDescription": "string (Bahasa Indonesia)",
+  "roles": [ { "name": "string (Bahasa Indonesia)", "features": ["string (Bahasa Indonesia)"], "aiAssistant": boolean } ],
+  "sections": [ { "name": "string (Bahasa Indonesia)", "type": "string", "description": "string (Bahasa Indonesia)", "elements": ["string (Bahasa Indonesia)"] } ],
+  "design": { 
+    "styleDesign": "string", 
+    "menuType": "string (HANYA 'sidebar', 'navbar', atau 'bottom')", 
+    "palette": "string (MAKSIMAL 3 HEX CODE, contoh: #1B263B, #415A77, #E0E1DD)", 
+    "visualDescription": "string (Bahasa Indonesia)" 
+  },
+  "isMobileFocus": boolean,
+  "isOptimisticUI": boolean,
+  "isSweetAlert": boolean,
+  "isConfirmCrud": boolean,
+  "aiExplanation": "Penjelasan singkat dalam Bahasa Indonesia tentang perubahan dan alasan keputusan Mobile Focus"
+}
+KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
+
+                    const payload = {
+                        contents: [{ parts: [{ text: promptText }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        generationConfig: { responseMimeType: "application/json" }
+                    };
+
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+
+                    try {
+                        const data = await fetchWithRetry(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (rawText) {
+                            const parsed = JSON.parse(rawText);
+                            if (parsed.appName) appName.value = parsed.appName;
+                            if (parsed.appDescription) appDescription.value = parsed.appDescription;
+                            if (parsed.roles && (activeTab.value === 'webapp' || activeTab.value === 'ai')) {
+                                roles.value = parsed.roles.map((r, i) => ({ id: i + 1, name: r.name, features: r.features || [], newFeature: "", aiAssistant: r.aiAssistant ?? false }));
+                            }
+                            if (parsed.sections && activeTab.value === 'landing') {
+                                sections.value = parsed.sections.map((s, i) => ({ id: i + 1, name: s.name, type: s.type || 'Custom', description: s.description || '', elements: s.elements || [], newElement: "" }));
+                            }
+                            if (parsed.design) Object.assign(design.value, parsed.design);
+                            if (typeof parsed.isMobileFocus === 'boolean') isMobileFocus.value = parsed.isMobileFocus;
+                            if (typeof parsed.isOptimisticUI === 'boolean') isOptimisticUI.value = parsed.isOptimisticUI;
+                            if (typeof parsed.isSweetAlert === 'boolean') isSweetAlert.value = parsed.isSweetAlert;
+                            if (typeof parsed.isConfirmCrud === 'boolean') isConfirmCrud.value = parsed.isConfirmCrud;
+
+                            messages.value.push({ role: 'ai', text: parsed.aiExplanation || "Rancangan berhasil diperbarui!" });
+                        } else {
+                            throw new Error("Respon API kosong.");
+                        }
+                    } catch (err) {
+                        showErrorModal("Gagal Memproses AI", err.toString());
+                    } finally {
+                        aiLoading.value = false;
+                    }
+                };
+
+                return {
+                    activeTab,
+                    showPromptModal,
+                    errorModal,
+                    isChatOpen,
+                    activeDropdown,
+                    roleNameOptions,
+                    sectionNameOptions,
+                    sectionTypeOptions,
+                    closeDropdownDelayed,
+                    selectOption,
+                    appName,
+                    appDescription,
+                    roles,
+                    sections,
+                    design,
+                    themePresets,
+                    splitPalette,
+                    applyThemePreset,
+                    isMobileFocus,
+                    isOptimisticUI,
+                    isSweetAlert,
+                    isConfirmCrud,
+                    chatInput,
+                    messages,
+                    aiLoading,
+                    addRole,
+                    removeRole,
+                    addFeature,
+                    removeFeature,
+                    addSection,
+                    removeSection,
+                    addElement,
+                    removeElement,
+                    generatedPrompt,
+                    generateAndShowPrompt,
+                    copyPrompt,
+                    processAIChat
+                };
+            }
+        });
+
+        vuePromptApp = app.mount('#prompt-builder-vue-app');
+    </script>
+</body>
+
+</html>
