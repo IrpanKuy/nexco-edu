@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexco Edu Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#1B263B',
+                            slate: '#415A77',
+                            platinum: '#E0E1DD',
+                            dark: '#0E131F',
+                            accent: '#4F46E5',
+                            success: '#10B981',
+                            danger: '#EF4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(65, 90, 119, 0.15);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .dark .glass-panel {
+            background: rgba(27, 38, 59, 0.7);
+            border: 1px solid rgba(65, 90, 119, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(27, 38, 59, 0.05);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(65, 90, 119, 0.15);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F4F5F7;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #0E131F;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #415A77;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
+
+    <!-- GLOBAL INITIAL LOADING SCREEN -->
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-dark">
+        <div class="relative flex items-center justify-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
+            <i class="fa-solid fa-graduation-cap text-brand-platinum absolute text-xl"></i>
+        </div>
+        <h3 class="text-lg font-semibold mt-4 text-brand-platinum tracking-wide animate-pulse">Sinkronisasi Database
+            Nexco Edu...</h3>
+    </div>
+
+    <!-- ================= AUTH: LOGIN SCREEN ================= -->
+    <div id="login-screen" class="hidden flex-1 flex items-center justify-center p-4">
+        <div
+            class="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden text-brand-navy dark:text-brand-platinum">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-accent/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-brand-slate/30 rounded-full blur-2xl"></div>
+
+            <div class="text-center mb-8 relative z-10">
+                <div
+                    class="inline-flex p-3 bg-brand-slate/20 rounded-2xl mb-3 border border-brand-slate/40 overflow-hidden w-16 h-16 items-center justify-center">
+                    <img src="/image/nexco.jpg" alt="Nexco Edu Logo" class="object-cover w-full h-full rounded-xl"
+                        onerror="this.src='https://placehold.co/120x120/1b263b/ffffff?text=NE'">
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight font-sans">Nexco Edu</h2>
+                <p class="text-xs text-brand-slate dark:text-brand-slate/80 mt-1">Platform Belajar Video & Akses Tools
+                    AI Instan</p>
+            </div>
+
+            <form id="login-form" class="space-y-5 relative z-10">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Email
+                        Pengguna</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="login-email" required
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
+                            placeholder="name@domain.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Kata
+                        Sandi</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="login-password" required
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-login-submit"
+                    class="w-full py-3 bg-brand-accent hover:bg-opacity-95 text-white font-semibold rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                    Masuk Sekarang <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MAIN SPA DASHBOARD CONTAINER ================= -->
+    <div id="main-app" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
+
+        <header
+            class="glass-panel mt-4 rounded-2xl sticky top-4 z-40 px-4 py-3 shadow-lg text-brand-navy dark:text-brand-platinum">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-brand-accent/20 rounded-xl border border-brand-accent/40 overflow-hidden flex items-center justify-center">
+                        <img src="/image/nexco.jpg" alt="Logo" class="w-full h-full object-cover"
+                            onerror="this.src='https://placehold.co/80x80/1b263b/ffffff?text=NE'">
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold tracking-tight">Nexco Edu</h1>
+                        <span
+                            class="text-[10px] bg-brand-slate/30 dark:bg-brand-slate/50 px-2 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold"
+                            id="user-badge">ROLE</span>
+                    </div>
+                </div>
+
+                <!-- REVISI LAYOUT NAV: Container navigasi yang fleksibel, rapi, dan seimbang -->
+                <nav class="hidden md:flex items-center gap-1.5 animate-fade-in" id="desktop-nav">
+                    <!-- Dipopulasikan secara dinamis berdasarkan role oleh JS -->
+                </nav>
+
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="toggleTheme()"
+                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 dark:hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all shadow-sm"
+                        title="Ubah Tema">
+                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
+                    </button>
+                    <div class="text-right">
+                        <p class="text-xs font-semibold" id="profile-name">Nama Pengguna</p>
+                        <p class="text-[10px] text-brand-slate" id="profile-email">email@domain.com</p>
+                    </div>
+                    <button onclick="handleLogout()"
+                        class="p-2.5 bg-brand-danger/10 hover:bg-brand-danger text-brand-danger hover:text-white rounded-xl border border-brand-danger/20 transition-all shadow-md"
+                        title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 md:hidden">
+                    <button onclick="toggleTheme()"
+                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all"
+                        title="Ubah Tema">
+                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()"
+                        class="p-2.5 hover:bg-brand-slate/20 rounded-xl border border-brand-slate/30 transition-all">
+                        <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-drawer"
+                class="hidden md:hidden mt-4 pt-3 border-t border-brand-slate/30 flex flex-col gap-2 transition-all">
+                <div id="mobile-nav" class="flex flex-col gap-1">
+                    <!-- Navigasi Dinamis Mobile -->
+                </div>
+                <div class="border-t border-brand-slate/20 mt-2 pt-3 flex items-center justify-between px-2">
+                    <div>
+                        <p class="text-xs font-semibold" id="profile-name-mobile">Nama Pengguna</p>
+                        <p class="text-[10px] text-brand-slate" id="profile-email-mobile">email@domain.com</p>
+                    </div>
+                    <button onclick="handleLogout()"
+                        class="px-3 py-1.5 bg-brand-danger/20 text-brand-danger text-xs font-semibold rounded-lg border border-brand-danger/30 flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="mt-6 flex-1 text-brand-navy dark:text-brand-platinum">
+
+            <!-- ================= VIEW: USER KATALOG VIDEO ================= -->
+            <section id="view-user-videos" class="hidden space-y-6">
+                <div
+                    class="flex flex-col sm:flex-row items-center gap-4 justify-between bg-white dark:bg-brand-navy/40 p-4 rounded-2xl border border-brand-slate/20 shadow-md">
+                    <div class="relative w-full sm:w-72">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="video-search" oninput="filterVideos()"
+                            class="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-brand-dark/60 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-accent text-sm text-brand-navy dark:text-brand-platinum"
+                            placeholder="Cari materi video...">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto py-1 justify-start sm:justify-end"
+                        id="video-categories">
+                        <!-- Tombol Kategori Dinamis -->
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="video-catalog-grid">
+                    <!-- Card Modul Video -->
+                </div>
+            </section>
+
+            <!-- ================= VIEW: USER TOOLS AI ================= -->
+            <section id="view-user-gems" class="hidden space-y-6">
+                <div class="text-center max-w-xl mx-auto py-4">
+                    <h2 class="text-xl font-bold">Tools AI Workspace</h2>
+                    <p class="text-sm text-brand-slate mt-1">Gunakan berbagai layanan kecerdasan buatan pilihan untuk
+                        menunjang dan melipatgandakan produktivitas belajar Anda.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="gems-catalog-grid">
+                    <!-- Card Tools AI -->
+                </div>
+            </section>
+
+            <!-- ================= VIEW: USER BOOKMARKS ================= -->
+            <section id="view-user-bookmarks" class="hidden space-y-6">
+                <div class="py-2 border-b border-brand-slate/20">
+                    <h2 class="text-lg font-bold">Materi yang Ditandai</h2>
+                    <p class="text-xs text-brand-slate">Daftar video penting yang Anda simpan untuk dipelajari kembali.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="bookmarks-grid">
+                    <!-- Bookmarks -->
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN DASHBOARD EVALUASI ================= -->
+            <section id="view-admin-dashboard" class="hidden space-y-6">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="glass-card p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-xs text-brand-slate">Total Siswa</p>
+                            <h3 class="text-2xl font-black mt-1" id="stat-total-students">0</h3>
+                        </div>
+                        <div class="p-3 bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 rounded-xl text-lg">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-xs text-brand-slate">Total Modul Video</p>
+                            <h3 class="text-2xl font-black mt-1" id="stat-total-videos">0</h3>
+                        </div>
+                        <div class="p-3 bg-brand-accent/20 text-brand-accent rounded-xl text-lg">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-xs text-brand-slate">Tools AI Terdaftar</p>
+                            <h3 class="text-2xl font-black mt-1" id="stat-total-gems">0</h3>
+                        </div>
+                        <div class="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl text-lg">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-xs text-brand-slate">Modul Diselesaikan</p>
+                            <h3 class="text-2xl font-black mt-1" id="stat-completed">0</h3>
+                        </div>
+                        <div class="p-3 bg-brand-success/20 text-brand-success rounded-xl text-lg">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-xs text-brand-slate">Total Penyimpan</p>
+                            <h3 class="text-2xl font-black mt-1" id="stat-bookmarked">0</h3>
+                        </div>
+                        <div class="p-3 bg-yellow-500/20 text-yellow-400 rounded-xl text-lg">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- USER TRACKING AND ACTIVITY SECTION -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Student Progress Table (Col-span 2) -->
+                    <div class="glass-panel p-5 rounded-3xl shadow-md lg:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
+                            <div>
+                                <h3 class="text-sm font-bold tracking-wide text-brand-slate dark:text-brand-slate/80">
+                                    Progres Belajar Siswa</h3>
+                                <p class="text-[10px] text-brand-slate">Pemantauan penyelesaian materi kurikulum per
+                                    individu.</p>
+                            </div>
+                            <span
+                                class="text-xs bg-brand-accent/20 text-brand-accent font-semibold px-2 py-0.5 rounded-lg"
+                                id="stat-active-students-badge">0 Siswa</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs">
+                                <thead
+                                    class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-bold uppercase">
+                                    <tr>
+                                        <th class="px-4 py-2">Nama Lengkap</th>
+                                        <th class="px-4 py-2">Email</th>
+                                        <th class="px-4 py-2">Progres Belajar</th>
+                                        <th class="px-4 py-2 text-center">Ditandai</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-brand-slate/10"
+                                    id="admin-dashboard-student-progress-body">
+                                    <!-- Baris Progres Siswa Dinamis -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Recent Activities (Col-span 1) -->
+                    <div class="glass-panel p-5 rounded-3xl shadow-md space-y-4">
+                        <div class="border-b border-brand-slate/20 pb-3">
+                            <h3 class="text-sm font-bold tracking-wide text-brand-slate dark:text-brand-slate/80">
+                                Aktivitas Terbaru</h3>
+                            <p class="text-[10px] text-brand-slate">Log interaksi dan progres belajar siswa secara
+                                real-time.</p>
+                        </div>
+                        <div class="space-y-3 max-h-80 overflow-y-auto pr-1" id="admin-dashboard-recent-activities">
+                            <!-- Feed Aktivitas Terbaru -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN KELOLA VIDEO ================= -->
+            <section id="view-admin-manage-videos" class="hidden space-y-6">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Modul Video & E-Book</h2>
+                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus kurikulum serta dokumen
+                            pembelajaran.</p>
+                    </div>
+                    <button onclick="openVideoFormModal()"
+                        class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Modul Baru
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead
+                            class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Urutan</th>
+                                <th class="px-6 py-3.5">Modul Pembelajaran</th>
+                                <th class="px-6 py-3.5">Kategori</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-videos-table-body">
+                            <!-- Baris Video -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Video Modal Form -->
+                <div id="video-form-modal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div
+                        class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="video-modal-title">Modul Video Baru</h3>
+                            <button onclick="closeVideoFormModal()"
+                                class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="video-crud-form" class="p-6 space-y-4">
+                            <input type="hidden" id="crud-video-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Judul Video</label>
+                                <input type="text" id="crud-video-judul" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori</label>
+                                    <select id="crud-video-kategori" required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                        <!-- Opsi Kategori Dinamis -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Nomor
+                                        Urutan</label>
+                                    <input type="number" id="crud-video-urutan" required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Video
+                                    YouTube</label>
+                                <input type="url" id="crud-video-url" placeholder="https://www.youtube.com/watch?v=..."
+                                    required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL E-Book
+                                    Terkait</label>
+                                <input type="url" id="crud-video-ebook"
+                                    placeholder="https://drive.google.com/... atau pdf link" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi
+                                    Singkat</label>
+                                <textarea id="crud-video-deskripsi" rows="3" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeVideoFormModal()"
+                                    class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit"
+                                    class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan
+                                    Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN KELOLA TOOLS AI ================= -->
+            <section id="view-admin-manage-gems" class="hidden space-y-6">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Tools AI</h2>
+                        <p class="text-xs text-brand-slate">Tambah dan sesuaikan tautan serta logo asisten AI bagi
+                            seluruh pengguna.</p>
+                    </div>
+                    <button onclick="openGemFormModal()"
+                        class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Tools Baru
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead
+                            class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Nama Tools</th>
+                                <th class="px-6 py-3.5">Deskripsi Singkat</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-gems-table-body">
+                            <!-- Baris Tools AI -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tools Modal Form -->
+                <div id="gems-form-modal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div
+                        class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="gems-modal-title">Konfigurasi Tools AI</h3>
+                            <button onclick="closeGemFormModal()"
+                                class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="gems-crud-form" class="p-6 space-y-4">
+                            <input type="hidden" id="crud-gem-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Tools</label>
+                                <input type="text" id="crud-gem-nama" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="misal: Claude Work">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Link Akses Langsung
+                                    (Web URL)</label>
+                                <input type="url" id="crud-gem-url" placeholder="https://claude.ai/..." required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar Banner/Logo
+                                    Tools</label>
+                                <input type="url" id="crud-gem-image"
+                                    placeholder="https://images.unsplash.com/... atau logo url" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat
+                                    Keunggulan</label>
+                                <input type="text" id="crud-gem-deskripsi" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="Mempermudah optimasi sintaksis...">
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeGemFormModal()"
+                                    class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit"
+                                    class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan
+                                    Tools</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN KELOLA KATEGORI ================= -->
+            <section id="view-admin-manage-categories" class="hidden space-y-6">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Kategori Pembelajaran</h2>
+                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus kategori pengelompokkan modul video.
+                        </p>
+                    </div>
+                    <button onclick="openCategoryFormModal()"
+                        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Kategori Baru
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead
+                            class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">ID Kategori</th>
+                                <th class="px-6 py-3.5">Nama Kategori</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-categories-table-body">
+                            <!-- Baris Kategori -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Category Modal Form -->
+                <div id="category-form-modal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div
+                        class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="category-modal-title">Kategori Baru</h3>
+                            <button onclick="closeCategoryFormModal()"
+                                class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="category-crud-form" class="p-6 space-y-4">
+                            <input type="hidden" id="crud-category-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Kategori</label>
+                                <input type="text" id="crud-category-nama" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="misal: Generative AI">
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeCategoryFormModal()"
+                                    class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit"
+                                    class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan
+                                    Kategori</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN KELOLA PENGGUNA (REVISI) ================= -->
+            <section id="view-admin-manage-users" class="hidden space-y-6 animate-fade-in">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Data Pengguna</h2>
+                        <p class="text-xs text-brand-slate">Manajemen akun pengguna dan hak akses peran platform.</p>
+                    </div>
+                    <button onclick="openUserFormModal()"
+                        class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Tambah Pengguna
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead
+                            class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Nama</th>
+                                <th class="px-6 py-3.5">Email</th>
+                                <th class="px-6 py-3.5">Peran</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-users-table-body">
+                            <!-- Baris Pengguna Dinamis -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- User Modal Form (Hapus Multi-Select Access to Tools AI) -->
+                <div id="user-form-modal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div
+                        class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="user-modal-title">Formulir Pengguna</h3>
+                            <button onclick="closeUserFormModal()"
+                                class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="user-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <input type="hidden" id="crud-user-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Lengkap</label>
+                                <input type="text" id="crud-user-nama" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Email</label>
+                                    <input type="email" id="crud-user-email" required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Hak Akses
+                                        Role</label>
+                                    <select id="crud-user-role" required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                        <option value="user">User / Siswa</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Kata Sandi (Kosongkan
+                                    jika tidak ingin mengubah)</label>
+                                <input type="password" id="crud-user-password"
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="••••••••">
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeUserFormModal()"
+                                    class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit"
+                                    class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan
+                                    Pengguna</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: UNIVERSAL SETTINGS ================= -->
+            <section id="view-settings" class="hidden space-y-6 max-w-xl mx-auto">
+                <div class="py-2 border-b border-brand-slate/20">
+                    <h2 class="text-lg font-bold">Pengaturan Pengguna</h2>
+                    <p class="text-xs text-brand-slate">Ubah kredensial akun dan preferensi profil Anda secara instan.
+                    </p>
+                </div>
+
+                <form id="settings-form"
+                    class="glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-5 shadow-sm text-brand-navy dark:text-brand-platinum">
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Lengkap</label>
+                        <input type="text" id="settings-name" required
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Email Terdaftar</label>
+                        <input type="email" id="settings-email" disabled
+                            class="w-full px-4 py-2.5 bg-slate-200 dark:bg-brand-dark/80 border border-brand-slate/30 rounded-xl text-xs text-brand-slate cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Kata Sandi Baru (Kosongkan jika
+                            tidak diubah)</label>
+                        <input type="password" id="settings-password"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                    </div>
+                    <button type="submit"
+                        class="w-full py-2.5 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-save"></i> Simpan Perubahan Profil
+                    </button>
+                </form>
+
+                <!-- GAS URL Config Section (Hanya tampil jika hosting eksternal) -->
+                <div id="settings-gas-url-section"
+                    class="hidden glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-4 shadow-sm text-brand-navy dark:text-brand-platinum">
+                    <h3 class="text-sm font-bold text-brand-slate dark:text-brand-slate/80">Koneksi Apps Script (Deploy
+                        Eksternal)</h3>
+                    <p class="text-xs text-brand-slate">Bagian ini hanya aktif bila aplikasi berjalan di luar domain
+                        Apps Script (hosting eksternal/lokal).</p>
+                    <div>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Web App Google Apps Script
+                            (GAS_URL)</label>
+                        <input type="text" id="settings-gas-url"
+                            class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum"
+                            placeholder="https://script.google.com/macros/s/.../exec">
+                    </div>
+                    <button type="button" onclick="saveSettingsGasUrl()"
+                        class="w-full py-2.5 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-link"></i> Perbarui URL Koneksi
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= RUNTIME APP LOGIC (JAVASCRIPT) ================= -->
+    <script>
+        // ================= CONFIGURATION FOR EXTERNAL HOSTING =================
+        let GAS_URL = "https://script.google.com/macros/s/AKfycbwuk5mdXQRVT0UVKd_rsHqDtljL4wO1eJou9tY3bJZkQ_yVX09mY58bl-3l7YoOH33kmA/exec";
+
+        // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
+        const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
+
+        if (isExternalHosting) {
+            // Ambil dari localStorage jika ada
+            const savedGasUrl = localStorage.getItem('gas_url');
+            if (savedGasUrl) {
+                GAS_URL = savedGasUrl;
+            }
+
+            console.log("Nexco Edu: Berjalan dalam mode HOSTING EKSTERNAL.");
+            window.google = {
+                script: {
+                    run: {
+                        _successHandler: null,
+                        _failureHandler: null,
+                        withSuccessHandler: function (handler) {
+                            this._successHandler = handler;
+                            return this;
+                        },
+                        withFailureHandler: function (handler) {
+                            this._failureHandler = handler;
+                            return this;
+                        }
+                    }
+                }
+            };
+
+            const runProxyHandler = {
+                get(target, prop) {
+                    if (prop === 'withSuccessHandler' || prop === 'withFailureHandler' || prop.startsWith('_')) {
+                        return target[prop];
+                    }
+
+                    return function (...args) {
+                        const success = target._successHandler;
+                        const failure = target._failureHandler;
+
+                        target._successHandler = null;
+                        target._failureHandler = null;
+
+                        // Pastikan URL valid sebelum melakukan request
+                        if (!GAS_URL || GAS_URL === "MASUKKAN_URL_WEB_APP_GAS_ANDA_DISINI" || !GAS_URL.startsWith("https://script.google.com")) {
+                            if (failure) {
+                                failure(new Error("URL Apps Script (GAS_URL) belum dikonfigurasi dengan benar."));
+                            } else {
+                                console.error("GAS_URL is not configured.");
+                            }
+                            return;
+                        }
+
+                        fetch(GAS_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'text/plain;charset=utf-8'
+                            },
+                            body: JSON.stringify({
+                                action: prop,
+                                arguments: args
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('HTTP Error: ' + response.status);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (success) success(data);
+                            })
+                            .catch(err => {
+                                if (failure) failure(err);
+                                else console.error('GAS API External Error:', err);
+                            });
+                    };
+                }
+            };
+
+            window.google.script.run = new Proxy(window.google.script.run, runProxyHandler);
+        } else {
+            console.log("Nexco Edu: Berjalan dalam mode HOSTING INTERNAL GAS.");
+        }
+
+        // Fungsi pembantu untuk memvalidasi dan meminta input GAS_URL secara interaktif
+        function validateOrPromptGasUrl(callback) {
+            if (isExternalHosting && (!GAS_URL || GAS_URL === "MASUKKAN_URL_WEB_APP_GAS_ANDA_DISINI" || !GAS_URL.startsWith("https://script.google.com"))) {
+                Swal.fire({
+                    title: 'Hubungkan ke Backend Apps Script',
+                    text: 'Aplikasi berjalan secara eksternal. Harap masukkan URL Web App Google Apps Script (GAS_URL) Anda untuk menghubungkan data:',
+                    input: 'text',
+                    inputPlaceholder: 'https://script.google.com/macros/s/.../exec',
+                    inputValue: localStorage.getItem('gas_url') || '',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    confirmButtonText: 'Hubungkan',
+                    confirmButtonColor: '#4F46E5',
+                    background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                    color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B',
+                    inputValidator: (value) => {
+                        if (!value || !value.trim().startsWith('https://script.google.com')) {
+                            return 'Harap masukkan URL Web App Google Apps Script yang valid!';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const url = result.value.trim();
+                        localStorage.setItem('gas_url', url);
+                        GAS_URL = url;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tersambung!',
+                            text: 'Koneksi ke backend Apps Script berhasil disimpan.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+                        }).then(() => {
+                            if (callback) callback();
+                            else window.location.reload();
+                        });
+                    }
+                });
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        // Penampung State Aplikasi
+        let appState = {
+            currentUser: null,
+            videos: [],
+            gems: [],
+            categories: [],
+            progress: [],
+            users: [],
+            activeView: '',
+            categoryFilter: 'Semua',
+            charts: {}
+        };
+
+        // Preferensi Tema Gelap/Terang
+        const savedTheme = localStorage.getItem('edu_theme') || 'dark';
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('edu_theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('edu_theme', 'dark');
+            }
+        }
+
+        // Eksekusi Pemuatan Awal (REVISI SISI KLIEN: Verifikasi sesi secara mandiri lewat localStorage)
+        window.addEventListener('load', () => {
+            validateOrPromptGasUrl(() => {
+                const storedUser = localStorage.getItem('edu_user');
+                if (storedUser) {
+                    try {
+                        const parsedUser = JSON.parse(storedUser);
+                        google.script.run
+                            .withSuccessHandler(res => {
+                                if (res.active) {
+                                    appState.currentUser = res.user;
+                                    loadSystemBundledData(res.user.id);
+                                } else {
+                                    localStorage.removeItem('edu_user');
+                                    hideLoader();
+                                    showLoginScreen();
+                                }
+                            })
+                            .withFailureHandler(err => {
+                                hideLoader();
+                                showErrorToast('Gagal memverifikasi sesi server: ' + err.toString());
+                            })
+                            .checkServerSession(parsedUser.id);
+                    } catch (e) {
+                        localStorage.removeItem('edu_user');
+                        hideLoader();
+                        showLoginScreen();
+                    }
+                } else {
+                    hideLoader();
+                    showLoginScreen();
+                }
+            });
+        });
+
+        function loadSystemBundledData(userId) {
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        appState.videos = res.videos || [];
+                        appState.gems = res.gems || [];
+                        appState.categories = res.categories || [];
+                        appState.progress = res.progress || [];
+                        appState.users = res.users || [];
+
+                        hideLoader();
+                        showMainApp();
+                    } else {
+                        hideLoader();
+                        showErrorToast('Gagal memuat database: ' + res.message);
+                    }
+                })
+                .withFailureHandler(err => {
+                    hideLoader();
+                    showErrorToast('Koneksi server gagal: ' + err.toString());
+                })
+                .fetchInitialBundledData(userId);
+        }
+
+        function showLoader(text) {
+            const loader = document.getElementById('global-loader');
+            const loaderText = loader.querySelector('h3');
+            if (loaderText) {
+                loaderText.textContent = text;
+            }
+            loader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            document.getElementById('global-loader').classList.add('hidden');
+        }
+
+        function showLoginScreen() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            updateUIProfile();
+            generateNavbars();
+
+            if (appState.currentUser.role === 'admin') {
+                navigateTo('admin-dashboard');
+            } else {
+                navigateTo('user-videos');
+            }
+        }
+
+        function updateUIProfile() {
+            document.getElementById('user-badge').textContent = appState.currentUser.role.toUpperCase();
+            document.getElementById('profile-name').textContent = appState.currentUser.nama;
+            document.getElementById('profile-email').textContent = appState.currentUser.email;
+
+            document.getElementById('profile-name-mobile').textContent = appState.currentUser.nama;
+            document.getElementById('profile-email-mobile').textContent = appState.currentUser.email;
+
+            document.getElementById('settings-name').value = appState.currentUser.nama;
+            document.getElementById('settings-email').value = appState.currentUser.email;
+
+            // Jika dalam mode hosting eksternal, tampilkan konfigurasi GAS URL
+            if (isExternalHosting) {
+                const section = document.getElementById('settings-gas-url-section');
+                if (section) section.classList.remove('hidden');
+                const urlInput = document.getElementById('settings-gas-url');
+                if (urlInput) urlInput.value = GAS_URL;
+            }
+        }
+
+        function saveSettingsGasUrl() {
+            const url = document.getElementById('settings-gas-url').value.trim();
+            if (!url || !url.startsWith('https://script.google.com')) {
+                showErrorAlert('Harap masukkan URL Web App Google Apps Script yang valid!');
+                return;
+            }
+            localStorage.setItem('gas_url', url);
+            Swal.fire({
+                icon: 'success',
+                title: 'Koneksi Diperbarui!',
+                text: 'Halaman akan dimuat ulang untuk menggunakan koneksi baru.',
+                timer: 1500,
+                showConfirmButton: false,
+                background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+
+        function generateNavbars() {
+            const dNav = document.getElementById('desktop-nav');
+            const mNav = document.getElementById('mobile-nav');
+            dNav.innerHTML = '';
+            mNav.innerHTML = '';
+
+            let items = [];
+            if (appState.currentUser.role === 'admin') {
+                items = [
+                    { view: 'admin-dashboard', icon: 'fa-chart-line', label: 'Evaluasi' },
+                    { view: 'admin-manage-videos', icon: 'fa-video', label: 'Kelola Video' },
+                    { view: 'admin-manage-gems', icon: 'fa-robot', label: 'Kelola Tools' },
+                    { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
+                    { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
+                    { view: 'settings', icon: 'fa-user-gear', label: 'Pengaturan' }
+                ];
+            } else {
+                items = [
+                    { view: 'user-videos', icon: 'fa-play-circle', label: 'Katalog Video' },
+                    { view: 'user-gems', icon: 'fa-wand-magic-sparkles', label: 'Tools AI' },
+                    { view: 'user-bookmarks', icon: 'fa-bookmark', label: 'Ditandai' },
+                    { view: 'settings', icon: 'fa-user-gear', label: 'Pengaturan' }
+                ];
+            }
+
+            items.forEach(item => {
+                const btnDesktop = document.createElement('button');
+                btnDesktop.id = 'nav-btn-desk-' + item.view;
+                btnDesktop.className = 'px-3 py-1.5 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all duration-200';
+                btnDesktop.innerHTML = '<i class="fa-solid ' + item.icon + ' text-inherit"></i> <span class="text-inherit">' + item.label + '</span>';
+                btnDesktop.onclick = function () { navigateTo(item.view); };
+                dNav.appendChild(btnDesktop);
+
+                const btnMobile = document.createElement('button');
+                btnMobile.id = 'nav-btn-mob-' + item.view;
+                btnMobile.className = 'w-full text-left px-4 py-3 text-xs font-semibold rounded-xl flex items-center gap-3 transition-all hover:bg-brand-slate/20 text-brand-navy dark:text-brand-platinum';
+                btnMobile.innerHTML = '<i class="fa-solid ' + item.icon + ' text-inherit"></i> <span class="text-inherit">' + item.label + '</span>';
+                btnMobile.onclick = function () {
+                    navigateTo(item.view);
+                    toggleMobileMenu();
+                };
+                mNav.appendChild(btnMobile);
+            });
+        }
+
+        function navigateTo(viewId) {
+            appState.activeView = viewId;
+            const views = [
+                'view-user-videos', 'view-user-gems', 'view-user-bookmarks',
+                'view-admin-dashboard', 'view-admin-manage-videos', 'view-admin-manage-gems',
+                'view-admin-manage-categories', 'view-admin-manage-users', 'view-settings'
+            ];
+            views.forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+
+            const navButtons = document.querySelectorAll('[id^="nav-btn-desk-"], [id^="nav-btn-mob-"]');
+            navButtons.forEach(btn => {
+                if (btn.id.endsWith(viewId)) {
+                    btn.classList.add('bg-brand-accent', 'text-white', 'shadow-md');
+                    btn.classList.remove('text-brand-navy', 'dark:text-brand-platinum', 'text-brand-slate', 'hover:bg-brand-slate/10', 'dark:hover:bg-brand-slate/30');
+                } else {
+                    btn.classList.remove('bg-brand-accent', 'text-white', 'shadow-md');
+                    btn.classList.add('text-brand-navy', 'dark:text-brand-platinum', 'hover:bg-brand-slate/10', 'dark:hover:bg-brand-slate/30');
+                }
+            });
+
+            if (viewId === 'user-videos') {
+                renderVideoCategories();
+                renderVideoCatalog();
+            } else if (viewId === 'user-gems') {
+                renderGemsCatalog();
+            } else if (viewId === 'user-bookmarks') {
+                renderBookmarks();
+            } else if (viewId === 'admin-dashboard') {
+                renderAdminStats();
+                renderAdminUserProgress();
+                renderAdminRecentActivities();
+            } else if (viewId === 'admin-manage-videos') {
+                renderAdminVideosTable();
+            } else if (viewId === 'admin-manage-gems') {
+                renderAdminGemsTable();
+            } else if (viewId === 'admin-manage-categories') {
+                renderAdminCategoriesTable();
+            } else if (viewId === 'admin-manage-users') {
+                renderAdminUsersTable();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-drawer');
+            const icon = document.getElementById('menu-icon');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-lg';
+            } else {
+                drawer.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars text-lg';
+            }
+        }
+
+        /* --- ANIMASI SPINNER PADA PROSES LOGIN / LOGOUT --- */
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            showLoader("Memvalidasi Kredensial & Membuat Sesi...");
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        appState.currentUser = res.user;
+                        // Amankan Sesi di localStorage (Bypass Bug Kebocoran Akun Google Apps Script)
+                        localStorage.setItem('edu_user', JSON.stringify(res.user));
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Selamat Datang, ${res.user.nama}!`,
+                            text: 'Sesi disimpan secara lokal di perangkat Anda.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+                        }).then(() => {
+                            showLoader("Sinkronisasi Kurikulum & Tools AI...");
+                            loadSystemBundledData(res.user.id);
+                        });
+                    } else {
+                        hideLoader();
+                        showErrorToast(res.message);
+                    }
+                })
+                .withFailureHandler(err => {
+                    hideLoader();
+                    showErrorToast('Autentikasi gagal: ' + err.toString());
+                })
+                .loginUser(email, pass);
+        });
+
+        function handleLogout() {
+            Swal.fire({
+                title: 'Apakah Anda ingin keluar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#415A77',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoader("Mengakhiri Sesi Pengguna...");
+                    // Hapus Sesi di localStorage secara instan
+                    localStorage.removeItem('edu_user');
+                    appState.currentUser = null;
+                    hideLoader();
+                    showLoginScreen();
+                }
+            });
+        }
+
+        /* --- HELPER YOUTUBE ID & EMBED PARSER --- */
+        function getYouTubeId(url) {
+            if (!url) return '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : '';
+        }
+
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return '';
+            const id = getYouTubeId(url);
+            return id ? 'https://www.youtube.com/embed/' + id : url;
+        }
+
+        function startVideo(videoId, context) {
+            const videoData = appState.videos.find(v => v.id === videoId);
+            if (!videoData) return;
+
+            const container = document.getElementById('video-frame-' + context + '-' + videoId);
+            if (container) {
+                const embedUrl = getYouTubeEmbedUrl(videoData.video_url);
+                container.innerHTML = '<iframe class="w-full h-full rounded-2xl" src="' + embedUrl + '?autoplay=1" title="Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+            }
+        }
+
+        /* --- RENDERING KATALOG VIDEO --- */
+        function renderVideoCategories() {
+            const catContainer = document.getElementById('video-categories');
+            catContainer.innerHTML = '';
+
+            const isSemuaActive = appState.categoryFilter === 'Semua';
+            const btnAll = document.createElement('button');
+            btnAll.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 ' +
+                (isSemuaActive ? 'bg-brand-accent text-white shadow-md scale-105' : 'bg-slate-200 dark:bg-brand-slate/20 text-brand-slate dark:text-brand-slate/80 hover:bg-slate-300');
+            btnAll.textContent = 'Semua';
+            btnAll.onclick = () => {
+                appState.categoryFilter = 'Semua';
+                renderVideoCategories();
+                renderVideoCatalog();
+            };
+            catContainer.appendChild(btnAll);
+
+            appState.categories.forEach(cat => {
+                const isActive = appState.categoryFilter === cat.id;
+                const btn = document.createElement('button');
+                btn.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 ' +
+                    (isActive ? 'bg-brand-accent text-white shadow-md scale-105' : 'bg-slate-200 dark:bg-brand-slate/20 text-brand-slate dark:text-brand-slate/80 hover:bg-slate-300');
+                btn.textContent = cat.nama;
+                btn.onclick = () => {
+                    appState.categoryFilter = cat.id;
+                    renderVideoCategories();
+                    renderVideoCatalog();
+                };
+                catContainer.appendChild(btn);
+            });
+        }
+
+        function renderVideoCatalog() {
+            const grid = document.getElementById('video-catalog-grid');
+            grid.innerHTML = '';
+
+            const searchQuery = document.getElementById('video-search').value.toLowerCase();
+            const filtered = appState.videos
+                .filter(v => appState.categoryFilter === 'Semua' || v.kategori_id === appState.categoryFilter)
+                .filter(v => v.judul.toLowerCase().includes(searchQuery) || v.deskripsi.toLowerCase().includes(searchQuery))
+                .sort((a, b) => a.urutan - b.urutan);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center glass-panel rounded-2xl border-dashed border-2 border-brand-slate/30"><i class="fa-solid fa-folder-open text-4xl text-brand-slate mb-3"></i><p class="text-sm font-semibold text-brand-slate">Tidak ada modul video yang ditemukan.</p></div>';
+                return;
+            }
+
+            filtered.forEach(vid => {
+                const prog = appState.progress.find(p => p.user_id === appState.currentUser.id && p.video_id === vid.id) || { is_completed: false, is_bookmarked: false };
+                const categoryObj = appState.categories.find(c => c.id === vid.kategori_id);
+                const catName = categoryObj ? categoryObj.nama : 'Umum';
+                const ytId = getYouTubeId(vid.video_url);
+
+                const card = document.createElement('div');
+                card.className = 'glass-card p-4 rounded-3xl flex flex-col justify-between hover:border-brand-accent/50 transition-all duration-300 relative overflow-hidden group shadow-sm';
+
+                const safeJudul = vid.judul.replace(/"/g, '&quot;');
+                const safeDeskripsi = vid.deskripsi.replace(/"/g, '&quot;');
+
+                const htmlStr = [
+                    '<div>',
+                    '<div id="video-frame-catalog-', vid.id, '" class="aspect-video w-full rounded-2xl bg-brand-navy border border-brand-slate/20 overflow-hidden relative mb-4">',
+                    '<div class="absolute inset-0 bg-brand-dark/40 flex items-center justify-center group-hover:bg-brand-dark/25 transition-all">',
+                    '<button onclick="startVideo(\'', vid.id, '\', \'catalog\')" class="p-4 bg-brand-accent text-white rounded-full text-xl shadow-lg hover:scale-110 transition-all">',
+                    '<i class="fa-solid fa-play"></i>',
+                    '</button>',
+                    '</div>',
+                    '<img src="https://img.youtube.com/vi/', ytId, '/hqdefault.jpg" alt="', safeJudul, '" class="w-full h-full object-cover" onerror="this.src=\'https://placehold.co/600x338/1b263b/ffffff?text=Video\'">',
+                    '<div class="absolute top-3 left-3 bg-brand-accent text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-lg text-white shadow-sm">', catName, '</div>',
+                    '</div>',
+                    '<div class="space-y-2">',
+                    '<div class="flex items-center justify-between">',
+                    '<span class="text-[10px] font-bold text-brand-slate">Modul ', vid.urutan, '</span>',
+                    '<div class="flex gap-2">',
+                    '<button onclick="toggleBookmark(\'', vid.id, '\')" class="text-sm ', (prog.is_bookmarked ? 'text-yellow-500' : 'text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum'), ' transition-all" title="Bookmark">',
+                    '<i class="fa-', (prog.is_bookmarked ? 'solid' : 'regular'), ' fa-bookmark"></i>',
+                    '</button>',
+                    '<button onclick="toggleCompletedDirect(\'', vid.id, '\')" class="text-sm ', (prog.is_completed ? 'text-brand-success' : 'text-brand-slate hover:text-brand-success'), ' transition-all" title="Tandai Selesai">',
+                    '<i class="fa-solid fa-circle-check"></i>',
+                    '</button>',
+                    '</div>',
+                    '</div>',
+                    '<h3 onclick="startVideo(\'', vid.id, '\', \'catalog\')" class="font-bold text-sm leading-tight text-brand-navy dark:text-brand-platinum group-hover:text-brand-accent transition-all cursor-pointer">', safeJudul, '</h3>',
+                    '<p class="text-xs text-brand-slate line-clamp-2 leading-relaxed">', safeDeskripsi, '</p>',
+                    '</div>',
+                    '</div>',
+                    '<div class="mt-4 pt-3 border-t border-brand-slate/20 flex items-center justify-between">',
+                    '<span class="text-[10px] ', (prog.is_completed ? 'bg-brand-success/20 text-brand-success' : 'bg-slate-200 dark:bg-brand-slate/20 text-brand-slate'), ' font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5">',
+                    '<i class="fa-solid ', (prog.is_completed ? 'fa-check-double' : 'fa-clock'), '"></i>',
+                    (prog.is_completed ? 'Selesai' : 'Belum Ditonton'),
+                    '</span>',
+                    '<a href="', (vid.ebook_url || '#'), '" target="_blank" class="px-3.5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-md">',
+                    '<i class="fa-solid fa-book-open"></i> Lihat E-Book',
+                    '</a>',
+                    '</div>'
+                ].join('');
+
+                card.innerHTML = htmlStr;
+                grid.appendChild(card);
+            });
+        }
+
+        // Mutasi Progress: Bookmark
+        function toggleBookmark(videoId) {
+            let index = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+            let originalState = index !== -1 ? { ...appState.progress[index] } : null;
+
+            if (index === -1) {
+                appState.progress.push({
+                    id: 'temp_' + Date.now(),
+                    user_id: appState.currentUser.id,
+                    video_id: videoId,
+                    is_completed: false,
+                    is_bookmarked: true
+                });
+            } else {
+                appState.progress[index].is_bookmarked = !appState.progress[index].is_bookmarked;
+            }
+
+            renderVideoCatalog();
+            if (appState.activeView === 'user-bookmarks') renderBookmarks();
+            showSuccessToast('Mengamankan bookmark...');
+
+            const isBookmark = index === -1 ? true : appState.progress[index].is_bookmarked;
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        let curIdx = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+                        if (curIdx !== -1) appState.progress[curIdx] = res.data;
+                    }
+                })
+                .withFailureHandler(err => {
+                    if (originalState === null) {
+                        appState.progress = appState.progress.filter(p => !(p.user_id === appState.currentUser.id && p.video_id === videoId));
+                    } else {
+                        let curIdx = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+                        if (curIdx !== -1) appState.progress[curIdx] = originalState;
+                    }
+                    renderVideoCatalog();
+                    if (appState.activeView === 'user-bookmarks') renderBookmarks();
+                    showErrorToast('Sinkronisasi cloud gagal. Bookmark dibatalkan.');
+                })
+                .syncUserProgressOnServer(appState.currentUser.id, videoId, 'is_bookmarked', isBookmark);
+        }
+
+        // Mutasi Progress: Selesai Ditonton
+        function toggleCompletedDirect(videoId) {
+            let index = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+            let originalState = index !== -1 ? { ...appState.progress[index] } : null;
+
+            if (index === -1) {
+                appState.progress.push({
+                    id: 'temp_' + Date.now(),
+                    user_id: appState.currentUser.id,
+                    video_id: videoId,
+                    is_completed: true,
+                    is_bookmarked: false
+                });
+            } else {
+                appState.progress[index].is_completed = !appState.progress[index].is_completed;
+            }
+
+            renderVideoCatalog();
+            showSuccessToast('Menyimpan progres...');
+
+            const isCompleted = index === -1 ? true : appState.progress[index].is_completed;
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        let curIdx = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+                        if (curIdx !== -1) appState.progress[curIdx] = res.data;
+                    }
+                })
+                .withFailureHandler(err => {
+                    if (originalState === null) {
+                        appState.progress = appState.progress.filter(p => !(p.user_id === appState.currentUser.id && p.video_id === videoId));
+                    } else {
+                        let curIdx = appState.progress.findIndex(p => p.user_id === appState.currentUser.id && p.video_id === videoId);
+                        if (curIdx !== -1) appState.progress[curIdx] = originalState;
+                    }
+                    renderVideoCatalog();
+                    showErrorToast('Progres gagal disimpan di cloud.');
+                })
+                .syncUserProgressOnServer(appState.currentUser.id, videoId, 'is_completed', isCompleted);
+        }
+
+        function renderBookmarks() {
+            const grid = document.getElementById('bookmarks-grid');
+            grid.innerHTML = '';
+
+            const bookmarkedIds = appState.progress
+                .filter(p => p.user_id === appState.currentUser.id && p.is_bookmarked)
+                .map(p => p.video_id);
+
+            const items = appState.videos.filter(v => bookmarkedIds.includes(v.id));
+
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center glass-panel rounded-2xl border-dashed border-2 border-brand-slate/30"><i class="fa-solid fa-bookmark text-4xl text-brand-slate mb-3"></i><p class="text-sm font-semibold text-brand-slate">Belum ada video yang Anda tandai.</p></div>';
+                return;
+            }
+
+            items.forEach(vid => {
+                const categoryObj = appState.categories.find(c => c.id === vid.kategori_id);
+                const catName = categoryObj ? categoryObj.nama : 'Umum';
+                const ytId = getYouTubeId(vid.video_url);
+
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-3xl flex flex-col justify-between hover:border-brand-accent/50 transition-all duration-300 shadow-sm';
+
+                const safeJudul = vid.judul.replace(/"/g, '&quot;');
+                const safeDeskripsi = vid.deskripsi.replace(/"/g, '&quot;');
+
+                const htmlStr = [
+                    '<div class="flex flex-col sm:flex-row gap-5">',
+                    '<div id="video-frame-bookmark-', vid.id, '" class="aspect-video w-full sm:w-56 bg-brand-navy rounded-2xl overflow-hidden relative flex-shrink-0 flex items-center justify-center border border-brand-slate/20">',
+                    '<button onclick="startVideo(\'', vid.id, '\', \'bookmark\')" class="p-4 bg-brand-accent text-white rounded-full text-lg shadow-lg hover:scale-105 transition-all">',
+                    '<i class="fa-solid fa-play"></i>',
+                    '</button>',
+                    '<img src="https://img.youtube.com/vi/', ytId, '/hqdefault.jpg" alt="', safeJudul, '" class="absolute inset-0 w-full h-full object-cover -z-10">',
+                    '</div>',
+                    '<div class="space-y-2 flex-1">',
+                    '<div class="flex items-center gap-2">',
+                    '<span class="text-[9px] bg-brand-accent/20 text-brand-accent px-2.5 py-0.5 rounded-lg font-bold uppercase">', catName, '</span>',
+                    '</div>',
+                    '<h4 onclick="startVideo(\'', vid.id, '\', \'bookmark\')" class="font-bold text-sm sm:text-base text-brand-navy dark:text-brand-platinum hover:text-brand-accent cursor-pointer">', safeJudul, '</h4>',
+                    '<p class="text-xs text-brand-slate leading-relaxed">', safeDeskripsi, '</p>',
+                    '</div>',
+                    '</div>',
+                    '<div class="flex justify-between items-center mt-4 pt-3.5 border-t border-brand-slate/20">',
+                    '<button onclick="toggleBookmark(\'', vid.id, '\')" class="text-xs text-brand-danger font-semibold flex items-center gap-1.5 hover:underline">',
+                    '<i class="fa-solid fa-trash-can"></i> Hapus Bookmark',
+                    '</button>',
+                    '<a href="', (vid.ebook_url || '#'), '" target="_blank" class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-md">',
+                    '<i class="fa-solid fa-book-open"></i> E-Book',
+                    '</a>',
+                    '</div>'
+                ].join('');
+
+                card.innerHTML = htmlStr;
+                grid.appendChild(card);
+            });
+        }
+
+        // REVISI TOOLS AI: Semua pengguna otomatis mendapatkan akses penuh ke seluruh tools AI tanpa terkecuali
+        function renderGemsCatalog() {
+            const grid = document.getElementById('gems-catalog-grid');
+            grid.innerHTML = '';
+
+            const filteredGems = appState.gems; // Tanpa memfilter allowed_tools pengguna
+
+            if (filteredGems.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center glass-panel rounded-2xl border-dashed border-2 border-brand-slate/30"><i class="fa-solid fa-lock text-4xl text-brand-slate mb-3"></i><p class="text-sm font-semibold text-brand-slate">Tidak ada Tools AI yang dikonfigurasi.</p></div>';
+                return;
+            }
+
+            filteredGems.forEach(gem => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-3xl flex flex-col justify-between hover:border-brand-accent/50 transition-all duration-300 relative group overflow-hidden shadow-sm animate-fade-in';
+
+                const safeNama = gem.nama.replace(/"/g, '&quot;');
+                const safeDeskripsi = gem.deskripsi.replace(/"/g, '&quot;');
+
+                const htmlStr = [
+                    '<div class="aspect-video w-full overflow-hidden bg-slate-100 dark:bg-brand-navy border-b border-brand-slate/10 relative">',
+                    '<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>',
+                    '<img src="', gem.image_url, '" alt="', safeNama, '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src=\'https://placehold.co/600x338/1b263b/ffffff?text=AI+Tools\'">',
+                    '</div>',
+                    '<div class="p-5 flex-1 flex flex-col justify-between">',
+                    '<div class="space-y-2 mb-4">',
+                    '<h3 class="font-bold text-sm tracking-tight text-brand-navy dark:text-brand-platinum group-hover:text-brand-accent transition-colors">', safeNama, '</h3>',
+                    '<p class="text-xs text-brand-slate line-clamp-3 leading-relaxed">', safeDeskripsi, '</p>',
+                    '</div>',
+                    '<div class="pt-2 border-t border-brand-slate/10">',
+                    '<a href="', gem.akses_url, '" target="_blank" class="w-full py-2.5 bg-brand-accent hover:bg-opacity-95 text-white text-[11px] font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">',
+                    '<i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tools Workspace',
+                    '</a>',
+                    '</div>',
+                    '</div>'
+                ].join('');
+
+                card.innerHTML = htmlStr;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAdminStats() {
+            // Hitung total siswa (user dengan role 'user')
+            const totalStudents = appState.users ? appState.users.filter(u => u.role === 'user').length : 0;
+            document.getElementById('stat-total-students').textContent = totalStudents;
+            document.getElementById('stat-active-students-badge').textContent = totalStudents + ' Siswa';
+
+            document.getElementById('stat-total-videos').textContent = appState.videos ? appState.videos.length : 0;
+            document.getElementById('stat-total-gems').textContent = appState.gems ? appState.gems.length : 0;
+
+            // Hitung total penyelesaian (is_completed === true) dari seluruh siswa
+            const totalCompleted = appState.progress ? appState.progress.filter(p => p.is_completed).length : 0;
+            document.getElementById('stat-completed').textContent = totalCompleted;
+
+            // Hitung total bookmark (is_bookmarked === true) dari seluruh siswa
+            const totalBookmarked = appState.progress ? appState.progress.filter(p => p.is_bookmarked).length : 0;
+            document.getElementById('stat-bookmarked').textContent = totalBookmarked;
+        }
+
+
+        function renderAdminUserProgress() {
+            const tbody = document.getElementById('admin-dashboard-student-progress-body');
+            tbody.innerHTML = '';
+
+            // Hanya ambil pengguna dengan role 'user'
+            const students = appState.users ? appState.users.filter(u => u.role === 'user') : [];
+            const totalVideosCount = appState.videos ? appState.videos.length : 0;
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-brand-slate">Tidak ada data siswa terdaftar.</td></tr>';
+                return;
+            }
+
+            students.forEach(student => {
+                // Ambil progres siswa ini
+                const studentProgress = appState.progress ? appState.progress.filter(p => p.user_id === student.id) : [];
+
+                // Hitung jumlah video diselesaikan
+                const completedCount = studentProgress.filter(p => p.is_completed).length;
+                const bookmarkedCount = studentProgress.filter(p => p.is_bookmarked).length;
+
+                // Persentase penyelesaian
+                const pct = totalVideosCount > 0 ? Math.round((completedCount / totalVideosCount) * 100) : 0;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum border-b border-brand-slate/10";
+
+                tr.innerHTML = [
+                    '<td class="px-4 py-3 font-semibold">', student.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-4 py-3 text-[11px] text-brand-slate">', student.email, '</td>',
+                    '<td class="px-4 py-3">',
+                    '  <div class="flex items-center gap-2">',
+                    '    <div class="w-24 bg-slate-200 dark:bg-brand-dark/60 h-2 rounded-full overflow-hidden">',
+                    '      <div class="bg-brand-success h-full rounded-full" style="width: ', pct, '%"></div>',
+                    '    </div>',
+                    '    <span class="font-bold text-[10px]">', pct, '%</span>',
+                    '    <span class="text-[10px] text-brand-slate">(', completedCount, '/', totalVideosCount, ')</span>',
+                    '  </div>',
+                    '</td>',
+                    '<td class="px-4 py-3 text-center text-yellow-500 font-bold">',
+                    '  <i class="fa-solid fa-bookmark text-[10px] mr-1"></i>', bookmarkedCount,
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAdminRecentActivities() {
+            const container = document.getElementById('admin-dashboard-recent-activities');
+            container.innerHTML = '';
+
+            const activities = [];
+
+            if (appState.progress && appState.users && appState.videos) {
+                appState.progress.forEach(p => {
+                    const student = appState.users.find(u => u.id === p.user_id);
+                    const video = appState.videos.find(v => v.id === p.video_id);
+
+                    if (student && student.role === 'user' && video) {
+                        // Tambah aktivitas complete jika true
+                        if (p.is_completed) {
+                            activities.push({
+                                type: 'completed',
+                                studentName: student.nama,
+                                videoTitle: video.judul,
+                                timestamp: p.updated_at ? new Date(p.updated_at) : new Date(0),
+                                icon: 'fa-circle-check',
+                                colorClass: 'text-brand-success bg-brand-success/15'
+                            });
+                        }
+                        // Tambah aktivitas bookmark jika true
+                        if (p.is_bookmarked) {
+                            activities.push({
+                                type: 'bookmarked',
+                                studentName: student.nama,
+                                videoTitle: video.judul,
+                                timestamp: p.updated_at ? new Date(p.updated_at) : new Date(0),
+                                icon: 'fa-bookmark',
+                                colorClass: 'text-yellow-500 bg-yellow-500/15'
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Urutkan aktivitas berdasarkan tanggal terbaru
+            activities.sort((a, b) => b.timestamp - a.timestamp);
+
+            const displayActivities = activities.slice(0, 10); // Ambil 10 aktivitas teratas
+
+            if (displayActivities.length === 0) {
+                container.innerHTML = '<div class="py-6 text-center text-brand-slate text-[11px]"><i class="fa-solid fa-clock-rotate-left mb-2 text-lg text-brand-slate opacity-60"></i><p>Belum ada aktivitas terekam.</p></div>';
+                return;
+            }
+
+            displayActivities.forEach(act => {
+                const timeStr = act.timestamp.getTime() === 0 ? '-' : act.timestamp.toLocaleDateString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const div = document.createElement('div');
+                div.className = "flex items-start gap-2.5 p-2 rounded-xl hover:bg-brand-slate/5 transition-all text-xs";
+
+                let descStr = '';
+                if (act.type === 'completed') {
+                    descStr = `menyelesaikan video <strong class="text-brand-accent">${act.videoTitle.replace(/"/g, '&quot;')}</strong>`;
+                } else {
+                    descStr = `menandai video <strong class="text-brand-accent">${act.videoTitle.replace(/"/g, '&quot;')}</strong>`;
+                }
+
+                div.innerHTML = [
+                    '<div class="p-1.5 rounded-lg flex-shrink-0 mt-0.5 ', act.colorClass, ' text-[10px]">',
+                    '  <i class="fa-solid ', act.icon, '"></i>',
+                    '</div>',
+                    '<div class="flex-1 min-w-0">',
+                    '  <p class="leading-tight text-brand-navy dark:text-brand-platinum text-[11px]"><span class="font-bold">', act.studentName, '</span> ', descStr, '</p>',
+                    '  <span class="text-[9px] text-brand-slate flex items-center gap-1 mt-1"><i class="fa-regular fa-clock"></i> ', timeStr, '</span>',
+                    '</div>'
+                ].join('');
+
+                container.appendChild(div);
+            });
+        }
+
+        function renderAdminVideosTable() {
+            const tbody = document.getElementById('admin-videos-table-body');
+            tbody.innerHTML = '';
+
+            if (appState.videos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Database kosong.</td></tr>';
+                return;
+            }
+
+            appState.videos.sort((a, b) => a.urutan - b.urutan).forEach(vid => {
+                const cat = appState.categories.find(c => c.id === vid.kategori_id);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold text-brand-accent">', vid.urutan, '</td>',
+                    '<td class="px-6 py-4"><p class="font-bold text-xs sm:text-sm line-clamp-1">', vid.judul.replace(/"/g, '&quot;'), '</p></td>',
+                    '<td class="px-6 py-4"><span class="text-[10px] font-bold uppercase">', (cat ? cat.nama : 'UMUM'), '</span></td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editVideo(\'', vid.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteVideo(\'', vid.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openVideoFormModal(editId = '') {
+            const modal = document.getElementById('video-form-modal');
+            document.getElementById('video-crud-form').reset();
+            document.getElementById('crud-video-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+
+            if (editId) {
+                const vid = appState.videos.find(v => v.id === editId);
+                if (!vid) return;
+                document.getElementById('video-modal-title').textContent = "Ubah Modul Pembelajaran";
+                document.getElementById('crud-video-id').value = vid.id;
+                document.getElementById('crud-video-judul').value = vid.judul;
+                document.getElementById('crud-video-kategori').value = vid.kategori_id;
+                document.getElementById('crud-video-urutan').value = vid.urutan;
+                document.getElementById('crud-video-url').value = vid.video_url;
+                document.getElementById('crud-video-ebook').value = vid.ebook_url || '';
+                document.getElementById('crud-video-deskripsi').value = vid.deskripsi;
+            } else {
+                document.getElementById('video-modal-title').textContent = "Buat Modul Pembelajaran Baru";
+                document.getElementById('crud-video-id').value = '';
+                document.getElementById('crud-video-urutan').value = appState.videos.length > 0 ? Math.max(...appState.videos.map(v => v.urutan)) + 1 : 1;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeVideoFormModal() { document.getElementById('video-form-modal').classList.add('hidden'); }
+
+        document.getElementById('video-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-video-id').value;
+            const payload = {
+                id: id || null,
+                judul: document.getElementById('crud-video-judul').value.trim(),
+                kategori_id: document.getElementById('crud-video-kategori').value,
+                urutan: parseInt(document.getElementById('crud-video-urutan').value),
+                video_url: document.getElementById('crud-video-url').value.trim(),
+                ebook_url: document.getElementById('crud-video-ebook').value.trim(),
+                deskripsi: document.getElementById('crud-video-deskripsi').value.trim()
+            };
+
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        if (id) { const idx = appState.videos.findIndex(v => v.id === id); if (idx !== -1) appState.videos[idx] = res.data; }
+                        else { appState.videos.push(res.data); }
+                        closeVideoFormModal(); renderAdminVideosTable(); showSuccessAlert('Berhasil Disimpan!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .saveVideoOnServer(payload);
+        });
+
+        function editVideo(id) { openVideoFormModal(id); }
+        function deleteVideo(id) {
+            Swal.fire({ title: 'Hapus modul?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            Swal.close();
+                            if (res.success) {
+                                appState.videos = appState.videos.filter(v => v.id !== id);
+                                appState.progress = appState.progress.filter(p => p.video_id !== id);
+                                renderAdminVideosTable(); showSuccessAlert('Berhasil Dihapus!');
+                            } else { showErrorAlert(res.message); }
+                        })
+                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .deleteVideoOnServer(id);
+                }
+            });
+        }
+
+        function renderAdminCategoriesTable() {
+            const tbody = document.getElementById('admin-categories-table-body');
+            tbody.innerHTML = '';
+            if (appState.categories.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center">Kosong</td></tr>'; return; }
+
+            appState.categories.forEach(cat => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold">', cat.id, '</td>',
+                    '<td class="px-6 py-4">', cat.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editCategory(\'', cat.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteCategory(\'', cat.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCategoryFormModal(editId = '') {
+            const modal = document.getElementById('category-form-modal');
+            document.getElementById('category-crud-form').reset();
+            if (editId) {
+                const cat = appState.categories.find(c => c.id === editId);
+                if (!cat) return;
+                document.getElementById('category-modal-title').textContent = "Ubah Kategori";
+                document.getElementById('crud-category-id').value = cat.id;
+                document.getElementById('crud-category-nama').value = cat.nama;
+            } else {
+                document.getElementById('category-modal-title').textContent = "Buat Kategori Baru";
+                document.getElementById('crud-category-id').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeCategoryFormModal() { document.getElementById('category-form-modal').classList.add('hidden'); }
+
+        document.getElementById('category-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-category-id').value;
+            const payload = { id: id || null, nama: document.getElementById('crud-category-nama').value.trim() };
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        if (id) { const idx = appState.categories.findIndex(c => c.id === id); if (idx !== -1) appState.categories[idx] = res.data; }
+                        else { appState.categories.push(res.data); }
+                        closeCategoryFormModal(); renderAdminCategoriesTable(); showSuccessAlert('Berhasil Disimpan!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .saveCategoryOnServer(payload);
+        });
+
+        function editCategory(id) { openCategoryFormModal(id); }
+        function deleteCategory(id) {
+            Swal.fire({ title: 'Hapus kategori?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            Swal.close();
+                            if (response.success) {
+                                appState.categories = appState.categories.filter(c => c.id !== id);
+                                renderAdminCategoriesTable(); showSuccessAlert('Berhasil Dihapus!');
+                            } else { showErrorAlert(response.message); }
+                        })
+                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .deleteCategoryOnServer(id);
+                }
+            });
+        }
+
+        function renderAdminGemsTable() {
+            const tbody = document.getElementById('admin-gems-table-body');
+            tbody.innerHTML = '';
+            if (appState.gems.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center">Kosong</td></tr>'; return; }
+
+            appState.gems.forEach(gem => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold text-xs">', gem.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-xs line-clamp-1">', gem.deskripsi.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editGem(\'', gem.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteGem(\'', gem.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openGemFormModal(editId = '') {
+            const modal = document.getElementById('gems-form-modal');
+            document.getElementById('gems-crud-form').reset();
+            if (editId) {
+                const gem = appState.gems.find(g => g.id === editId);
+                if (!gem) return;
+                document.getElementById('gems-modal-title').textContent = "Ubah Tools AI";
+                document.getElementById('crud-gem-id').value = gem.id;
+                document.getElementById('crud-gem-nama').value = gem.nama;
+                document.getElementById('crud-gem-url').value = gem.akses_url;
+                document.getElementById('crud-gem-image').value = gem.image_url || '';
+                document.getElementById('crud-gem-deskripsi').value = gem.deskripsi;
+            } else {
+                document.getElementById('gems-modal-title').textContent = "Tambah Tools AI Baru";
+                document.getElementById('crud-gem-id').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeGemFormModal() { document.getElementById('gems-form-modal').classList.add('hidden'); }
+
+        document.getElementById('gems-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-gem-id').value;
+            const payload = {
+                id: id || null,
+                nama: document.getElementById('crud-gem-nama').value.trim(),
+                akses_url: document.getElementById('crud-gem-url').value.trim(),
+                image_url: document.getElementById('crud-gem-image').value.trim(),
+                deskripsi: document.getElementById('crud-gem-deskripsi').value.trim()
+            };
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        if (id) { const idx = appState.gems.findIndex(g => g.id === id); if (idx !== -1) appState.gems[idx] = res.data; }
+                        else { appState.gems.push(res.data); }
+                        closeGemFormModal(); renderAdminGemsTable(); showSuccessAlert('Berhasil Disimpan!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .saveGemOnServer(payload);
+        });
+
+        function editGem(id) { openGemFormModal(id); }
+        function deleteGem(id) {
+            Swal.fire({ title: 'Cabut Tools AI?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            Swal.close();
+                            if (response.success) {
+                                appState.gems = appState.gems.filter(g => g.id !== id);
+                                renderAdminGemsTable(); showSuccessAlert('Berhasil Dicabut!');
+                            } else { showErrorAlert(response.message); }
+                        })
+                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .deleteGemOnServer(id);
+                }
+            });
+        }
+
+        // REVISI MANAJEMEN PENGGUNA: Penghapusan kolom visual dan sistem kontrol batasan "Akses Tools AI"
+        function renderAdminUsersTable() {
+            const tbody = document.getElementById('admin-users-table-body');
+            tbody.innerHTML = '';
+            if (!appState.users || appState.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Kosong</td></tr>';
+                return;
+            }
+
+            appState.users.forEach(usr => {
+                const isCurrentActive = appState.currentUser && appState.currentUser.id === usr.id;
+                const deleteBtn = isCurrentActive ? '<button class="p-2 bg-slate-500/10 text-slate-500 rounded-lg text-xs" title="Akun Aktif"><i class="fa-solid fa-ban"></i></button>' : `<button onclick="deleteUser('${usr.id}')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold text-xs sm:text-sm">', usr.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-xs">', usr.email, '</td>',
+                    '<td class="px-6 py-4 text-xs uppercase font-bold">', usr.role, '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editUser(\'', usr.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs" title="Edit"><i class="fa-solid fa-pencil"></i></button>',
+                    deleteBtn,
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openUserFormModal(editId = '') {
+            const modal = document.getElementById('user-form-modal');
+            document.getElementById('user-crud-form').reset();
+
+            if (editId) {
+                const usr = appState.users.find(u => u.id === editId);
+                if (!usr) return;
+                document.getElementById('user-modal-title').textContent = "Ubah Informasi Pengguna";
+                document.getElementById('crud-user-id').value = usr.id;
+                document.getElementById('crud-user-nama').value = usr.nama;
+                document.getElementById('crud-user-email').value = usr.email;
+                document.getElementById('crud-user-role').value = usr.role;
+                document.getElementById('crud-user-password').placeholder = "Ubah kata sandi disini...";
+            } else {
+                document.getElementById('user-modal-title').textContent = "Tambah Pengguna Baru";
+                document.getElementById('crud-user-id').value = '';
+                document.getElementById('crud-user-password').placeholder = "Masukan kata sandi baru...";
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeUserFormModal() { document.getElementById('user-form-modal').classList.add('hidden'); }
+
+        document.getElementById('user-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-user-id').value;
+
+            const payload = {
+                id: id || null,
+                nama: document.getElementById('crud-user-nama').value.trim(),
+                email: document.getElementById('crud-user-email').value.trim(),
+                role: document.getElementById('crud-user-role').value,
+                password: document.getElementById('crud-user-password').value.trim() || null,
+                allowed_tools: '' // Kosong karena seluruh pengguna sekarang dapat mengakses semua tools secara default
+            };
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        if (id) { const idx = appState.users.findIndex(u => u.id === id); if (idx !== -1) appState.users[idx] = res.data; }
+                        else { appState.users.push(res.data); }
+                        closeUserFormModal(); renderAdminUsersTable(); showSuccessAlert('Pengguna Disimpan!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .saveUserOnServer(payload);
+        });
+
+        function editUser(id) { openUserFormModal(id); }
+        function deleteUser(id) {
+            Swal.fire({ title: 'Hapus pengguna?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            Swal.close();
+                            if (response.success) {
+                                appState.users = appState.users.filter(u => u.id !== id);
+                                renderAdminUsersTable(); showSuccessAlert('Pengguna Dihapus!');
+                            } else { showErrorAlert(response.message); }
+                        })
+                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .deleteUserOnServer(id, appState.currentUser.id);
+                }
+            });
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nama = document.getElementById('settings-name').value.trim();
+            const pass = document.getElementById('settings-password').value.trim();
+
+            Swal.fire({ title: 'Mengamankan Profil...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        appState.currentUser.nama = res.nama;
+                        updateUIProfile(); document.getElementById('settings-password').value = '';
+                        showSuccessAlert('Profil Diperbarui!');
+                    } else { showErrorAlert(res.message); }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .updateProfileOnServer(appState.currentUser.id, nama, pass);
+        });
+
+        function showSuccessToast(message) { Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 }).fire({ icon: 'success', title: message }); }
+        function showErrorToast(message) { Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 }).fire({ icon: 'error', title: message }); }
+        function showSuccessAlert(title) { Swal.fire({ icon: 'success', title: title, timer: 1500, showConfirmButton: false }); }
+        function showErrorAlert(text) { Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', text: text, confirmButtonColor: '#4F46E5' }); }
+    </script>
+</body>
+
+</html>
