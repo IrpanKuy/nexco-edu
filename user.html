@@ -1203,7 +1203,7 @@
                 };
 
                 const processAIChat = async () => {
-                    const apiKey = (window.appState && window.appState.aiApiKey ? window.appState.aiApiKey : defaultApiKey).trim();
+                    const apiKey = ((typeof appState !== 'undefined' && appState.aiApiKey) ? appState.aiApiKey : (window.appState && window.appState.aiApiKey ? window.appState.aiApiKey : defaultApiKey)).trim();
                     if (!apiKey) {
                         showErrorModal(
                             "API Key Belum Dikonfigurasi",
@@ -1233,9 +1233,6 @@
                     const systemPrompt = `Anda adalah AI Assistant cerdas yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? (activeTab.value === "ai" ? "Web Application Dashboard dengan Asisten AI" : "Web Application Dashboard") : "Marketing Landing Page"}. 
 Perbarui konfigurasi JSON berdasarkan instruksi pengguna.
 
-ATURAN KHUSUS MOBILE FOCUS:
-Pada mode WebApp dan AI Mode, analisis aplikasi/produk yang diminta pengguna. Jika aplikasi tersebut sangat berorientasi pada penggunaan perangkat seluler / smartphone (contoh: Ojek Online, Marketplace Mobile, E-Wallet / Mobile Banking, Kasir Mobile, Transportasi, Delivery, PPOB, Absensi Mobile, Ojek Online, Chat App, atau sejenisnya), tentukan "isMobileFocus": true secara otomatis dan jika cocok set "menuType": "bottom". Jika berupa dashboard admin/desktop kompleks, atur "isMobileFocus": false.
-
 STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
 {
   "appName": "string (Bahasa Indonesia)",
@@ -1248,11 +1245,10 @@ STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
     "palette": "string (MAKSIMAL 3 HEX CODE, contoh: #1B263B, #415A77, #E0E1DD)", 
     "visualDescription": "string (Bahasa Indonesia)" 
   },
-  "isMobileFocus": boolean,
   "isOptimisticUI": boolean,
   "isSweetAlert": boolean,
   "isConfirmCrud": boolean,
-  "aiExplanation": "Penjelasan singkat dalam Bahasa Indonesia tentang perubahan dan alasan keputusan Mobile Focus"
+  "aiExplanation": "Penjelasan singkat dalam Bahasa Indonesia tentang perubahan rancangan"
 }
 KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
 
@@ -1282,7 +1278,6 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
                                 sections.value = parsed.sections.map((s, i) => ({ id: i + 1, name: s.name, type: s.type || 'Custom', description: s.description || '', elements: s.elements || [], newElement: "" }));
                             }
                             if (parsed.design) Object.assign(design.value, parsed.design);
-                            if (typeof parsed.isMobileFocus === 'boolean') isMobileFocus.value = parsed.isMobileFocus;
                             if (typeof parsed.isOptimisticUI === 'boolean') isOptimisticUI.value = parsed.isOptimisticUI;
                             if (typeof parsed.isSweetAlert === 'boolean') isSweetAlert.value = parsed.isSweetAlert;
                             if (typeof parsed.isConfirmCrud === 'boolean') isConfirmCrud.value = parsed.isConfirmCrud;

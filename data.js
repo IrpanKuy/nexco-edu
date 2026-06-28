@@ -1,5 +1,5 @@
 // ================= CONFIGURATION & SHARED STATE FOR NEXCO EDU =================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzG65nhJekzeXk7zNgIu-7hdpu7eBOVBNfdKgvitSDUV5mvIUpBWbmgCT6Px8FTcM0f/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzVY7ymnLO4rLugKNvtUAcRa9X-8WbB8zlMWVex1_IA8GX0hst-d2JvNnwFTasoR9cJ/exec";
 
 // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
 const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
@@ -93,6 +93,7 @@ let appState = {
     categoryFilter: 'Semua',
     charts: {}
 };
+window.appState = appState;
 
 // Preferensi Tema Gelap/Terang (Default: Terang)
 const savedTheme = localStorage.getItem('edu_theme') || 'light';
@@ -191,6 +192,7 @@ function loadSystemBundledData(userId, callback) {
                 appState.categories = res.categories || [];
                 appState.users = res.users || [];
                 appState.aiApiKey = res.aiApiKey || '';
+                window.appState = appState;
                 if (callback) callback();
             } else {
                 hideLoader();

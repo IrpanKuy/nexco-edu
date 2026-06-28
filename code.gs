@@ -280,8 +280,8 @@ function fetchInitialBundledData(userId) {
 function getAiApiKeyFromServer() {
   try {
     const settings = readSheetData('settings');
-    const record = settings.find(s => s.key === 'ai_api_key');
-    return record ? record.value : '';
+    const record = settings.find(s => s && String(s.key).trim() === 'ai_api_key');
+    return record && record.value ? String(record.value).trim() : '';
   } catch (e) {
     return '';
   }
@@ -299,10 +299,11 @@ function saveAiApiKeyOnServer(apiKey) {
     const rows = sheet.getDataRange().getValues();
     const timestamp = new Date().toISOString();
     let found = false;
+    const cleanKey = String(apiKey || '').trim();
     
     for (let i = 1; i < rows.length; i++) {
-      if (rows[i][0] === 'ai_api_key') {
-        sheet.getRange(i + 1, 2).setValue(apiKey);
+      if (String(rows[i][0]).trim() === 'ai_api_key') {
+        sheet.getRange(i + 1, 2).setValue(cleanKey);
         sheet.getRange(i + 1, 3).setValue(timestamp);
         found = true;
         break;
@@ -310,10 +311,10 @@ function saveAiApiKeyOnServer(apiKey) {
     }
     
     if (!found) {
-      sheet.appendRow(['ai_api_key', apiKey, timestamp]);
+      sheet.appendRow(['ai_api_key', cleanKey, timestamp]);
     }
     SpreadsheetApp.flush();
-    return { success: true, aiApiKey: apiKey };
+    return { success: true, aiApiKey: cleanKey };
   } catch (err) {
     return { success: false, message: "Gagal menyimpan AI API Key: " + err.toString() };
   }
