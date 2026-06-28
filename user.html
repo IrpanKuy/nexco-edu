@@ -14,7 +14,9 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
 
     <script>
         tailwind.config = {
@@ -101,30 +103,37 @@
     <script src="data.js"></script>
 </head>
 
-<body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
+<body
+    class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
 
     <!-- GLOBAL INITIAL LOADING SCREEN -->
-    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
+    <div id="global-loader"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
         <div class="relative flex items-center justify-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
             <i class="fa-solid fa-graduation-cap text-brand-accent absolute text-xl"></i>
         </div>
-        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">Memuat Ruang Belajar...</h3>
+        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">
+            Memuat Ruang Belajar...</h3>
     </div>
 
     <!-- ================= MAIN USER DASHBOARD CONTAINER ================= -->
     <div id="main-app" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
 
-        <header class="glass-panel mt-4 rounded-2xl sticky top-4 z-40 px-4 py-3 shadow-lg text-brand-navy dark:text-brand-platinum">
+        <header
+            class="glass-panel mt-4 rounded-2xl sticky top-4 z-40 px-4 py-3 shadow-lg text-brand-navy dark:text-brand-platinum">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand-accent/20 rounded-xl border border-brand-accent/40 overflow-hidden flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 bg-brand-accent/20 rounded-xl border border-brand-accent/40 overflow-hidden flex items-center justify-center">
                         <img src="/image/nexco.jpg" alt="Logo" class="w-full h-full object-cover"
                             onerror="this.src='https://placehold.co/80x80/1b263b/ffffff?text=NE'">
                     </div>
                     <div>
                         <h1 class="text-base font-bold tracking-tight">Nexco Edu</h1>
-                        <span class="text-[10px] bg-brand-slate/30 dark:bg-brand-slate/50 px-2 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold" id="user-badge">SISWA</span>
+                        <span
+                            class="text-[10px] bg-brand-slate/30 dark:bg-brand-slate/50 px-2 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold"
+                            id="user-badge">SISWA</span>
                     </div>
                 </div>
 
@@ -186,14 +195,17 @@
 
             <!-- ================= VIEW: USER KATALOG VIDEO ================= -->
             <section id="view-user-videos" class="hidden space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
                     <div>
                         <h2 class="text-xl font-extrabold tracking-tight">Katalog Pembelajaran AI</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Eksplorasi modul video interaktif dan e-book pendukung untuk meningkatkan efisiensi kerja Anda.</p>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Eksplorasi modul video
+                            interaktif dan e-book pendukung untuk meningkatkan efisiensi kerja Anda.</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="category-filters-container">
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"
+                    id="category-filters-container">
                     <!-- Filter Kategori Dinamis -->
                 </div>
 
@@ -203,19 +215,26 @@
             </section>
 
             <!-- ================= PEMUTAR VIDEO MODAL (NON-REDIRECT) ================= -->
-            <div id="video-player-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+            <div id="video-player-modal"
+                class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                <div
+                    class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
                     <div class="flex justify-between items-center p-4 border-b border-brand-slate/20">
-                        <h3 class="font-bold text-base line-clamp-1" id="player-modal-title">Pemutar Video Pembelajaran</h3>
-                        <button onclick="closeVideoPlayerModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-2xl px-2">
+                        <h3 class="font-bold text-base line-clamp-1" id="player-modal-title">Pemutar Video Pembelajaran
+                        </h3>
+                        <button onclick="closeVideoPlayerModal()"
+                            class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-2xl px-2">
                             <i class="fa-solid fa-circle-xmark"></i>
                         </button>
                     </div>
                     <div class="relative aspect-video w-full bg-black">
-                        <iframe id="player-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe id="player-iframe" class="w-full h-full" src="" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
                     </div>
                     <div class="p-5 space-y-3">
-                        <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed" id="player-modal-desc"></p>
+                        <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed"
+                            id="player-modal-desc"></p>
                         <div id="player-modal-ebook-link"></div>
                     </div>
                 </div>
@@ -223,10 +242,13 @@
 
             <!-- ================= VIEW: USER TOOLS AI WORKSPACE ================= -->
             <section id="view-user-gems" class="hidden space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cyan-500/10 dark:bg-cyan-500/20 p-6 rounded-3xl border border-cyan-500/30 shadow-sm">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cyan-500/10 dark:bg-cyan-500/20 p-6 rounded-3xl border border-cyan-500/30 shadow-sm">
                     <div>
-                        <h2 class="text-xl font-extrabold tracking-tight text-cyan-700 dark:text-cyan-400">Tools AI Workspace</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Akses cepat ke jajaran asisten pintar AI resmi untuk mempercepat alur kerja harian Anda.</p>
+                        <h2 class="text-xl font-extrabold tracking-tight text-cyan-700 dark:text-cyan-400">Tools AI
+                            Workspace</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Akses cepat ke jajaran
+                            asisten pintar AI resmi untuk mempercepat alur kerja harian Anda.</p>
                     </div>
                 </div>
 
@@ -247,20 +269,22 @@
                             'bg-gradient-to-r from-emerald-600 via-teal-500 to-green-600 dark:from-emerald-700 dark:via-teal-600 dark:to-green-800 border border-emerald-400/40 shadow-emerald-500/20': activeTab === 'landing'
                         }">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
                                 <i v-if="activeTab === 'webapp'" class="fa-solid fa-rocket"></i>
                                 <i v-else-if="activeTab === 'ai'" class="fa-solid fa-robot animate-pulse"></i>
                                 <i v-else class="fa-solid fa-globe"></i>
                             </div>
                             <div>
-                                <span class="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">
-                                    {{ activeTab === 'webapp' ? 'Mode Web App (Biru)' : (activeTab === 'ai' ? 'Mode Chatbot AI (Ungu)' : 'Mode Landing Page (Hijau)') }}
+                                <span
+                                    class="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">
+                                    {{ activeTabModeLabel }}
                                 </span>
                                 <h2 class="text-xl font-black tracking-tight mt-1">
-                                    {{ activeTab === 'webapp' ? 'Web App Architecture Builder' : (activeTab === 'ai' ? 'Smart Chatbot AI Mode Builder' : 'Landing Page Campaign Builder') }}
+                                    {{ activeTabTitle }}
                                 </h2>
                                 <p class="text-xs text-white/80 mt-0.5">
-                                    {{ activeTab === 'webapp' ? 'Rancang arsitektur aplikasi web full-stack, struktur role, dan sistem data.' : (activeTab === 'ai' ? 'Rancang aplikasi berbasis AI Assistant dengan konfirmasi CRUD dinamis.' : 'Susun struktur section halaman kampanye marketing dan elemen konversi tinggi.') }}
+                                    {{ activeTabDesc }}
                                 </p>
                             </div>
                         </div>
@@ -274,19 +298,23 @@
                             'bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30': activeTab === 'landing'
                         }">
                         <div class="flex items-center gap-2 border-b border-brand-slate/20 pb-3">
-                            <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
-                            <h3 class="text-sm font-extrabold text-brand-navy dark:text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-sliders text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i> Identitas Proyek
+                            <span class="w-2.5 h-5 rounded-full"
+                                :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
+                            <h3
+                                class="text-sm font-extrabold text-brand-navy dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-xs"
+                                    :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i>
+                                Identitas Proyek
                             </h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                <label
+                                    class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
                                     :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                     <i class="fa-solid fa-laptop-code"></i> Nama Aplikasi / Produk
                                 </label>
-                                <input type="text" v-model="appName" placeholder="Contoh: Nexco Smart Dashboard"
-                                    :class="{
+                                <input type="text" v-model="appName" placeholder="Contoh: Nexco Smart Dashboard" :class="{
                                         'bg-white dark:bg-[#070e24] dark:border-blue-500/50 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/30': activeTab === 'webapp',
                                         'bg-white dark:bg-[#0e0421] dark:border-purple-500/50 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400 focus:ring-purple-500/20 dark:focus:ring-violet-500/30': activeTab === 'ai',
                                         'bg-white dark:bg-[#03140e] dark:border-emerald-500/50 text-brand-navy dark:text-white focus:border-emerald-500 dark:focus:border-teal-400 focus:ring-emerald-500/20 dark:focus:ring-teal-500/30': activeTab === 'landing'
@@ -294,12 +322,13 @@
                                     class="w-full px-4 py-3 border-2 border-brand-slate/20 rounded-2xl outline-none text-xs font-bold shadow-sm focus:ring-4 transition-all">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                <label
+                                    class="block text-[11px] font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
                                     :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                     <i class="fa-solid fa-align-left"></i> Deskripsi Proyek
                                 </label>
-                                <input type="text" v-model="appDescription" placeholder="Jelaskan visi dan tujuan proyek ini..."
-                                    :class="{
+                                <input type="text" v-model="appDescription"
+                                    placeholder="Jelaskan visi dan tujuan proyek ini..." :class="{
                                         'bg-white dark:bg-[#070e24] dark:border-blue-500/50 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/30': activeTab === 'webapp',
                                         'bg-white dark:bg-[#0e0421] dark:border-purple-500/50 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400 focus:ring-purple-500/20 dark:focus:ring-violet-500/30': activeTab === 'ai',
                                         'bg-white dark:bg-[#03140e] dark:border-emerald-500/50 text-brand-navy dark:text-white focus:border-emerald-500 dark:focus:border-teal-400 focus:ring-emerald-500/20 dark:focus:ring-teal-500/30': activeTab === 'landing'
@@ -314,12 +343,17 @@
                         <!-- KOLOM KIRI: STRUKTUR DINAMIS -->
                         <section class="lg:col-span-6 space-y-6">
                             <!-- WEBAPP / AI MODE ROLES -->
-                            <div v-if="activeTab === 'webapp' || activeTab === 'ai'" class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300"
+                            <div v-if="activeTab === 'webapp' || activeTab === 'ai'"
+                                class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300"
                                 :class="activeTab === 'webapp' ? 'bg-gradient-to-br from-blue-50/90 via-indigo-50/30 to-white dark:from-[#081229] dark:via-[#0f1d3f] dark:to-[#081229] dark:border-blue-500/60 dark:shadow-[0_0_25px_rgba(37,99,235,0.2)] border-blue-400/30' : 'bg-gradient-to-br from-purple-50/90 via-violet-50/30 to-white dark:from-[#13072b] dark:via-[#200c47] dark:to-[#13072b] dark:border-purple-500/60 dark:shadow-[0_0_25px_rgba(147,51,234,0.2)] border-purple-400/30'">
                                 <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
-                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
-                                        <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : 'bg-purple-600 dark:bg-violet-400'"></span>
-                                        <i class="fa-solid fa-users-gear text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'"></i> Struktur Role & Hak Akses
+                                    <h3
+                                        class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                        <span class="w-2.5 h-5 rounded-full"
+                                            :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : 'bg-purple-600 dark:bg-violet-400'"></span>
+                                        <i class="fa-solid fa-users-gear text-xs"
+                                            :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'"></i>
+                                        Struktur Role & Hak Akses
                                     </h3>
                                     <button @click="addRole"
                                         :class="activeTab === 'webapp' ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/20' : 'bg-purple-600 text-white hover:bg-purple-700 shadow-md shadow-purple-500/20'"
@@ -328,54 +362,99 @@
                                     </button>
                                 </div>
 
-                                <div v-if="roles.length === 0" class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
-                                    <p class="text-xs text-brand-slate font-medium">Belum ada role sistem ditambahkan.</p>
-                                    <button @click="addRole" class="text-xs font-bold underline" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'">Klik untuk membuat role pertama</button>
+                                <div v-if="roles.length === 0"
+                                    class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
+                                    <p class="text-xs text-brand-slate font-medium">Belum ada role sistem ditambahkan.
+                                    </p>
+                                    <button @click="addRole" class="text-xs font-bold underline"
+                                        :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : 'text-purple-600 dark:text-violet-400'">Klik
+                                        untuk membuat role pertama</button>
                                 </div>
 
                                 <div v-else class="space-y-4 max-h-[520px] overflow-y-auto pr-1">
                                     <div v-for="(role, rIndex) in roles" :key="role.id"
                                         :class="activeTab === 'webapp' ? 'border-l-4 border-l-blue-600 dark:border-l-cyan-400 border-blue-200/60 dark:border-blue-500/40 bg-white/90 dark:bg-[#0f1a38]' : 'border-l-4 border-l-purple-600 dark:border-l-violet-400 border-purple-200/60 dark:border-purple-500/40 bg-white/90 dark:bg-[#1c0b3b]'"
                                         class="p-4 rounded-2xl border-2 shadow-sm hover:shadow-md transition-all relative space-y-3">
-                                        <button @click="removeRole(rIndex)" class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors" title="Hapus Role"><i class="fa-solid fa-trash-can"></i></button>
+                                        <button @click="removeRole(rIndex)"
+                                            class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors"
+                                            title="Hapus Role"><i class="fa-solid fa-trash-can"></i></button>
                                         <div class="relative">
-                                            <label class="block text-[10px] font-extrabold uppercase mb-1 flex items-center gap-1" :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
+                                            <label
+                                                class="block text-[10px] font-extrabold uppercase mb-1 flex items-center gap-1"
+                                                :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
                                                 <i class="fa-solid fa-user-tag text-[9px]"></i> Nama Role
                                             </label>
-                                            <input type="text" v-model="role.name" @focus="activeDropdown = 'roleName_' + rIndex" @blur="closeDropdownDelayed" placeholder="Contoh: Admin, Guru, Siswa"
+                                            <input type="text" v-model="role.name"
+                                                @focus="activeDropdown = 'roleName_' + rIndex"
+                                                @blur="closeDropdownDelayed" placeholder="Contoh: Admin, Guru, Siswa"
                                                 :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white focus:border-blue-500 dark:focus:border-cyan-400' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white focus:border-purple-500 dark:focus:border-violet-400'"
                                                 class="bg-white text-xs font-bold outline-none border-2 border-brand-slate/20 rounded-xl px-3 py-2 w-full shadow-inner">
-                                            <div v-show="activeDropdown === 'roleName_' + rIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#0b132b] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
-                                                <div v-for="opt in roleNameOptions" :key="opt" @mousedown="selectOption('roleName', rIndex, opt)" class="px-3 py-2 text-xs hover:bg-blue-500/20 dark:hover:bg-cyan-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                            <div v-show="activeDropdown === 'roleName_' + rIndex"
+                                                class="absolute z-30 w-full mt-1 bg-white dark:bg-[#0b132b] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                <div v-for="opt in roleNameOptions" :key="opt"
+                                                    @mousedown="selectOption('roleName', rIndex, opt)"
+                                                    class="px-3 py-2 text-xs hover:bg-blue-500/20 dark:hover:bg-cyan-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">
+                                                    {{ opt }}</div>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1" :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
-                                                <i class="fa-solid fa-list-check text-[9px]"></i> Daftar Fitur / Menu Akses
+                                            <label
+                                                class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                                :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
+                                                <i class="fa-solid fa-list-check text-[9px]"></i> Daftar Fitur / Menu
+                                                Akses
                                             </label>
                                             <div class="space-y-2">
-                                                <div v-for="(feat, fIndex) in role.features" :key="fIndex" class="flex items-center gap-2">
+                                                <div v-for="(feat, fIndex) in role.features" :key="fIndex"
+                                                    class="flex items-center gap-2">
                                                     <input type="text" v-model="role.features[fIndex]"
                                                         :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white'"
                                                         class="flex-1 px-3 py-1.5 bg-white border-2 border-brand-slate/20 rounded-xl text-xs font-semibold outline-none shadow-sm">
-                                                    <button @click="removeFeature(rIndex, fIndex)" class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                                                    <button @click="removeFeature(rIndex, fIndex)"
+                                                        class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i
+                                                            class="fa-solid fa-xmark"></i></button>
                                                 </div>
                                                 <div class="flex items-center gap-2 pt-1">
-                                                    <input type="text" v-model="role.newFeature" @keyup.enter="addFeature(rIndex)" placeholder="Tambah fitur baru..."
+                                                    <input type="text" v-model="role.newFeature"
+                                                        @keyup.enter="addFeature(rIndex)"
+                                                        placeholder="Tambah fitur baru..."
                                                         :class="activeTab === 'webapp' ? 'dark:bg-[#070e24]/60 dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421]/60 dark:border-purple-500/40 text-brand-navy dark:text-white'"
                                                         class="flex-1 px-3 py-1.5 bg-white/70 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs outline-none">
-                                                    <button @click="addFeature(rIndex)" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 text-white' : 'bg-purple-600 dark:bg-violet-500 text-white'" class="px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                    <button @click="addFeature(rIndex)"
+                                                        :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 text-white' : 'bg-purple-600 dark:bg-violet-500 text-white'"
+                                                        class="px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div v-if="activeTab === 'ai'" class="pt-2 flex items-center justify-between border-t border-brand-slate/20">
-                                            <span class="text-[11px] font-extrabold text-purple-700 dark:text-violet-300 flex items-center gap-1.5">
+                                        <div v-if="activeTab === 'ai'"
+                                            class="pt-2 flex items-center justify-between border-t border-brand-slate/20">
+                                            <span
+                                                class="text-[11px] font-extrabold text-purple-700 dark:text-violet-300 flex items-center gap-1.5">
                                                 <i class="fa-solid fa-robot"></i> Akses AI Assistant untuk Role Ini
+                                                <div class="relative group/tip inline-flex items-center ml-0.5">
+                                                    <i
+                                                        class="fa-solid fa-circle-question text-purple-400 dark:text-violet-400 hover:scale-110 text-[11px] cursor-pointer transition-transform"></i>
+                                                    <div
+                                                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 hidden group-hover/tip:block z-50 pointer-events-none">
+                                                        <div
+                                                            class="bg-brand-navy dark:bg-slate-800 text-white text-[10px] font-medium leading-relaxed p-2.5 rounded-xl shadow-2xl border border-white/20 text-center">
+                                                            Mengaktifkan widget & panel AI Assistant interaktif khusus
+                                                            untuk role ini pada arsitektur dashboard.
+                                                            <div
+                                                                class="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-brand-navy dark:border-t-slate-800">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </span>
-                                            <button @click="role.aiAssistant = !role.aiAssistant" :class="role.aiAssistant ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
-                                                <div :class="role.aiAssistant ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                            <button @click="role.aiAssistant = !role.aiAssistant"
+                                                :class="role.aiAssistant ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'"
+                                                class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                                <div :class="role.aiAssistant ? 'translate-x-5' : 'translate-x-1'"
+                                                    class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md">
+                                                </div>
                                             </button>
                                         </div>
                                     </div>
@@ -383,78 +462,142 @@
 
                                 <!-- Toggle Konfirmasi CRUD (AI Mode Only) -->
                                 <div v-if="activeTab === 'ai'" class="pt-3 border-t border-brand-slate/20">
-                                    <div class="p-4 rounded-2xl bg-purple-100/70 dark:bg-[#230d45] border-2 border-purple-300/60 dark:border-purple-500/50 flex items-center justify-between shadow-sm">
-                                        <span class="text-xs font-extrabold text-purple-900 dark:text-purple-200 flex items-center gap-2">
-                                            <i class="fa-solid fa-shield-halved text-purple-600 dark:text-violet-400"></i> Konfirmasi sebelum merubah data
+                                    <div
+                                        class="p-4 rounded-2xl bg-purple-100/70 dark:bg-[#230d45] border-2 border-purple-300/60 dark:border-purple-500/50 flex items-center justify-between shadow-sm">
+                                        <span
+                                            class="text-xs font-extrabold text-purple-900 dark:text-purple-200 flex items-center gap-1.5">
+                                            <i
+                                                class="fa-solid fa-shield-halved text-purple-600 dark:text-violet-400"></i>
+                                            Konfirmasi sebelum merubah data
+                                            <div class="relative group/tip inline-flex items-center ml-0.5">
+                                                <i
+                                                    class="fa-solid fa-circle-question text-purple-500 dark:text-violet-300 hover:scale-110 text-xs cursor-pointer transition-transform"></i>
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 hidden group-hover/tip:block z-50 pointer-events-none">
+                                                    <div
+                                                        class="bg-brand-navy dark:bg-slate-800 text-white text-[10px] font-medium leading-relaxed p-2.5 rounded-xl shadow-2xl border border-white/20 text-center">
+                                                        Mewajibkan AI Assistant meminta konfirmasi dialog ke pengguna
+                                                        sebelum mengeksekusi aksi manipulasi data (CRUD).
+                                                        <div
+                                                            class="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-brand-navy dark:border-t-slate-800">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </span>
-                                        <button @click="isConfirmCrud = !isConfirmCrud" :class="isConfirmCrud ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
-                                            <div :class="isConfirmCrud ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        <button @click="isConfirmCrud = !isConfirmCrud"
+                                            :class="isConfirmCrud ? 'bg-purple-600 dark:bg-violet-500' : 'bg-slate-400 dark:bg-slate-700'"
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isConfirmCrud ? 'translate-x-5' : 'translate-x-1'"
+                                                class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md">
+                                            </div>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- LANDING PAGE SECTIONS -->
-                            <div v-if="activeTab === 'landing'" class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300 bg-gradient-to-br from-emerald-50/90 via-teal-50/30 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30">
+                            <div v-if="activeTab === 'landing'"
+                                class="p-6 rounded-3xl space-y-4 shadow-xl border backdrop-blur-md transition-all duration-300 bg-gradient-to-br from-emerald-50/90 via-teal-50/30 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30">
                                 <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
-                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                    <h3
+                                        class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
                                         <span class="w-2.5 h-5 rounded-full bg-emerald-600 dark:bg-teal-400"></span>
-                                        <i class="fa-solid fa-layer-group text-xs text-emerald-600 dark:text-teal-400"></i> Struktur Section & Isi Halaman
+                                        <i
+                                            class="fa-solid fa-layer-group text-xs text-emerald-600 dark:text-teal-400"></i>
+                                        Struktur Section & Isi Halaman
                                     </h3>
-                                    <button @click="addSection" class="px-4 py-2 rounded-xl bg-emerald-600 dark:bg-teal-500 text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                    <button @click="addSection"
+                                        class="px-4 py-2 rounded-xl bg-emerald-600 dark:bg-teal-500 text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
                                         <i class="fa-solid fa-plus"></i> Tambah Section
                                     </button>
                                 </div>
 
-                                <div v-if="sections.length === 0" class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
-                                    <p class="text-xs text-brand-slate font-medium">Belum ada section yang ditambahkan.</p>
-                                    <button @click="addSection" class="text-xs font-bold text-emerald-600 dark:text-teal-400 underline">Klik untuk membuat section pertama</button>
+                                <div v-if="sections.length === 0"
+                                    class="p-8 rounded-2xl border-2 border-dashed border-brand-slate/30 text-center space-y-2 bg-white/50 dark:bg-brand-dark/50">
+                                    <p class="text-xs text-brand-slate font-medium">Belum ada section yang ditambahkan.
+                                    </p>
+                                    <button @click="addSection"
+                                        class="text-xs font-bold text-emerald-600 dark:text-teal-400 underline">Klik
+                                        untuk membuat section pertama</button>
                                 </div>
 
                                 <div v-else class="space-y-4 max-h-[520px] overflow-y-auto pr-1">
-                                    <div v-for="(sect, sIndex) in sections" :key="sect.id" class="p-4 rounded-2xl border-2 border-l-4 border-l-emerald-600 dark:border-l-teal-400 border-emerald-200/60 dark:border-emerald-500/40 bg-white/90 dark:bg-[#09291d] shadow-sm hover:shadow-md transition-all relative space-y-3">
-                                        <button @click="removeSection(sIndex)" class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors" title="Hapus Section"><i class="fa-solid fa-trash-can"></i></button>
-                                        
+                                    <div v-for="(sect, sIndex) in sections" :key="sect.id"
+                                        class="p-4 rounded-2xl border-2 border-l-4 border-l-emerald-600 dark:border-l-teal-400 border-emerald-200/60 dark:border-emerald-500/40 bg-white/90 dark:bg-[#09291d] shadow-sm hover:shadow-md transition-all relative space-y-3">
+                                        <button @click="removeSection(sIndex)"
+                                            class="absolute top-4 right-4 text-brand-slate dark:text-slate-400 hover:text-red-500 text-xs transition-colors"
+                                            title="Hapus Section"><i class="fa-solid fa-trash-can"></i></button>
+
                                         <div class="relative">
-                                            <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                            <label
+                                                class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
                                                 <i class="fa-solid fa-heading text-[9px]"></i> Nama Section
                                             </label>
-                                            <input type="text" v-model="sect.name" @focus="activeDropdown = 'sectionName_' + sIndex" @blur="closeDropdownDelayed" placeholder="Contoh: Hero Section, Fitur Unggulan" class="bg-white dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white text-xs font-bold outline-none border-2 border-brand-slate/20 focus:border-emerald-500 dark:focus:border-teal-400 rounded-xl px-3 py-2 w-full shadow-inner">
-                                            <div v-show="activeDropdown === 'sectionName_' + sIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
-                                                <div v-for="opt in sectionNameOptions" :key="opt" @mousedown="selectOption('sectionName', sIndex, opt)" class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                            <input type="text" v-model="sect.name"
+                                                @focus="activeDropdown = 'sectionName_' + sIndex"
+                                                @blur="closeDropdownDelayed"
+                                                placeholder="Contoh: Hero Section, Fitur Unggulan"
+                                                class="bg-white dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white text-xs font-bold outline-none border-2 border-brand-slate/20 focus:border-emerald-500 dark:focus:border-teal-400 rounded-xl px-3 py-2 w-full shadow-inner">
+                                            <div v-show="activeDropdown === 'sectionName_' + sIndex"
+                                                class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                <div v-for="opt in sectionNameOptions" :key="opt"
+                                                    @mousedown="selectOption('sectionName', sIndex, opt)"
+                                                    class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">
+                                                    {{ opt }}</div>
                                             </div>
                                         </div>
 
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div class="relative">
-                                                <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                <label
+                                                    class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
                                                     <i class="fa-solid fa-cubes text-[9px]"></i> Tipe Section
                                                 </label>
-                                                <input type="text" v-model="sect.type" @focus="activeDropdown = 'sectionType_' + sIndex" @blur="closeDropdownDelayed" class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
-                                                <div v-show="activeDropdown === 'sectionType_' + sIndex" class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
-                                                    <div v-for="opt in sectionTypeOptions" :key="opt" @mousedown="selectOption('sectionType', sIndex, opt)" class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">{{ opt }}</div>
+                                                <input type="text" v-model="sect.type"
+                                                    @focus="activeDropdown = 'sectionType_' + sIndex"
+                                                    @blur="closeDropdownDelayed"
+                                                    class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
+                                                <div v-show="activeDropdown === 'sectionType_' + sIndex"
+                                                    class="absolute z-30 w-full mt-1 bg-white dark:bg-[#061e14] border-2 border-brand-slate/30 rounded-xl max-h-40 overflow-y-auto shadow-2xl">
+                                                    <div v-for="opt in sectionTypeOptions" :key="opt"
+                                                        @mousedown="selectOption('sectionType', sIndex, opt)"
+                                                        class="px-3 py-2 text-xs hover:bg-emerald-500/20 dark:hover:bg-teal-500/20 cursor-pointer border-b border-brand-slate/10 last:border-0 font-semibold text-brand-navy dark:text-white">
+                                                        {{ opt }}</div>
                                                 </div>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                                <label
+                                                    class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
                                                     <i class="fa-solid fa-circle-info text-[9px]"></i> Deskripsi Singkat
                                                 </label>
-                                                <input type="text" v-model="sect.description" placeholder="Inti section ini..." class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
+                                                <input type="text" v-model="sect.description"
+                                                    placeholder="Inti section ini..."
+                                                    class="w-full px-3 py-2 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:border-emerald-500 dark:focus:border-teal-400 shadow-sm">
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
+                                            <label
+                                                class="block text-[10px] font-extrabold text-emerald-700 dark:text-teal-300 uppercase mb-1 flex items-center gap-1">
                                                 <i class="fa-solid fa-elements text-[9px]"></i> Isi Elemen Konten
                                             </label>
                                             <div class="space-y-2">
-                                                <div v-for="(elem, eIndex) in sect.elements" :key="eIndex" class="flex items-center gap-2">
-                                                    <input type="text" v-model="sect.elements[eIndex]" class="flex-1 px-3 py-1.5 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none shadow-sm">
-                                                    <button @click="removeElement(sIndex, eIndex)" class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                                                <div v-for="(elem, eIndex) in sect.elements" :key="eIndex"
+                                                    class="flex items-center gap-2">
+                                                    <input type="text" v-model="sect.elements[eIndex]"
+                                                        class="flex-1 px-3 py-1.5 bg-white dark:bg-[#03140e] dark:border-emerald-500/40 border-2 border-brand-slate/20 rounded-xl text-xs font-semibold text-brand-navy dark:text-white outline-none shadow-sm">
+                                                    <button @click="removeElement(sIndex, eIndex)"
+                                                        class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i
+                                                            class="fa-solid fa-xmark"></i></button>
                                                 </div>
                                                 <div class="flex items-center gap-2 pt-1">
-                                                    <input type="text" v-model="sect.newElement" @keyup.enter="addElement(sIndex)" placeholder="Tambah komponen isi baru..." class="flex-1 px-3 py-1.5 bg-white/70 dark:bg-[#03140e]/60 dark:border-emerald-500/40 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs text-brand-navy dark:text-white outline-none">
-                                                    <button @click="addElement(sIndex)" class="px-3 py-1.5 bg-emerald-600 dark:bg-teal-500 text-white text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                    <input type="text" v-model="sect.newElement"
+                                                        @keyup.enter="addElement(sIndex)"
+                                                        placeholder="Tambah komponen isi baru..."
+                                                        class="flex-1 px-3 py-1.5 bg-white/70 dark:bg-[#03140e]/60 dark:border-emerald-500/40 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs text-brand-navy dark:text-white outline-none">
+                                                    <button @click="addElement(sIndex)"
+                                                        class="px-3 py-1.5 bg-emerald-600 dark:bg-teal-500 text-white text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -472,64 +615,143 @@
                                     'bg-gradient-to-br from-emerald-50/90 via-teal-50/30 to-white dark:from-[#041f16] dark:via-[#093828] dark:to-[#041f16] dark:border-emerald-500/60 dark:shadow-[0_0_25px_rgba(16,185,129,0.2)] border-emerald-400/30': activeTab === 'landing'
                                 }">
                                 <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
-                                    <h3 class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
-                                        <span class="w-2.5 h-5 rounded-full" :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
-                                        <i class="fa-solid fa-palette text-xs" :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i> Gaya & Estetika Visual
+                                    <h3
+                                        class="text-sm font-extrabold text-brand-navy dark:text-white flex items-center gap-2">
+                                        <span class="w-2.5 h-5 rounded-full"
+                                            :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-400' : 'bg-emerald-600 dark:bg-teal-400')"></span>
+                                        <i class="fa-solid fa-palette text-xs"
+                                            :class="activeTab === 'webapp' ? 'text-blue-600 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-600 dark:text-violet-400' : 'text-emerald-600 dark:text-teal-400')"></i>
+                                        Gaya & Estetika Visual
                                     </h3>
                                 </div>
 
                                 <!-- PRESET THEMES LIST -->
                                 <div>
-                                    <label class="block text-xs font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                                    <label
+                                        class="block text-xs font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5"
                                         :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                         <i class="fa-solid fa-wand-magic"></i> Preset Tema Dashboard / Halaman
                                     </label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <button v-for="(themeData, tName) in themePresets" :key="tName" @click="applyThemePreset(tName)"
+                                        <button v-for="(themeData, tName) in themePresets" :key="tName"
+                                            @click="applyThemePreset(tName)"
                                             :class="design.styleDesign.includes(tName) || (tName === 'Corporate Clean' && design.styleDesign === 'Corporate Design') ? (activeTab === 'webapp' ? 'border-2 border-blue-600 dark:border-cyan-400 bg-blue-100/80 dark:bg-[#15254e] shadow-md text-blue-950 dark:text-white font-extrabold' : (activeTab === 'ai' ? 'border-2 border-purple-600 dark:border-violet-400 bg-purple-100/80 dark:bg-[#281250] shadow-md text-purple-950 dark:text-white font-extrabold' : 'border-2 border-emerald-600 dark:border-teal-400 bg-emerald-100/80 dark:bg-[#0f3827] shadow-md text-emerald-950 dark:text-white font-extrabold')) : 'bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 text-brand-slate dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#12224d] shadow-sm'"
                                             class="p-3.5 rounded-2xl text-left flex flex-col gap-1.5 transition-all text-xs active:scale-95">
                                             <div class="flex gap-2">
-                                                <span v-for="color in splitPalette(themeData.palette)" :key="color" :style="{ backgroundColor: color }" class="w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-700 shadow-sm"></span>
+                                                <span v-for="color in splitPalette(themeData.palette)" :key="color"
+                                                    :style="{ backgroundColor: color }"
+                                                    class="w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-700 shadow-sm"></span>
                                             </div>
-                                            <span class="font-extrabold text-[11px] uppercase tracking-wider mt-0.5">{{ tName }}</span>
-                                            <p class="text-[9.5px] line-clamp-1 italic font-medium opacity-80">{{ themeData.vibe }}</p>
+                                            <span class="font-extrabold text-[11px] uppercase tracking-wider mt-0.5">{{
+                                                tName }}</span>
+                                            <p class="text-[9.5px] line-clamp-1 italic font-medium opacity-80">{{
+                                                themeData.vibe }}</p>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- GRID TOGGLES TERPADU (KHUSUS WEBAPP & AI MODE) -->
-                                <div v-if="activeTab === 'webapp' || activeTab === 'ai'" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-brand-slate/20">
-                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
-                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
-                                            <i class="fa-solid fa-mobile-screen text-blue-500 dark:text-cyan-400"></i> Mobile Focus
+                                <div v-if="activeTab === 'webapp' || activeTab === 'ai'"
+                                    class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-brand-slate/20">
+                                    <div
+                                        class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
+                                        <span
+                                            class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-mobile-screen text-blue-500 dark:text-cyan-400"></i>
+                                            Mobile Focus
+                                            <div class="relative group/tip inline-flex items-center ml-0.5">
+                                                <i
+                                                    class="fa-solid fa-circle-question text-slate-400 hover:text-blue-500 dark:hover:text-cyan-400 hover:scale-110 text-xs cursor-pointer transition-transform"></i>
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 hidden group-hover/tip:block z-50 pointer-events-none">
+                                                    <div
+                                                        class="bg-brand-navy dark:bg-slate-800 text-white text-[10px] font-medium leading-relaxed p-2.5 rounded-xl shadow-2xl border border-white/20 text-center">
+                                                        Memfokuskan rancangan arsitektur UI pada tampilan perangkat
+                                                        seluler (Mobile-First Layout) dengan navigasi Bottom Tab Bar.
+                                                        <div
+                                                            class="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-brand-navy dark:border-t-slate-800">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </span>
-                                        <button @click="isMobileFocus = !isMobileFocus" :class="isMobileFocus ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
-                                            <div :class="isMobileFocus ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        <button @click="isMobileFocus = !isMobileFocus"
+                                            :class="isMobileFocus ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'"
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isMobileFocus ? 'translate-x-5' : 'translate-x-1'"
+                                                class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md">
+                                            </div>
                                         </button>
                                     </div>
-                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
-                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
-                                            <i class="fa-solid fa-bolt text-amber-500 dark:text-amber-400"></i> Optimistic UI
+                                    <div
+                                        class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between shadow-sm">
+                                        <span
+                                            class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bolt text-amber-500 dark:text-amber-400"></i>
+                                            Optimistic UI
+                                            <div class="relative group/tip inline-flex items-center ml-0.5">
+                                                <i
+                                                    class="fa-solid fa-circle-question text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:scale-110 text-xs cursor-pointer transition-transform"></i>
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 hidden group-hover/tip:block z-50 pointer-events-none">
+                                                    <div
+                                                        class="bg-brand-navy dark:bg-slate-800 text-white text-[10px] font-medium leading-relaxed p-2.5 rounded-xl shadow-2xl border border-white/20 text-center">
+                                                        Menginstruksikan pembuatan mutasi state data secara instan di UI
+                                                        dengan notifikasi Toast sebelum respon async server selesai.
+                                                        <div
+                                                            class="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-brand-navy dark:border-t-slate-800">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </span>
-                                        <button @click="isOptimisticUI = !isOptimisticUI" :class="isOptimisticUI ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
-                                            <div :class="isOptimisticUI ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        <button @click="isOptimisticUI = !isOptimisticUI"
+                                            :class="isOptimisticUI ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'"
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isOptimisticUI ? 'translate-x-5' : 'translate-x-1'"
+                                                class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md">
+                                            </div>
                                         </button>
                                     </div>
-                                    <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between sm:col-span-2 shadow-sm">
-                                        <span class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
-                                            <i class="fa-solid fa-bell text-pink-500 dark:text-pink-400"></i> Sweet Alert Integration
+                                    <div
+                                        class="p-3.5 rounded-2xl bg-white/80 dark:bg-[#0b1633] border-2 border-brand-slate/20 dark:border-slate-700 flex items-center justify-between sm:col-span-2 shadow-sm">
+                                        <span
+                                            class="text-xs font-extrabold text-brand-navy dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bell text-pink-500 dark:text-pink-400"></i> Sweet
+                                            Alert Integration
+                                            <div class="relative group/tip inline-flex items-center ml-0.5">
+                                                <i
+                                                    class="fa-solid fa-circle-question text-slate-400 hover:text-pink-500 dark:hover:text-pink-400 hover:scale-110 text-xs cursor-pointer transition-transform"></i>
+                                                <div
+                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 hidden group-hover/tip:block z-50 pointer-events-none">
+                                                    <div
+                                                        class="bg-brand-navy dark:bg-slate-800 text-white text-[10px] font-medium leading-relaxed p-2.5 rounded-xl shadow-2xl border border-white/20 text-center">
+                                                        Menggantikan dialog alert/confirm browser standar menggunakan
+                                                        library SweetAlert2 CDN untuk tampilan modal yang lebih cantik.
+                                                        <div
+                                                            class="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-brand-navy dark:border-t-slate-800">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </span>
-                                        <button @click="isSweetAlert = !isSweetAlert" :class="isSweetAlert ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'" class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
-                                            <div :class="isSweetAlert ? 'translate-x-5' : 'translate-x-1'" class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md"></div>
+                                        <button @click="isSweetAlert = !isSweetAlert"
+                                            :class="isSweetAlert ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : 'bg-purple-600 dark:bg-violet-500') : 'bg-slate-400 dark:bg-slate-700'"
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            <div :class="isSweetAlert ? 'translate-x-5' : 'translate-x-1'"
+                                                class="top-0.5 absolute w-4 h-4 bg-white rounded-full transition-transform shadow-md">
+                                            </div>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- UNIFIED INPUTS FOR STYLING -->
                                 <div class="space-y-4 pt-2">
-                                    <div class="grid grid-cols-1 gap-4" :class="{'sm:grid-cols-2': activeTab === 'webapp' || activeTab === 'ai'}">
+                                    <div class="grid grid-cols-1 gap-4"
+                                        :class="{'sm:grid-cols-2': activeTab === 'webapp' || activeTab === 'ai'}">
                                         <div>
-                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                            <label
+                                                class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
                                                 :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                                 <i class="fa-solid fa-compass"></i> Gaya Desain
                                             </label>
@@ -538,7 +760,8 @@
                                                 class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-bold outline-none shadow-sm">
                                         </div>
                                         <div v-if="activeTab === 'webapp' || activeTab === 'ai'">
-                                            <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                            <label
+                                                class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
                                                 :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
                                                 <i class="fa-solid fa-bars-staggered"></i> Tipe Navigasi Menu
                                             </label>
@@ -553,21 +776,25 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                        <label
+                                            class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
                                             :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                             <i class="fa-solid fa-droplet"></i> Warna Palet HEX (Maks 3 HEX)
                                         </label>
-                                        <input type="text" v-model="design.palette" placeholder="#0F172A, #1E293B, #F1F5F9"
+                                        <input type="text" v-model="design.palette"
+                                            placeholder="#0F172A, #1E293B, #F1F5F9"
                                             :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : (activeTab === 'ai' ? 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white')"
                                             class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-mono font-bold outline-none shadow-sm">
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
+                                        <label
+                                            class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
                                             :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : (activeTab === 'ai' ? 'text-purple-700 dark:text-violet-300' : 'text-emerald-700 dark:text-teal-300')">
                                             <i class="fa-solid fa-note-sticky"></i> Deskripsi Khusus Gaya Visual
                                         </label>
-                                        <textarea v-model="design.visualDescription" rows="2.5" placeholder="Detailkan gaya visual tambahan..."
+                                        <textarea v-model="design.visualDescription" rows="2.5"
+                                            placeholder="Detailkan gaya visual tambahan..."
                                             :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : (activeTab === 'ai' ? 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#03140e] dark:border-emerald-500/40 text-brand-navy dark:text-white')"
                                             class="w-full px-3.5 py-2.5 bg-white border-2 border-brand-slate/20 rounded-2xl text-xs font-medium outline-none shadow-sm resize-none"></textarea>
                                     </div>
@@ -578,8 +805,7 @@
 
                     <!-- TOMBOL GENERATE PROMPT -->
                     <div class="mt-6">
-                        <button @click="generateAndShowPrompt"
-                            :class="{
+                        <button @click="generateAndShowPrompt" :class="{
                                 'from-blue-600 via-indigo-600 to-blue-700 border-blue-400/40 shadow-blue-500/25': activeTab === 'webapp',
                                 'from-purple-600 via-violet-600 to-purple-700 border-purple-400/40 shadow-purple-500/25': activeTab === 'ai',
                                 'from-emerald-600 via-teal-600 to-emerald-700 border-emerald-400/40 shadow-emerald-500/25': activeTab === 'landing'
@@ -590,14 +816,22 @@
                     </div>
 
                     <!-- MODAL POPUP: PROMPT OUTPUT GENERATOR -->
-                    <div v-if="showPromptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                        <div class="w-full max-w-3xl p-6 rounded-3xl bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 shadow-2xl space-y-4 text-brand-navy dark:text-brand-platinum">
+                    <div v-if="showPromptModal"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                        <div
+                            class="w-full max-w-3xl p-6 rounded-3xl bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 shadow-2xl space-y-4 text-brand-navy dark:text-brand-platinum">
                             <div class="flex justify-between items-center border-b border-brand-slate/20 pb-3">
-                                <h3 class="text-base font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-green-500"></i> Prompt Berhasil di-Generate!</h3>
-                                <button @click="showPromptModal = false" class="text-brand-slate hover:text-brand-navy dark:hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+                                <h3 class="text-base font-bold flex items-center gap-2"><i
+                                        class="fa-solid fa-circle-check text-green-500"></i> Prompt Berhasil
+                                    di-Generate!</h3>
+                                <button @click="showPromptModal = false"
+                                    class="text-brand-slate hover:text-brand-navy dark:hover:text-white text-lg"><i
+                                        class="fa-solid fa-xmark"></i></button>
                             </div>
-                            <p class="text-xs text-brand-slate dark:text-slate-300">Silakan salin seluruh teks prompt instruksi di bawah ini ke chatbot AI Anda (Claude, GPT, v0, atau Gemini):</p>
-                            <textarea readonly :value="generatedPrompt" class="w-full h-80 p-4 bg-slate-100 dark:bg-[#060d21] border border-brand-slate/30 dark:border-slate-700 rounded-2xl text-xs font-mono text-brand-navy dark:text-slate-200 outline-none resize-none focus:border-brand-accent"></textarea>
+                            <p class="text-xs text-brand-slate dark:text-slate-300">Silakan salin seluruh teks prompt
+                                instruksi di bawah ini ke chatbot AI Anda (Claude, GPT, v0, atau Gemini):</p>
+                            <textarea readonly :value="generatedPrompt"
+                                class="w-full h-80 p-4 bg-slate-100 dark:bg-[#060d21] border border-brand-slate/30 dark:border-slate-700 rounded-2xl text-xs font-mono text-brand-navy dark:text-slate-200 outline-none resize-none focus:border-brand-accent"></textarea>
                             <div class="flex justify-end gap-3">
                                 <button @click="copyPrompt"
                                     :class="activeTab === 'webapp' ? 'bg-blue-600' : (activeTab === 'ai' ? 'bg-purple-600' : 'bg-emerald-600')"
@@ -609,12 +843,18 @@
                     </div>
 
                     <!-- MODAL POPUP: DIAGNOSA ERROR KUSTOM -->
-                    <div v-if="errorModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-                        <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-[#0c1633] border-2 border-red-500/60 shadow-2xl space-y-4 text-center text-brand-navy dark:text-white">
-                            <div class="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div v-if="errorModal.show"
+                        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                        <div
+                            class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-[#0c1633] border-2 border-red-500/60 shadow-2xl space-y-4 text-center text-brand-navy dark:text-white">
+                            <div
+                                class="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto text-2xl">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
                             <h3 class="text-lg font-bold">{{ errorModal.title }}</h3>
                             <p class="text-xs text-brand-slate italic">"{{ errorModal.message }}"</p>
-                            <button @click="errorModal.show = false" class="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider">Tutup</button>
+                            <button @click="errorModal.show = false"
+                                class="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider">Tutup</button>
                         </div>
                     </div>
 
@@ -627,7 +867,8 @@
                             <i v-else class="fa-solid fa-xmark text-xl"></i>
                         </button>
 
-                        <div v-show="isChatOpen" class="fixed bottom-24 right-6 w-96 max-w-[90vw] h-[520px] bg-white/95 dark:bg-[#0c1633]/95 backdrop-blur-xl border border-brand-slate/30 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-brand-navy dark:text-white">
+                        <div v-show="isChatOpen"
+                            class="fixed bottom-24 right-6 w-96 max-w-[90vw] h-[520px] bg-white/95 dark:bg-[#0c1633]/95 backdrop-blur-xl border border-brand-slate/30 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-brand-navy dark:text-white">
                             <div class="p-4 border-b border-brand-slate/20 flex items-center justify-between"
                                 :class="activeTab === 'webapp' ? 'bg-blue-600/10 dark:bg-cyan-500/20' : (activeTab === 'ai' ? 'bg-purple-600/10 dark:bg-violet-500/20' : 'bg-emerald-600/10 dark:bg-teal-500/20')">
                                 <div class="flex items-center gap-2.5">
@@ -639,35 +880,46 @@
                                         <h4 class="text-xs font-bold">Nexco Assistant AI</h4>
                                         <span class="text-[9px] font-semibold flex items-center gap-1"
                                             :class="activeTab === 'webapp' ? 'text-blue-500 dark:text-cyan-400' : (activeTab === 'ai' ? 'text-purple-500 dark:text-violet-400' : 'text-emerald-500 dark:text-teal-400')">
-                                            <span class="w-1.5 h-1.5 rounded-full animate-pulse" :class="activeTab === 'webapp' ? 'bg-blue-500 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-500 dark:bg-violet-400' : 'bg-emerald-500 dark:bg-teal-400')"></span> Auto Data Builder Active
+                                            <span class="w-1.5 h-1.5 rounded-full animate-pulse"
+                                                :class="activeTab === 'webapp' ? 'bg-blue-500 dark:bg-cyan-400' : (activeTab === 'ai' ? 'bg-purple-500 dark:bg-violet-400' : 'bg-emerald-500 dark:bg-teal-400')"></span>
+                                            Auto Data Builder Active
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
-                                <div v-if="messages.length === 0" class="h-full flex flex-col items-center justify-center text-center text-brand-slate dark:text-slate-300 space-y-2 py-8">
+                                <div v-if="messages.length === 0"
+                                    class="h-full flex flex-col items-center justify-center text-center text-brand-slate dark:text-slate-300 space-y-2 py-8">
                                     <i class="fa-solid fa-comments text-3xl opacity-40"></i>
-                                    <p class="text-xs font-semibold">Tanyakan atau minta AI mengubah rancangan data Anda secara langsung!</p>
-                                    <p class="text-[10px] opacity-80">Contoh: "Buatkan role Guru dan Siswa dengan menu lengkap", "Ubah tema jadi Bento Grid"</p>
+                                    <p class="text-xs font-semibold">Tanyakan atau minta AI mengubah rancangan data Anda
+                                        secara langsung!</p>
+                                    <p class="text-[10px] opacity-80">Contoh: "Buatkan role Guru dan Siswa dengan menu
+                                        lengkap", "Ubah tema jadi Bento Grid"</p>
                                 </div>
-                                <div v-for="(m, idx) in messages" :key="idx" :class="m.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                                    <div :class="m.role === 'user' ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-600 text-white' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-600 text-white' : 'bg-emerald-600 dark:bg-teal-600 text-white')) + ' rounded-tr-none shadow-md' : 'bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 text-brand-navy dark:text-slate-200 rounded-tl-none'" class="px-4 py-2.5 rounded-2xl max-w-[85%] leading-relaxed shadow-sm">
+                                <div v-for="(m, idx) in messages" :key="idx"
+                                    :class="m.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                                    <div :class="m.role === 'user' ? (activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-600 text-white' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-600 text-white' : 'bg-emerald-600 dark:bg-teal-600 text-white')) + ' rounded-tr-none shadow-md' : 'bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 text-brand-navy dark:text-slate-200 rounded-tl-none'"
+                                        class="px-4 py-2.5 rounded-2xl max-w-[85%] leading-relaxed shadow-sm">
                                         {{ m.text }}
                                     </div>
                                 </div>
                                 <div v-if="aiLoading" class="flex justify-start">
-                                    <div class="bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 px-4 py-2.5 rounded-2xl text-brand-slate dark:text-slate-300 text-xs animate-pulse">
+                                    <div
+                                        class="bg-slate-100 dark:bg-[#060d21] border border-brand-slate/20 dark:border-slate-700 px-4 py-2.5 rounded-2xl text-brand-slate dark:text-slate-300 text-xs animate-pulse">
                                         Sedang merancang struktur data...
                                     </div>
                                 </div>
                             </div>
 
                             <div class="p-3 border-t border-brand-slate/20 bg-slate-50 dark:bg-[#060d21] flex gap-2">
-                                <input type="text" v-model="chatInput" @keyup.enter="processAIChat()" placeholder="Ketik instruksi ubah data..." class="flex-1 px-3 py-2 bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:ring-1 focus:ring-brand-accent">
+                                <input type="text" v-model="chatInput" @keyup.enter="processAIChat()"
+                                    placeholder="Ketik instruksi ubah data..."
+                                    class="flex-1 px-3 py-2 bg-white dark:bg-[#0c1633] border border-brand-slate/30 dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-white outline-none focus:ring-1 focus:ring-brand-accent">
                                 <button @click="processAIChat()" :disabled="aiLoading || !chatInput.trim()"
                                     :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500' : (activeTab === 'ai' ? 'bg-purple-600 dark:bg-violet-500' : 'bg-emerald-600 dark:bg-teal-500')"
-                                    class="px-3 py-2 hover:bg-opacity-90 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-paper-plane"></i></button>
+                                    class="px-3 py-2 hover:bg-opacity-90 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all"><i
+                                        class="fa-solid fa-paper-plane"></i></button>
                             </div>
                         </div>
                     </div>
@@ -678,10 +930,12 @@
             <section id="view-settings" class="hidden space-y-6 max-w-xl mx-auto">
                 <div class="py-2 border-b border-brand-slate/20">
                     <h2 class="text-lg font-bold">Pengaturan Pengguna</h2>
-                    <p class="text-xs text-brand-slate">Ubah kredensial akun dan preferensi profil Anda secara instan.</p>
+                    <p class="text-xs text-brand-slate">Ubah kredensial akun dan preferensi profil Anda secara instan.
+                    </p>
                 </div>
 
-                <form id="settings-form" class="glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-5 shadow-sm text-brand-navy dark:text-brand-platinum">
+                <form id="settings-form"
+                    class="glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-5 shadow-sm text-brand-navy dark:text-brand-platinum">
                     <div>
                         <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Lengkap</label>
                         <input type="text" id="settings-name" required
@@ -693,7 +947,8 @@
                             class="w-full px-4 py-2.5 bg-slate-200 dark:bg-brand-dark/80 border border-brand-slate/30 rounded-xl text-xs text-brand-slate cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Kata Sandi Baru (Kosongkan jika tidak diubah)</label>
+                        <label class="block text-xs font-semibold mb-2 text-brand-slate">Kata Sandi Baru (Kosongkan jika
+                            tidak diubah)</label>
                         <input type="password" id="settings-password"
                             class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
                     </div>
@@ -1013,6 +1268,24 @@
                 const isChatOpen = ref(false);
                 const activeDropdown = ref(null);
 
+                const activeTabModeLabel = computed(() => {
+                    if (activeTab.value === 'webapp') return 'Mode Web App (Biru)';
+                    if (activeTab.value === 'ai') return 'Mode Chatbot AI (Ungu)';
+                    return 'Mode Landing Page (Hijau)';
+                });
+
+                const activeTabTitle = computed(() => {
+                    if (activeTab.value === 'webapp') return 'Web App Architecture Builder';
+                    if (activeTab.value === 'ai') return 'Smart Chatbot AI Mode Builder';
+                    return 'Landing Page Campaign Builder';
+                });
+
+                const activeTabDesc = computed(() => {
+                    if (activeTab.value === 'webapp') return 'Rancang arsitektur aplikasi web full-stack, struktur role, dan sistem data.';
+                    if (activeTab.value === 'ai') return 'Rancang aplikasi berbasis AI Assistant dengan konfirmasi CRUD dinamis.';
+                    return 'Susun struktur section halaman kampanye marketing dan elemen konversi tinggi.';
+                });
+
                 const errorModal = ref({ show: false, title: "", message: "" });
                 const showErrorModal = (title, message) => {
                     errorModal.value.title = title;
@@ -1049,11 +1322,30 @@
 
                 // Theme Presets Matching Example
                 const themePresets = {
-                    "Corporate Clean": { palette: "#FFFFFF, #1E293B, #2563EB", vibe: "Startup & Fintech Style: Bersih, terstruktur." },
-                    "Playful Vector": { palette: "#FFF7ED, #FB923C, #F97316", vibe: "Ceria & Ramah: Warna hangat, elemen melengkung." },
-                    "Bento Grid": { palette: "#0F172A, #1E293B, #F1F5F9", vibe: "Modern Info-Dense: Grid presisi, kotak padat." },
-                    "Aurora Glow": { palette: "#020617, #7C3AED, #2DD4BF", vibe: "Dark Futuristik: Background pekat pendaran neon." },
-                    "Claymorphism": { palette: "#EEF2FF, #818CF8, #FFFFFF", vibe: "3D Soft Volume: Tekstur lembut tanah liat digital." }
+                    "Navy Professional": {
+                        "palette": "#0B192C, #FFFFFF, #1E3E62",
+                        "vibe": "Classic Executive: Perpaduan biru navy pekat dan putih bersih yang sangat elegan, kontras, dan terpercaya untuk arsitektur enterprise."
+                    },
+                    "Tech Startup": {
+                        "palette": "#FFFFFF, #0F172A, #2563EB",
+                        "vibe": "Clean & Trustworthy: Gaya andalan fintech dan SaaS modern. Rapi, kontras tinggi, dan profesional."
+                    },
+                    "Warm Minimalist": {
+                        "palette": "#FBFBFA, #2D2D2D, #C5A880",
+                        "vibe": "Earthy & Premium: Estetika minimalis dengan sentuhan warna hangat. Sangat populer untuk brand fashion, FnB, dan portofolio arsitektur."
+                    },
+                    "Neo-Brutalism": {
+                        "palette": "#F3F4F6, #000000, #FFDE4D",
+                        "vibe": "Bold & Trendy: Desain dengan border tegas dan warna pop kontras. Banyak diadopsi oleh media kreatif dan brand anak muda."
+                    },
+                    "Cyber Dark": {
+                        "palette": "#0B0F19, #1E293B, #10B981",
+                        "vibe": "Futuristic Night Mode: Latar belakang gelap pekat dengan aksen emerald/cyan neon. Favorit untuk web komunitas, gaming, dan crypto."
+                    },
+                    "Clean Pastel": {
+                        "palette": "#F8FAFC, #6366F1, #E0E7FF",
+                        "vibe": "Soft & Friendly: Kombinasi putih bersih dengan ungu/biru pastel yang estetik. Ramah di mata, modern, dan tidak intimidatif."
+                    }
                 };
 
                 const splitPalette = (paletteStr) => {
@@ -1237,7 +1529,7 @@ STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
 {
   "appName": "string (Bahasa Indonesia)",
   "appDescription": "string (Bahasa Indonesia)",
-  "roles": [ { "name": "string (Bahasa Indonesia)", "features": ["string (Bahasa Indonesia)"], "aiAssistant": boolean } ],
+  "roles": [ { "name": "string (Bahasa Indonesia)", "features": ["string (Bahasa Indonesia)"], "aiAssistant": boolean } ](Jangan lebih dari 2 role),
   "sections": [ { "name": "string (Bahasa Indonesia)", "type": "string", "description": "string (Bahasa Indonesia)", "elements": ["string (Bahasa Indonesia)"] } ],
   "design": { 
     "styleDesign": "string", 
@@ -1295,6 +1587,9 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
 
                 return {
                     activeTab,
+                    activeTabModeLabel,
+                    activeTabTitle,
+                    activeTabDesc,
                     showPromptModal,
                     errorModal,
                     isChatOpen,

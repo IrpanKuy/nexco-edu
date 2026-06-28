@@ -166,7 +166,7 @@ function verifySessionAndInit(expectedRole, onSuccessCallback) {
                         if (onSuccessCallback) onSuccessCallback(res.user);
                     } else {
                         localStorage.removeItem('edu_user');
-                        window.location.href = 'index.html';
+                        window.location.href = 'login.html';
                     }
                 })
                 .withFailureHandler(err => {
@@ -176,10 +176,10 @@ function verifySessionAndInit(expectedRole, onSuccessCallback) {
                 .checkServerSession(parsedUser.id);
         } catch (e) {
             localStorage.removeItem('edu_user');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
     } else {
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
     }
 }
 
@@ -222,7 +222,7 @@ function handleLogout() {
             showLoader("Mengakhiri Sesi Pengguna...");
             localStorage.removeItem('edu_user');
             appState.currentUser = null;
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
     });
 }

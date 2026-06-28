@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexco Edu - Masuk Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#1B263B',
+                            slate: '#415A77',
+                            platinum: '#E0E1DD',
+                            dark: '#0E131F',
+                            accent: '#4F46E5',
+                            success: '#10B981',
+                            danger: '#EF4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(65, 90, 119, 0.15);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .dark .glass-panel {
+            background: rgba(27, 38, 59, 0.7);
+            border: 1px solid rgba(65, 90, 119, 0.3);
+        }
+    </style>
+
+    <script src="data.js"></script>
+</head>
+
+<body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
+
+    <!-- GLOBAL INITIAL LOADING SCREEN -->
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
+        <div class="relative flex items-center justify-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
+            <i class="fa-solid fa-graduation-cap text-brand-accent absolute text-xl"></i>
+        </div>
+        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">Memeriksa Sesi Autentikasi...</h3>
+    </div>
+
+    <!-- ================= AUTH: LOGIN SCREEN ================= -->
+    <div id="login-screen" class="hidden flex-1 flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden text-brand-navy dark:text-brand-platinum">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-accent/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-brand-slate/30 rounded-full blur-2xl"></div>
+
+            <div class="text-center mb-8 relative z-10">
+                <div class="inline-flex p-3 bg-brand-slate/20 rounded-2xl mb-3 border border-brand-slate/40 overflow-hidden w-16 h-16 items-center justify-center">
+                    <img src="/image/nexco.jpg" alt="Nexco Edu Logo" class="object-cover w-full h-full rounded-xl"
+                        onerror="this.src='https://placehold.co/120x120/1b263b/ffffff?text=NE'">
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight font-sans">Nexco Edu</h2>
+                <p class="text-xs text-brand-slate dark:text-brand-slate/80 mt-1">Platform Belajar Video & Akses Tools AI Instan</p>
+            </div>
+
+            <form id="login-form" class="space-y-5 relative z-10" autocomplete="off">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Email Pengguna</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="login-email" required autocomplete="off"
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
+                            placeholder="name@domain.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Kata Sandi</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="text" id="login-password" required autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                            class="w-full pl-10 pr-10 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
+                            placeholder="••••••••" style="-webkit-text-security: disc; -moz-text-security: disc;">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-colors" title="Lihat/Sembunyikan Kata Sandi">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-login-submit"
+                    class="w-full py-3 bg-brand-accent hover:bg-opacity-95 text-white font-semibold rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                    Masuk Sekarang <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const storedUser = localStorage.getItem('edu_user');
+            if (storedUser) {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            if (res.active) {
+                                // Redirect otomatis berdasarkan role saat ini
+                                window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
+                            } else {
+                                localStorage.removeItem('edu_user');
+                                hideLoader();
+                                document.getElementById('login-screen').classList.remove('hidden');
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            hideLoader();
+                            document.getElementById('login-screen').classList.remove('hidden');
+                        })
+                        .checkServerSession(parsedUser.id);
+                } catch (e) {
+                    localStorage.removeItem('edu_user');
+                    hideLoader();
+                    document.getElementById('login-screen').classList.remove('hidden');
+                }
+            } else {
+                hideLoader();
+                document.getElementById('login-screen').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            showLoader("Memvalidasi Kredensial & Membuat Sesi...");
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        appState.currentUser = res.user;
+                        localStorage.setItem('edu_user', JSON.stringify(res.user));
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Selamat Datang, ${res.user.nama}!`,
+                            text: 'Sesi disimpan secara lokal di perangkat Anda.',
+                            timer: 1200,
+                            showConfirmButton: false,
+                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+                        }).then(() => {
+                            // Redirect ke halaman UI sesuai role saat login
+                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
+                        });
+                    } else {
+                        hideLoader();
+                        showErrorToast(res.message);
+                    }
+                })
+                .withFailureHandler(err => {
+                    hideLoader();
+                    showErrorToast('Autentikasi gagal: ' + err.toString());
+                })
+                .loginUser(email, pass);
+        });
+    </script>
+</body>
+
+</html>

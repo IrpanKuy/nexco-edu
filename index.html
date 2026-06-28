@@ -1,188 +1,1142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexco Edu - Masuk Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexco Builder - Solusi Web App Tanpa Server & Coding</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans for Modern Clean Aesthetics -->
+  <link rel="icon" href="/image/nexco.jpg" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["Space Mono", "monospace"],
+          },
+          colors: {
+            brand: {
+              blue: "#1E3E62", // Navy Blue
+              lightBlue: "#3B82F6", // Bright Accent Blue
+              dark: "#0B192C", // Deep Navy Dark
+              cream: "#F8FAFC", // Soft Light Background
+              clickbait: "#EA580C", // Eye-catching Orange/Coral highlight
+              success: "#10B981", // Green for Sheets/Success
+            },
+          },
+          boxShadow: {
+            "flat-sm":
+              "0 2px 8px -1px rgba(11, 25, 44, 0.08), 0 1px 3px -1px rgba(11, 25, 44, 0.04)",
+            "flat-md":
+              "0 4px 20px -2px rgba(11, 25, 44, 0.12), 0 2px 8px -1px rgba(11, 25, 44, 0.06)",
+            "flat-lg":
+              "0 10px 25px -5px rgba(11, 25, 44, 0.15), 0 8px 16px -6px rgba(11, 25, 44, 0.1)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 4rem;
+      /* Offset for sticky header (h-16) */
+    }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            navy: '#1B263B',
-                            slate: '#415A77',
-                            platinum: '#E0E1DD',
-                            dark: '#0E131F',
-                            accent: '#4F46E5',
-                            success: '#10B981',
-                            danger: '#EF4444'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
 
-    <style>
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(65, 90, 119, 0.15);
-            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
-        }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
 
-        .dark .glass-panel {
-            background: rgba(27, 38, 59, 0.7);
-            border: 1px solid rgba(65, 90, 119, 0.3);
-        }
-    </style>
+    /* Scroll Reveal Classes */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
+    }
 
-    <script src="data.js"></script>
+    .reveal-section.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 
-<body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
+<body
+  class="bg-brand-cream text-brand-dark font-sans antialiased overflow-x-hidden selection:bg-brand-lightBlue selection:text-white">
+  <!-- Navigation Header -->
+  <header
+    class="sticky top-0 bg-white/95 backdrop-blur-md z-40 border-b border-slate-200/80 shadow-sm transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- 100% Image Logo (No Text alongside) -->
+      <div class="flex items-center">
+        <img src="/image/Nexco Builder.png" alt="Nexco Logo" class="h-9 object-contain" onerror="
+              this.onerror = null;
+              this.src =
+                'https://placehold.co/140x35/0B192C/FFFFFF?text=NEXCO+BUILDER';
+            " />
+      </div>
 
-    <!-- GLOBAL INITIAL LOADING SCREEN -->
-    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-brand-dark text-brand-navy dark:text-brand-platinum">
-        <div class="relative flex items-center justify-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-accent"></div>
-            <i class="fa-solid fa-graduation-cap text-brand-accent absolute text-xl"></i>
-        </div>
-        <h3 class="text-lg font-semibold mt-4 text-brand-navy dark:text-brand-platinum tracking-wide animate-pulse">Memeriksa Sesi Autentikasi...</h3>
+      <!-- Nav Links (Desktop Only) -->
+      <nav class="hidden md:flex items-center gap-6 font-semibold text-slate-600 text-xs tracking-wide">
+        <a href="#what-is-gas" class="hover:text-brand-lightBlue transition-colors">TEKNOLOGI</a>
+        <a href="#capabilities" class="hover:text-brand-lightBlue transition-colors">DEMO</a>
+        <a href="#how-it-works" class="hover:text-brand-lightBlue transition-colors">CARA KERJA</a>
+        <a href="#tools" class="hover:text-brand-lightBlue transition-colors">TOOLS KAMI</a>
+      </nav>
+
+      <!-- Header CTA (Tablet & Desktop Only) -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="#tools"
+          class="inline-flex items-center gap-1.5 bg-brand-blue text-white px-4 py-2 text-xs font-bold rounded-lg shadow-sm hover:bg-brand-dark hover:-translate-y-0.5 transition-all duration-200">
+          Mulai Sekarang <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <!-- Hamburger Button (Mobile Only) -->
+      <div class="flex items-center sm:hidden">
+        <button id="hamburger-btn"
+          class="text-slate-600 hover:text-brand-blue focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition-colors"
+          onclick="toggleMobileMenu()">
+          <i data-lucide="menu" class="w-6 h-6" id="hamburger-icon"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- ================= AUTH: LOGIN SCREEN ================= -->
-    <div id="login-screen" class="hidden flex-1 flex items-center justify-center p-4">
-        <div class="glass-panel p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden text-brand-navy dark:text-brand-platinum">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-accent/20 rounded-full blur-2xl"></div>
-            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-brand-slate/30 rounded-full blur-2xl"></div>
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden sm:hidden bg-white border-t border-slate-200/80 px-4 py-4 space-y-4 shadow-lg">
+      <nav class="flex flex-col gap-3 font-semibold text-slate-600 text-xs tracking-wide">
+        <a href="#what-is-gas" onclick="closeMobileMenu()"
+          class="hover:text-brand-lightBlue py-1 transition-colors">TEKNOLOGI</a>
+        <a href="#capabilities" onclick="closeMobileMenu()"
+          class="hover:text-brand-lightBlue py-1 transition-colors">DEMO</a>
+        <a href="#how-it-works" onclick="closeMobileMenu()"
+          class="hover:text-brand-lightBlue py-1 transition-colors">CARA KERJA</a>
+        <a href="#tools" onclick="closeMobileMenu()" class="hover:text-brand-lightBlue py-1 transition-colors">FITUR</a>
+      </nav>
+      <div class="border-t border-slate-100 pt-3 flex flex-col gap-2.5">
+        <a href="#how-it-works" onclick="closeMobileMenu()"
+          class="text-center text-slate-600 hover:text-brand-lightBlue py-2 text-xs font-bold transition-colors">
+          Pelajari Skema
+        </a>
+        <a href="#how-it-works" onclick="closeMobileMenu()"
+          class="inline-flex items-center justify-center gap-1.5 bg-brand-blue text-white px-4 py-2.5 text-xs font-bold rounded-lg shadow-sm hover:bg-brand-dark transition-all duration-200">
+          Mulai Sekarang <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
 
-            <div class="text-center mb-8 relative z-10">
-                <div class="inline-flex p-3 bg-brand-slate/20 rounded-2xl mb-3 border border-brand-slate/40 overflow-hidden w-16 h-16 items-center justify-center">
-                    <img src="/image/nexco.jpg" alt="Nexco Edu Logo" class="object-cover w-full h-full rounded-xl"
-                        onerror="this.src='https://placehold.co/120x120/1b263b/ffffff?text=NE'">
-                </div>
-                <h2 class="text-2xl font-bold tracking-tight font-sans">Nexco Edu</h2>
-                <p class="text-xs text-brand-slate dark:text-brand-slate/80 mt-1">Platform Belajar Video & Akses Tools AI Instan</p>
+  <!-- Main Content -->
+  <main>
+    <!-- SECTION 1: HERO SECTION (Premium Modern Centered Layout, Dense & Clear Copywriting) -->
+    <section class="relative bg-white py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80">
+      <div class="max-w-4xl mx-auto flex flex-col items-center text-center gap-8">
+        <!-- Copywriting Container (Centered) -->
+        <div class="flex flex-col items-center gap-5">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-snug text-brand-dark">
+            Bangun Aplikasi Web Interaktif <br class="hidden md:inline" />
+            <span
+              class="text-brand-clickbait bg-orange-50 px-3 py-0.5 rounded-lg border border-orange-200/60 inline-block my-1 align-middle">
+              TANPA BIAYA SERVER
+            </span>
+            dan Tanpa Jago Coding!
+          </h1>
+
+          <p class="text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+            Kelola operasional bisnis Anda secara efisien tanpa biaya sewa
+            hosting bulanan. Bangun aplikasi internal dan sistem bisnis yang
+            berjalan stabil di atas Google Apps Script (GAS) dengan database
+            Google Sheets yang terintegrasi secara otomatis.
+          </p>
+
+          <!-- Dense Grid Benefits (Centered container, left-aligned items) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 py-2 max-w-xl mx-auto text-left">
+            <div class="flex items-center gap-2.5 text-slate-700 font-bold text-xs">
+              <span
+                class="bg-blue-50 text-brand-blue p-1 rounded-full border border-blue-100 flex items-center justify-center"><i
+                  data-lucide="check" class="w-3.5 h-3.5"></i></span>
+              Bebas Biaya Hosting Selamanya
+            </div>
+            <div class="flex items-center gap-2.5 text-slate-700 font-bold text-xs">
+              <span
+                class="bg-blue-50 text-brand-blue p-1 rounded-full border border-blue-100 flex items-center justify-center"><i
+                  data-lucide="check" class="w-3.5 h-3.5"></i></span>
+              Google Sheets Sebagai Database
+            </div>
+            <div class="flex items-center gap-2.5 text-slate-700 font-bold text-xs">
+              <span
+                class="bg-blue-50 text-brand-blue p-1 rounded-full border border-blue-100 flex items-center justify-center"><i
+                  data-lucide="check" class="w-3.5 h-3.5"></i></span>
+              Pembuatan Kode Otomatis Berbasis AI
+            </div>
+            <div class="flex items-center gap-2.5 text-slate-700 font-bold text-xs">
+              <span
+                class="bg-blue-50 text-brand-blue p-1 rounded-full border border-blue-100 flex items-center justify-center"><i
+                  data-lucide="check" class="w-3.5 h-3.5"></i></span>
+              Proses Publikasi Instan di Bawah 3 Menit
+            </div>
+          </div>
+
+          <!-- CTA Buttons (Centered) -->
+          <div
+            class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-2 w-full sm:w-auto">
+            <a href="#tools"
+              class="bg-brand-blue text-white px-6 py-3.5 font-bold text-center text-sm rounded-lg shadow-md hover:bg-brand-dark hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5">
+              <i data-lucide="sparkles" class="w-4 h-4"></i> Mulai Sekarang
+            </a>
+            <a target="_blank" href="https://www.youtube.com/watch?v=CYjaALx7khc"
+              class="bg-white text-brand-dark px-5 py-3.5 font-bold text-center text-sm rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 hover:-translate-y-0.5 transition-all duration-200">
+              Lihat Demo
+            </a>
+          </div>
+        </div>
+
+        <!-- Preview Mockup (Positioned Under the Text) -->
+        <div class="w-full max-w-3xl mt-4">
+          <div class="bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden w-full">
+            <!-- Browser Bar -->
+            <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+                <span class="w-3 h-3 rounded-full bg-green-400"></span>
+              </div>
+              <span class="font-mono text-[10px] text-slate-500 font-bold">nexco-integration.apps</span>
+              <div class="w-8"></div>
             </div>
 
-            <form id="login-form" class="space-y-5 relative z-10" autocomplete="off">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Email Pengguna</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
-                            <i class="fa-solid fa-envelope"></i>
-                        </span>
-                        <input type="email" id="login-email" required autocomplete="off"
-                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
-                            placeholder="name@domain.com">
-                    </div>
+            <div class="p-5 space-y-4 bg-slate-50/50">
+              <!-- Visual Row 1: The Input Prompt -->
+              <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl space-y-2 text-left">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-bold text-brand-blue uppercase tracking-wider font-mono">Input Perintah
+                    AI:</span>
+                  <span
+                    class="text-[9px] bg-blue-50 text-brand-blue font-bold px-2 py-0.5 rounded-full border border-blue-100">Sistem
+                    Otomatis</span>
                 </div>
+                <p class="text-xs font-semibold text-slate-700 italic">
+                  "Buatkan formulir pendaftaran member baru terhubung langsung
+                  ke Google Sheets"
+                </p>
+              </div>
 
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-brand-slate">Kata Sandi</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-brand-slate">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="text" id="login-password" required autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-                            class="w-full pl-10 pr-10 py-3 bg-white dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/50 text-brand-navy dark:text-brand-platinum text-sm transition-all"
-                            placeholder="••••••••" style="-webkit-text-security: disc; -moz-text-security: disc;">
-                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-colors" title="Lihat/Sembunyikan Kata Sandi">
-                            <i class="fa-solid fa-eye-slash"></i>
-                        </button>
-                    </div>
+              <!-- Connection Graphic Indicator -->
+              <div class="flex items-center justify-center gap-2 py-1 text-slate-400">
+                <div class="h-[1px] bg-slate-200 w-12"></div>
+                <div class="bg-brand-blue text-white p-2 rounded-full shadow-md">
+                  <i data-lucide="arrow-down" class="w-4 h-4"></i>
                 </div>
+                <div class="h-[1px] bg-slate-200 w-12"></div>
+              </div>
 
-                <button type="submit" id="btn-login-submit"
-                    class="w-full py-3 bg-brand-accent hover:bg-opacity-95 text-white font-semibold rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
-                    Masuk Sekarang <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </form>
+              <!-- Visual Row 2: Generated File Status -->
+              <div class="grid grid-cols-2 gap-4 text-left">
+                <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl">
+                  <div class="flex items-center gap-1.5 text-brand-lightBlue font-bold text-[10px] mb-2">
+                    <i data-lucide="file-code" class="w-4 h-4"></i> HTML & UI
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="h-1.5 bg-slate-100 rounded w-full"></div>
+                    <div class="h-1.5 bg-slate-100 rounded w-10/12"></div>
+                  </div>
+                  <span class="text-[9px] font-mono text-slate-400 block mt-3">index.html (Desain)</span>
+                </div>
+                <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl">
+                  <div class="flex items-center gap-1.5 text-brand-success font-bold text-[10px] mb-2">
+                    <i data-lucide="database" class="w-4 h-4"></i> DB
+                    Connector
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="h-1.5 bg-slate-100 rounded w-11/12"></div>
+                    <div class="h-1.5 bg-slate-100 rounded w-9/12"></div>
+                  </div>
+                  <span class="text-[9px] font-mono text-slate-400 block mt-3">code.gs (Konektor)</span>
+                </div>
+              </div>
+
+              <!-- Integration Status Banner -->
+              <div
+                class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex items-center justify-between text-brand-success text-left">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-brand-success animate-pulse"></span>
+                  <span class="text-xs font-bold text-emerald-800">Status Koneksi: Aktif & Terlindungi</span>
+                </div>
+                <span class="text-[9px] font-bold text-slate-500 uppercase font-mono">Ready to Deploy</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: WHAT IS GOOGLE APPS SCRIPT? (Edukasi & Pembangun Kepercayaan) -->
+    <section id="what-is-gas"
+      class="bg-slate-100/80 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 reveal-section">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col gap-2">
+          <span class="text-brand-blue font-bold tracking-wider text-xs uppercase font-mono">Infrastruktur Google
+            Workspace</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight">
+            Apa itu Google Apps Script (GAS)?
+          </h2>
+          <p class="text-sm text-slate-600 font-medium">
+            Infrastruktur awan resmi dari Google yang memungkinkan aplikasi
+            Anda berjalan secara gratis tanpa biaya hosting bulanan.
+          </p>
+        </div>
+
+        <!-- Structured Modern Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div
+            class="bg-white p-8 border border-slate-200/80 shadow-md rounded-2xl flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center border border-blue-100 font-bold text-sm font-mono">
+              01
+            </div>
+            <h3 class="text-base font-bold text-brand-dark">
+              Infrastruktur Cloud Google
+            </h3>
+            <p class="text-slate-600 text-xs leading-relaxed">
+              Aplikasi Anda berjalan di server Google untuk menjamin kecepatan
+              akses optimal, stabilitas sistem yang tinggi, serta tingkat
+              keamanan data yang maksimal.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div
+            class="bg-white p-8 border border-slate-200/80 shadow-md rounded-2xl flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div
+              class="w-10 h-10 rounded-full bg-emerald-50 text-brand-success flex items-center justify-center border border-emerald-100 font-bold text-sm font-mono">
+              02
+            </div>
+            <h3 class="text-base font-bold text-brand-dark">
+              Google Sheets Sebagai Database
+            </h3>
+            <p class="text-slate-600 text-xs leading-relaxed">
+              Tidak memerlukan konfigurasi database SQL yang rumit. Seluruh
+              data transaksi atau input dari aplikasi Anda akan otomatis
+              tersimpan dengan rapi di Google Sheets.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div
+            class="bg-white p-8 border border-slate-200/80 shadow-md rounded-2xl flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div
+              class="w-10 h-10 rounded-full bg-orange-50 text-brand-clickbait flex items-center justify-center border border-orange-100 font-bold text-sm font-mono">
+              03
+            </div>
+            <h3 class="text-base font-bold text-brand-dark">
+              Bebas Biaya Pemeliharaan
+            </h3>
+            <p class="text-slate-600 text-xs leading-relaxed">
+              Anda tidak perlu memikirkan biaya perpanjangan sertifikat SSL,
+              pembagian RAM, atau pemeliharaan server lainnya. Google
+              mengelola seluruh pemeliharaan infrastruktur secara gratis.
+            </p>
+          </div>
+        </div>
+
+        <!-- High Trust Information Banner (Modern & Smooth) -->
+        <div
+          class="mt-10 bg-white border border-slate-200 shadow-lg rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4 text-left">
+            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 shrink-0">
+              <i data-lucide="shield-check" class="w-7 h-7 text-brand-blue"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-brand-dark">
+                Integrasi Resmi dan Aman
+              </h4>
+              <p class="text-slate-600 text-xs">
+                Aplikasi berjalan secara resmi menggunakan akun Google Anda
+                sendiri dengan memanfaatkan kuota gratis yang disediakan oleh
+                Google Workspace.
+              </p>
+            </div>
+          </div>
+          <div class="w-full md:w-auto shrink-0">
+            <a href="#how-it-works"
+              class="block text-center bg-brand-blue hover:bg-brand-dark text-white px-6 py-2.5 rounded-lg shadow-md text-xs font-bold hover:-translate-y-0.5 transition-all duration-200">
+              Lihat Cara Kerjanya
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: WEBAPP DEMOS SHOWCASE (Asynchronous Tabbed Showcase) -->
+    <section id="capabilities" class="bg-white py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 reveal-section">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-3">
+          <div class="max-w-xl flex flex-col gap-1">
+            <span class="text-brand-clickbait font-bold text-xs uppercase tracking-wider font-mono">Galeri
+              Aplikasi</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight">
+              Contoh WebApp yang Sudah Kami Buat
+            </h2>
+            <p class="text-sm text-slate-600 font-medium">
+              Lihat fungsionalitas nyata aplikasi yang berjalan di atas Google
+              Apps Script.
+            </p>
+          </div>
+          <div class="shrink-0">
+            <span
+              class="inline-block bg-blue-50 text-brand-blue border border-blue-200/80 px-3.5 py-1.5 text-xs font-semibold rounded-full">
+              Terkoneksi Google Sheets secara Real-Time
+            </span>
+          </div>
+        </div>
+
+        <!-- Modern Showcase Tabs Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column: Scrollable List of WebApps (Overflow-Y) -->
+          <div id="demo-tabs-container"
+            class="lg:col-span-4 flex flex-col gap-2.5 max-h-[380px] overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Right Column: Webapp Preview, Description, and Lihat Demo Button -->
+          <div id="demo-details-container"
+            class="lg:col-span-8 bg-slate-50 border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-lg flex flex-col justify-between min-h-[380px]">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE PROCESS (Alur 3 Langkah Sederhana Dengan Hasil Dashboard Di Kanan) -->
+    <section id="how-it-works"
+      class="bg-slate-100/80 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 reveal-section">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col gap-2">
+          <span class="text-brand-blue font-bold tracking-wider text-xs uppercase font-mono">Implementasi Cepat</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight font-sans">
+            Bagaimana Alur Proses Pembuatannya?
+          </h2>
+          <p class="text-sm text-slate-600 font-medium">
+            Panduan singkat menyusun hingga mempublikasikan aplikasi web
+            berbasis Google Sheets Anda.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Step list -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            <!-- Step 1 -->
+            <div
+              class="bg-white p-6 border border-slate-200/80 shadow-md rounded-2xl relative flex flex-col gap-2 hover:shadow-lg transition-all duration-300">
+              <div
+                class="absolute -top-3 -left-2.5 bg-brand-clickbait text-white font-mono font-bold px-3 py-1 rounded-full text-[10px] shadow-sm">
+                LANGKAH 01
+              </div>
+              <h3 class="text-base font-bold text-brand-dark mt-1">
+                Deskripsikan Kebutuhan Aplikasi
+              </h3>
+              <p class="text-slate-600 text-xs leading-relaxed font-medium">
+                Jelaskan tipe aplikasi, kolom input, dan tampilan yang Anda
+                inginkan secara detail menggunakan instruksi bahasa Indonesia
+                pada sistem Nexco Prompt.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div
+              class="bg-white p-6 border border-slate-200/80 shadow-md rounded-2xl relative flex flex-col gap-2 hover:shadow-lg transition-all duration-300">
+              <div
+                class="absolute -top-3 -left-2.5 bg-brand-lightBlue text-white font-mono font-bold px-3 py-1 rounded-full text-[10px] shadow-sm">
+                LANGKAH 02
+              </div>
+              <h3 class="text-base font-bold text-brand-dark mt-1">
+                Dapatkan Kode Aplikasi
+              </h3>
+              <p class="text-slate-600 text-xs leading-relaxed font-medium">
+                Sistem AI akan secara instan menghasilkan kode tampilan (<code
+                  class="bg-slate-100 text-slate-800 font-mono px-1.5 py-0.5 border border-slate-200 text-[10px] rounded font-bold">index.html</code>)
+                dan kode konektor database Google Sheets (<code
+                  class="bg-slate-100 text-slate-800 font-mono px-1.5 py-0.5 border border-slate-200 text-[10px] rounded font-bold">code.gs</code>)
+                yang siap digunakan.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="bg-white p-6 border border-slate-200/80 shadow-md rounded-2xl relative flex flex-col gap-2 hover:shadow-lg transition-all duration-300">
+              <div
+                class="absolute -top-3 -left-2.5 bg-brand-success text-white font-mono font-bold px-3 py-1 rounded-full text-[10px] shadow-sm">
+                LANGKAH 03
+              </div>
+              <h3 class="text-base font-bold text-brand-dark mt-1">
+                Publikasikan Aplikasi Web
+              </h3>
+              <p class="text-slate-600 text-xs leading-relaxed font-medium">
+                Salin kode tersebut ke konsol Google Apps Script di Google
+                Drive Anda, klik tombol deploy, dan dapatkan URL aktif
+                aplikasi web Anda secara instan.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right: Visualisasi Hasil Generate Berupa Dashboard Operasional Terintegrasi -->
+          <div class="lg:col-span-7">
+            <div class="bg-white border border-slate-200 shadow-xl rounded-2xl overflow-hidden">
+              <!-- Mockup Application Topbar -->
+              <div
+                class="bg-brand-blue text-white px-5 py-3 border-b border-brand-blue flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="bg-white/10 text-white w-5 h-5 flex items-center justify-center font-black text-xs rounded">
+                    N
+                  </div>
+                  <span class="text-xs font-mono font-bold tracking-wide">Hasil Webapp: Sistem CRM Penjualan
+                    Mandiri</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-emerald-500 w-2.5 h-2.5 rounded-full inline-block"></span>
+                  <span class="text-[9px] font-mono font-bold">Online</span>
+                </div>
+              </div>
+
+              <!-- Dashboard Mockup Content -->
+              <div class="p-5 bg-slate-50 space-y-4">
+                <!-- Metric Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+                  <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl">
+                    <span class="text-[9px] text-slate-500 font-bold block uppercase tracking-wider font-mono">Total
+                      Prospek</span>
+                    <span class="text-lg font-black text-slate-800">1.248</span>
+                  </div>
+                  <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl">
+                    <span class="text-[9px] text-slate-500 font-bold block uppercase tracking-wider font-mono">Data Baru
+                      Hari Ini</span>
+                    <span class="text-lg font-black text-brand-blue">+24</span>
+                  </div>
+                  <div class="bg-white p-4 border border-slate-200/80 shadow-sm rounded-xl">
+                    <span class="text-[9px] text-slate-500 font-bold block uppercase tracking-wider font-mono">Koneksi
+                      DB</span>
+                    <span
+                      class="text-[10px] bg-emerald-50 text-brand-success font-bold px-2 py-0.5 rounded-full border border-emerald-100 inline-block mt-1">SINKRON</span>
+                  </div>
+                </div>
+
+                <!-- Database Table Sheet Integration Mock -->
+                <div class="bg-white border border-slate-200/80 shadow-sm rounded-xl overflow-hidden">
+                  <div
+                    class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-[10px] font-semibold">
+                    <span class="font-bold text-slate-700 font-mono flex items-center gap-1.5">
+                      <i data-lucide="table" class="w-3.5 h-3.5 text-brand-success"></i>
+                      Sinkronisasi Lembar Kerja Google Sheets
+                    </span>
+                    <span class="text-slate-500 font-mono text-[9px]">Live Update</span>
+                  </div>
+
+                  <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse text-[10px]">
+                      <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-200">
+                          <th class="p-2.5 font-mono font-bold text-slate-600">
+                            Waktu Masuk
+                          </th>
+                          <th class="p-2.5 font-mono font-bold text-slate-600">
+                            Nama Kontak
+                          </th>
+                          <th class="p-2.5 font-mono font-bold text-slate-600">
+                            Jenis Layanan
+                          </th>
+                          <th class="p-2.5 font-mono font-bold text-slate-600">
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100">
+                        <tr>
+                          <td class="p-2.5 font-mono text-slate-500">
+                            2026-06-22 10:14
+                          </td>
+                          <td class="p-2.5 font-bold text-slate-800">
+                            PT. Mulia Sejahtera
+                          </td>
+                          <td class="p-2.5 text-slate-700">
+                            Sewa Server Utama
+                          </td>
+                          <td class="p-2.5">
+                            <span
+                              class="bg-blue-50 text-brand-blue border border-blue-100 text-[9px] font-bold px-2 py-0.5 rounded-full">Diproses</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-2.5 font-mono text-slate-500">
+                            2026-06-22 09:45
+                          </td>
+                          <td class="p-2.5 font-bold text-slate-800">
+                            Hendra Wijaya
+                          </td>
+                          <td class="p-2.5 text-slate-700">
+                            Konsultasi Bisnis
+                          </td>
+                          <td class="p-2.5">
+                            <span
+                              class="bg-emerald-50 text-brand-success border border-emerald-100 text-[9px] font-bold px-2 py-0.5 rounded-full">Sukses</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-2.5 font-mono text-slate-500">
+                            2026-06-22 08:32
+                          </td>
+                          <td class="p-2.5 font-bold text-slate-800">
+                            Siti Rahayu
+                          </td>
+                          <td class="p-2.5 text-slate-700">
+                            Akses Portal Internal
+                          </td>
+                          <td class="p-2.5">
+                            <span
+                              class="bg-emerald-50 text-brand-success border border-emerald-100 text-[9px] font-bold px-2 py-0.5 rounded-full">Sukses</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Action bar of generated dashboard -->
+                <div
+                  class="bg-slate-50/50 p-3 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+                  <span class="flex items-center gap-1 font-mono text-[10px]"><i data-lucide="refresh-cw"
+                      class="w-3 h-3 text-slate-400"></i>
+                    Auto-refresh data setiap 5 detik</span>
+                  <button
+                    class="bg-brand-blue hover:bg-brand-dark text-white px-3.5 py-1.5 text-[10px] font-bold rounded-lg shadow-sm font-mono flex items-center gap-1.5 transition-all">
+                    <i data-lucide="download" class="w-3 h-3"></i> Ekspor CSV
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: WHAT THEY SAY (Ulasan & Kepercayaan Indonesia) -->
+    <section id="testimonials" class="bg-white py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 reveal-section">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col gap-2">
+          <span class="text-brand-blue font-bold tracking-wider text-xs uppercase font-mono">Ulasan Klien</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight">
+            Review Pelaku Usaha & Pengembang Digital
+          </h2>
+          <p class="text-sm text-slate-600 font-medium">
+            Testimoni pengguna yang berhasil mengefisiensikan anggaran sewa
+            server secara optimal.
+          </p>
+        </div>
+
+        <!-- Testimonial Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Review 1 -->
+          <div
+            class="bg-slate-50 p-6 border border-slate-200 shadow-md rounded-2xl flex flex-col justify-between gap-4 hover:shadow-lg transition-all duration-300">
+            <div class="space-y-3">
+              <div class="flex gap-0.5 text-amber-500">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              </div>
+              <p class="text-slate-700 text-xs font-medium leading-relaxed italic">
+                "Dulu pusing mikirin biaya langganan bulanan untuk aplikasi
+                kasir (POS) toko. Pas coba pakai Nexco Builder, saya bisa
+                bikin webapp POS sendiri yang datanya langsung masuk ke Google
+                Sheets. Beneran gratis tis, ga perlu pusing sewa server lagi
+                tiap bulan."
+              </p>
+            </div>
+            <div class="flex items-center gap-3 pt-3.5 border-t border-slate-200">
+              <div
+                class="w-9 h-9 rounded-full bg-brand-blue text-white font-bold flex items-center justify-center text-xs shadow-sm font-mono">
+                BS
+              </div>
+              <div>
+                <h4 class="font-bold text-xs text-brand-dark">
+                  Budi Santoso
+                </h4>
+                <span class="text-[9px] text-slate-500 font-semibold block">Owner Kopi & Retail Sejahtera</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 2 -->
+          <div
+            class="bg-slate-50 p-6 border border-slate-200 shadow-md rounded-2xl flex flex-col justify-between gap-4 hover:shadow-lg transition-all duration-300">
+            <div class="space-y-3">
+              <div class="flex gap-0.5 text-amber-500">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              </div>
+              <p class="text-slate-700 text-xs font-medium leading-relaxed italic">
+                "Biasanya keuangan boros bgt, gatau keluar dimana. tapi
+                setelah tau Tools ini, aku bisa bikin WebApp manajemen
+                keuangan sendiri, Ada Chatbotnya lagi, Akhirnya yang
+                sebelumnya berantakan sekarang jadi teratur"
+              </p>
+            </div>
+            <div class="flex items-center gap-3 pt-3.5 border-t border-slate-200">
+              <div
+                class="w-9 h-9 rounded-full bg-brand-clickbait text-white font-bold flex items-center justify-center text-xs shadow-sm font-mono">
+                HL
+              </div>
+              <div>
+                <h4 class="font-bold text-xs text-brand-dark">
+                  Hesti Larasati
+                </h4>
+                <span class="text-[9px] text-slate-500 font-semibold block">Pekerja Lepas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review 3 -->
+          <div
+            class="bg-slate-50 p-6 border border-slate-200 shadow-md rounded-2xl flex flex-col justify-between gap-4 hover:shadow-lg transition-all duration-300">
+            <div class="space-y-3">
+              <div class="flex gap-0.5 text-amber-500">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              </div>
+              <p class="text-slate-700 text-xs font-medium leading-relaxed italic">
+                "Manajemen inventaris barang masuk dan keluar sekarang jauh
+                lebih praktis. Pakai webapp inventaris bikinan Nexco, tim
+                gudang ga perlu lagi update stok manual lewat laptop. Semua
+                real-time terupdate dari handphone masing-masing dan sinkron
+                ke spreadsheet utama."
+              </p>
+            </div>
+            <div class="flex items-center gap-3 pt-3.5 border-t border-slate-200">
+              <div
+                class="w-9 h-9 rounded-full bg-brand-success text-white font-bold flex items-center justify-center text-xs shadow-sm font-mono">
+                RW
+              </div>
+              <div>
+                <h4 class="font-bold text-xs text-brand-dark">Rian Wijaya</h4>
+                <span class="text-[9px] text-slate-500 font-semibold block">Kepala Gudang PT Logistik Nusantara</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: TOOLS & FITUR UTAMA (Spesifikasi Teknis & Gambar Pendukung) -->
+    <section id="tools" class="bg-slate-100/80 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 reveal-section">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col gap-2">
+          <span class="text-brand-blue font-bold tracking-wider text-xs uppercase font-mono">Modul Utama Nexco</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight">
+            Tools Unggulan Kami
+          </h2>
+          <p class="text-sm text-slate-600 font-medium">
+            Setiap fungsionalitas dirancang khusus untuk mengoptimalkan WebApp
+            Anda.
+          </p>
+        </div>
+
+        <!-- Feature Card Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <!-- Tool 1: UI Form Generator -->
+          <div
+            class="bg-white border border-slate-200 shadow-md rounded-2xl overflow-hidden flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <!-- Clean Image Representing Feature in 1:1 Aspect Ratio -->
+              <div class="w-full aspect-square overflow-hidden bg-slate-50 border-b border-slate-200">
+                <img src="/tools image/webapp.jpg
+                " alt="Responsive UI Generator" class="w-full h-full object-cover" onerror="
+                      this.onerror = null;
+                      this.src =
+                        'https://placehold.co/400x400/0B192C/FFFFFF?text=UI+Generator';
+                    " />
+              </div>
+
+              <div class="p-5 space-y-3">
+
+                <h3 class="text-sm font-extrabold text-brand-dark">
+                  Nexco WebApp Builder V2
+                </h3>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  Nexco WebApp Builder v2 adalah Gemini Gems yang dirancang
+                  khusus buat membantu kamu bikin aplikasi web (dashboard,
+                  landing page) secara otomatis lewat Google Apps Script dan
+                  Google Sheets. Gak perlu jago bahasa pemrograman, tinggal
+                  pakai AI!
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a target="_blank" href="https://lynk.id/nexco-builder/9j26q1mnvwm8"
+                class="w-full bg-brand-blue hover:bg-brand-dark text-white text-xs font-bold py-3.5 px-4 rounded-xl shadow-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5">
+                Detail Fitur Lengkap
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Tool 2: Database Sync Connector -->
+          <div
+            class="bg-white border border-slate-200 shadow-md rounded-2xl overflow-hidden flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <!-- Clean Image Representing Feature in 1:1 Aspect Ratio -->
+              <div class="w-full aspect-square overflow-hidden bg-slate-50 border-b border-slate-200">
+                <img src="/tools image/webbot.jpg" alt="Spreadsheet DB Connector" class="w-full h-full object-cover"
+                  onerror="
+                      this.onerror = null;
+                      this.src =
+                        'https://placehold.co/400x400/0B192C/FFFFFF?text=Database+Sync';
+                    " />
+              </div>
+
+              <div class="p-5 space-y-3">
+
+                <h3 class="text-sm font-extrabold text-brand-dark">
+                  Nexco Chatbot + WebApp Builder
+                </h3>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  Dengan Nexco Chatbot + WebApp Builder, kamu bisa
+                  nge-generate aplikasi web dan chatbot canggih secara
+                  otomatis. Semuanya di-build langsung menggunakan bantuan AI
+                  dan berjalan di atas Google Apps Script serta Google Sheets.
+                  Gak perlu langganan server yang mahal!
+                </p>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a target="_blank" href="https://lynk.id/nexco-builder/lz91xmemxev8"
+                class="w-full bg-brand-blue hover:bg-brand-dark text-white text-xs font-bold py-3.5 px-4 rounded-xl shadow-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5">
+                Detail Fitur Lengkap
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: FINAL CTA & FOOTER (Konversi Akhir Formal) -->
+    <section class="bg-brand-dark text-white py-16 px-4 sm:px-6 lg:px-8 relative">
+      <div class="max-w-4xl mx-auto text-center flex flex-col gap-6 relative z-10">
+        <span class="text-brand-lightBlue font-mono font-bold tracking-widest uppercase text-xs">OPTIMALKAN ANGGARAN
+          OPERASIONAL SEKARANG</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight text-white">
+          Mulai Bangun Aplikasi Web Anda Hari Ini!
+        </h2>
+        <p class="text-slate-300 text-xs md:text-sm max-w-2xl mx-auto font-medium leading-relaxed">
+          Tidak memerlukan kartu kredit atau biaya sewa hosting bulanan.
+          Gunakan Nexco Webapp Builder untuk mempublikasikan aplikasi kustom
+          Anda secara gratis selamanya.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-2">
+          <a href="#tools"
+            class="bg-brand-clickbait hover:bg-brand-clickbait/90 text-white px-6 py-3.5 font-bold text-center text-sm rounded-lg shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4"></i> Mulai Sekarang
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Comprehensive Footer Sitemap -->
+      <div
+        class="max-w-7xl mx-auto mt-16 pt-12 border-t border-slate-800 grid grid-cols-1 md:grid-cols-12 gap-8 text-left text-xs text-slate-400">
+        <!-- Logo & Description -->
+        <div class="md:col-span-6 space-y-4">
+          <img src="/image/Nexco Builder.png" alt="Nexco Logo" class="h-9 object-contain brightness-0 invert" onerror="
+                this.onerror = null;
+                this.src =
+                  'https://placehold.co/140x35/1E3E62/FFFFFF?text=NEXCO+BUILDER';
+              " />
+          <p class="leading-relaxed text-slate-400 font-medium">
+            Nexco Webapp Builder adalah platform independen yang membantu
+            pelaku usaha, UKM, dan pengembang di Indonesia membangun sistem
+            aplikasi berbasis cloud tanpa biaya sewa server bulanan.
+          </p>
+          <div class="flex gap-3 text-slate-300">
+            <a href="#" class="p-2 bg-slate-800 hover:bg-slate-700 transition-colors rounded-lg"><i
+                data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a href="#" class="p-2 bg-slate-800 hover:bg-slate-700 transition-colors rounded-lg"><i data-lucide="github"
+                class="w-4 h-4"></i></a>
+            <a href="#" class="p-2 bg-slate-800 hover:bg-slate-700 transition-colors rounded-lg"><i
+                data-lucide="linkedin" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+
+        <!-- Menu Section Links -->
+        <div class="md:col-span-3">
+          <h4 class="font-bold text-white uppercase tracking-wider mb-4 font-mono text-[10px]">
+            Navigasi Halaman
+          </h4>
+          <ul class="space-y-2.5 font-medium text-slate-400">
+            <li>
+              <a href="#what-is-gas" class="hover:text-white transition-colors">TEKNOLOGI</a>
+            </li>
+            <li>
+              <a href="#capabilities" class="hover:text-white transition-colors">DEMO</a>
+            </li>
+            <li>
+              <a href="#how-it-works" class="hover:text-white transition-colors">CARA KERJA</a>
+            </li>
+            <li>
+              <a href="#tools" class="hover:text-white transition-colors">FITUR</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- WhatsApp Consultation Column -->
+        <div class="md:col-span-3 space-y-4">
+          <h4 class="font-bold text-white uppercase tracking-wider font-mono text-[10px]">
+            Konsultasi Gratis
+          </h4>
+          <p class="leading-relaxed text-slate-400 font-medium">
+            Diskusikan kebutuhan sistem aplikasi bisnis kustom Anda bersama
+            tim ahli kami tanpa dipungut biaya.
+          </p>
+          <div class="pt-1">
+            <a target="_blank"
+              href="https://wa.me/6289683889798?text=Halo%20Nexco%20Builder%2C%20saya%20tertarik%20untuk%20konsultasi%20gratis%20mengenai%20WebApp."
+              class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-5 rounded-xl shadow-md hover:-translate-y-0.5 transition-all duration-200 w-full">
+              <i data-lucide="message-square" class="w-4 h-4"></i> Konsultasi
+              Gratis
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="max-w-7xl mx-auto pt-8 border-t border-slate-800/80 mt-12 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-left">
+        <span>© 2026 Nexco Webapp Builder. Hak Cipta Dilindungi. Seluruh
+          infrastruktur server dilayani oleh Google Apps Script.</span>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
+          <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+          <a href="#" class="hover:text-white transition-colors">Legalitas Google Sandbox</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- SCRIPT LOGIC FOR INTERACTIONS -->
+  <script>
+    // Data untuk Contoh Demo WebApp
+    const demoData = [
+      {
+        id: "crm",
+        name: "WebApp Inventaris Dengan Chatbot",
+        badge: "WebApp + Chatbot",
+        title: "Gas UMKM",
+        description:
+          "Gas UMKM adalah solusi platform manajemen inventaris (webapp) berbasis digital yang dirancang khusus untuk meningkatkan efisiensi operasional dan akurasi tata kelola logistik usaha. Berbeda dengan sistem konvensional, platform ini mengintegrasikan Gas Gem AI Asisten (berbasis teknologi mutakhir Gemini 3.1 Flash-Lite) yang memungkinkan pengelolaan database dan analisis data dilakukan secara dinamis melalui antarmuka percakapan (chat-based interface).<br/><br/> Akun Login: <br/> Usename: admin <br/> Password: admin123 <br/> Lalu ke pengaturan > Klik simpan Api Key agar Kalian bisa coba chatbotnya",
+        imageUrl: "/demo image/inventaris.jpg",
+        browserUrl:
+          "https://script.google.com/macros/s/AKfycbx88seLsCE3Unc7Gyvf5v2Asy1m080Y-10gsMpghw6HN7--fZJDGSfStsCSjCHY29ts/exec",
+      },
+      {
+        id: "tahfidz",
+        name: "WebApp Pencatatan Tahfidz",
+        badge: "WebApp",
+        title: "TahfidzQ ",
+        description:
+          "TahfidzQ adalah sebuah platform berbasis web responsif (webapp) yang dikembangkan untuk memodernisasi tata kelola dan pencatatan progres hafalan Al-Qur'an secara digital. Mengusung peran (role) khusus seperti Santri, aplikasi ini menyajikan transparansi data perkembangan interaksi ayat secara instan, akurat, dan dapat diakses kapan saja melalui perangkat seluler.<br/><br/> Akun Login: <br/> Usename(pengajar): hanan <br/> Password: 123 <br/><br/> Usename(santri): Yusuf  <br/> Password: 123 <br/>",
+        imageUrl: "/demo image/tahfidz.webp",
+        browserUrl:
+          "https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec",
+      },
+      {
+        id: "perpus",
+        name: "WebApp Manajemen Perpustakaan",
+        badge: "WebApp",
+        title: "Pustaka Pro ",
+        description:
+          "Pustaka Pro adalah platform web-based application (Administrator Console) yang dirancang khusus untuk digitalisasi, otomatisasi, dan optimalisasi tata kelola operasional perpustakaan atau pusat dokumentasi. Mengusung konsep dasbor terpadu (Dashboard Overview), sistem ini menyajikan metrik performa sirkulasi dan manajemen data secara transparan, akurat, dan real-time.<br/><br/> Akun Login: <br/> Usename: admin <br/> Password: admin123 <br/>",
+        imageUrl: "/demo image/perpus.webp",
+        browserUrl:
+          "https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec",
+      },
+      {
+        id: "uang",
+        name: "WebApp Manajemen Keuangan  + Chatbot",
+        badge: "wwebApp + Chatbot",
+        title: "Dompet Pintar ",
+        description:
+          "Dompet Pintar adalah sebuah platform aplikasi seluler responsif (web-based mobile application) yang dikembangkan untuk memfasilitasi pencatatan, pelacakan, dan analisis tata kelola finansial pada skala personal secara digital. Sistem ini dirancang untuk mengatasi kompleksitas pengelolaan arus kas harian melalui penyajian agregasi data yang terstruktur, akurat, dan berbasis data (data-driven).<br/> untuk coba Chatbot, ke pengaturan > Klik simpan Api Key agar Kalian, lalu kalian bisa Chat dengan Chatbotnya",
+        imageUrl: "/demo image/uang.webp",
+        browserUrl:
+          "https://script.google.com/macros/s/AKfycbwtFBCZ1tKT81yoRhHlo8113_S3Y_Bu1_gdoNBMsJc4EfH-ZA9rzCvEX9BXXrrNCE3m9w/exec",
+      },
+    ];
+
+    let currentActiveTabId = "crm";
+
+    function renderDemoShowcase() {
+      const tabsContainer = document.getElementById("demo-tabs-container");
+      const detailsContainer = document.getElementById(
+        "demo-details-container",
+      );
+
+      if (!tabsContainer || !detailsContainer) return;
+
+      // 1. Render Left Column Tabs
+      tabsContainer.innerHTML = demoData
+        .map((item) => {
+          const isActive = item.id === currentActiveTabId;
+          const activeClass = isActive
+            ? "tab-btn text-left p-4 bg-brand-blue text-white font-bold flex items-center justify-between shadow-md rounded-xl transition-all text-xs tracking-wide w-full"
+            : "tab-btn text-left p-4 bg-slate-50 text-slate-700 hover:text-brand-blue font-bold flex items-center justify-between border border-slate-200/60 rounded-xl transition-all text-xs tracking-wide w-full";
+          return `
+            <button
+              onclick="switchCapTab('${item.id}')"
+              id="tab-btn-${item.id}"
+              class="${activeClass}"
+            >
+              <span class="flex items-center gap-2">
+                <i data-lucide="${item.icon}" class="w-4 h-4"></i> ${item.name}
+              </span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          `;
+        })
+        .join("");
+
+      // 2. Find Active Data
+      const activeItem =
+        demoData.find((item) => item.id === currentActiveTabId) ||
+        demoData[0];
+
+      // 3. Render Right Column Content
+      detailsContainer.innerHTML = `
+          <div class="w-full space-y-4">
+            <!-- Thumbnail Image of WebApp (Diatas Judul) -->
+            <div class="w-full bg-slate-200 rounded-xl border border-slate-200 overflow-hidden shadow-inner relative group">
+  <div class="absolute top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 flex items-center justify-end z-10">
+    <div class="flex gap-1">
+      <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
     </div>
+  </div>
+  
+  <img
+    src="${activeItem.imageUrl}"
+    alt="${activeItem.name} Demo"
+    class="w-full h-auto block hover:scale-105 transition-transform duration-500"
+  />
+</div>
 
-    <script>
-        window.addEventListener('load', () => {
-            const storedUser = localStorage.getItem('edu_user');
-            if (storedUser) {
-                try {
-                    const parsedUser = JSON.parse(storedUser);
-                    google.script.run
-                        .withSuccessHandler(res => {
-                            if (res.active) {
-                                // Redirect otomatis berdasarkan role saat ini
-                                window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
-                            } else {
-                                localStorage.removeItem('edu_user');
-                                hideLoader();
-                                document.getElementById('login-screen').classList.remove('hidden');
-                            }
-                        })
-                        .withFailureHandler(err => {
-                            hideLoader();
-                            document.getElementById('login-screen').classList.remove('hidden');
-                        })
-                        .checkServerSession(parsedUser.id);
-                } catch (e) {
-                    localStorage.removeItem('edu_user');
-                    hideLoader();
-                    document.getElementById('login-screen').classList.remove('hidden');
-                }
-            } else {
-                hideLoader();
-                document.getElementById('login-screen').classList.remove('hidden');
+            <div class="pt-2 space-y-2">
+              <span class="text-[10px] font-bold text-brand-blue uppercase tracking-wider block font-mono">${activeItem.badge}</span>
+              <h3 class="text-lg sm:text-xl font-extrabold text-brand-dark leading-snug">${activeItem.title}</h3>
+              <p class="text-slate-600 text-xs leading-relaxed">${activeItem.description}</p>
+            </div>
+          </div>
+
+          <!-- Card Footer Actions: Tombol Lihat Demo -->
+          <div class="border-t border-slate-200 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 w-full">
+            <span class="text-xs text-slate-500 font-medium">Keunggulan utama: Terkoneksi Google Sheets secara asinkron dan bebas biaya server.</span>
+            <a target="_blank"
+              href="${activeItem.browserUrl}"
+              class="inline-flex items-center justify-center gap-1.5 bg-brand-blue hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl shadow-md text-xs font-bold hover:-translate-y-0.5 transition-all duration-200 shrink-0"
+            >
+              Lihat Demo
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        `;
+
+      // Reinitialize Lucide Icons for Dynamically Created Elements
+      lucide.createIcons();
+    }
+
+    function switchCapTab(activeTabId) {
+      currentActiveTabId = activeTabId;
+      renderDemoShowcase();
+    }
+
+    // Initialize Lucide Icons & Render Showcase
+    lucide.createIcons();
+    renderDemoShowcase();
+
+    // Mobile Menu Interactions
+    function toggleMobileMenu() {
+      const menu = document.getElementById("mobile-menu");
+      const icon = document.getElementById("hamburger-icon");
+      if (menu.classList.contains("hidden")) {
+        menu.classList.remove("hidden");
+        icon.setAttribute("data-lucide", "x");
+      } else {
+        menu.classList.add("hidden");
+        icon.setAttribute("data-lucide", "menu");
+      }
+      lucide.createIcons();
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById("mobile-menu");
+      const icon = document.getElementById("hamburger-icon");
+      menu.classList.add("hidden");
+      icon.setAttribute("data-lucide", "menu");
+      lucide.createIcons();
+    }
+
+    // Scroll Reveal Intersection Observer
+    document.addEventListener("DOMContentLoaded", () => {
+      const revealElements = document.querySelectorAll(".reveal-section");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+              observer.unobserve(entry.target);
             }
-        });
+          });
+        },
+        {
+          threshold: 0.05,
+          rootMargin: "0px 0px -40px 0px",
+        },
+      );
 
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value.trim();
-
-            showLoader("Memvalidasi Kredensial & Membuat Sesi...");
-
-            google.script.run
-                .withSuccessHandler(res => {
-                    if (res.success) {
-                        appState.currentUser = res.user;
-                        localStorage.setItem('edu_user', JSON.stringify(res.user));
-                        Swal.fire({
-                            icon: 'success',
-                            title: `Selamat Datang, ${res.user.nama}!`,
-                            text: 'Sesi disimpan secara lokal di perangkat Anda.',
-                            timer: 1200,
-                            showConfirmButton: false,
-                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
-                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
-                        }).then(() => {
-                            // Redirect ke halaman UI sesuai role saat login
-                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
-                        });
-                    } else {
-                        hideLoader();
-                        showErrorToast(res.message);
-                    }
-                })
-                .withFailureHandler(err => {
-                    hideLoader();
-                    showErrorToast('Autentikasi gagal: ' + err.toString());
-                })
-                .loginUser(email, pass);
-        });
-    </script>
+      revealElements.forEach((el) => observer.observe(el));
+    });
+  </script>
 </body>
 
 </html>
