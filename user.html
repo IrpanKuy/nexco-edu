@@ -1522,15 +1522,33 @@
                         isConfirmCrud: isConfirmCrud.value
                     };
 
-                    const systemPrompt = `Anda adalah AI Assistant cerdas yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? (activeTab.value === "ai" ? "Web Application Dashboard dengan Asisten AI" : "Web Application Dashboard") : "Marketing Landing Page"}. 
-Perbarui konfigurasi JSON berdasarkan instruksi pengguna.
+                    const systemPrompt = `Anda adalah AI Assistant cerdas & konsultan arsitektur sistem ahli yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? (activeTab.value === "ai" ? "Web Application Dashboard dengan Asisten AI" : "Web Application Dashboard") : "Marketing Landing Page"}. 
+Perbarui konfigurasi JSON berdasarkan instruksi pengguna dengan pemikiran analisis yang mendalam.
+
+ATURAN PERANCANGAN STRUKTUR ROLE & FITUR KHUSUS:
+1. Analisis Perintah Pengguna: Pikirkan secara cermat jenis aplikasi yang diminta. Analisis berapa jumlah role yang paling ideal, relevan, dan logis untuk aplikasi tersebut (contoh: apakah cukup 1 role, 2 role seperti Admin & Pembeli, atau 3 role seperti Admin, Kasir, & Pelanggan).
+2. Perancangan Fitur Spesifik: Jangan gunakan nama fitur generik. Buat daftar fitur yang sangat cocok, spesifik, dan realistis sesuai alur kerja bisnis nyata aplikasi yang diminta pengguna.
+3. Keselarasan Kontekstual: Pastikan seluruh nama role dan fitur yang dihasilkan 100% cocok dan saling mendukung sesuai skenario penggunaan aplikasi oleh pengguna.
 
 STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
 {
-  "appName": "string (Bahasa Indonesia)",
-  "appDescription": "string (Bahasa Indonesia)",
-  "roles": [ { "name": "string (Bahasa Indonesia)", "features": ["string (Bahasa Indonesia)"], "aiAssistant": boolean } ](Jangan lebih dari 2 role),
-  "sections": [ { "name": "string (Bahasa Indonesia)", "type": "string", "description": "string (Bahasa Indonesia)", "elements": ["string (Bahasa Indonesia)"] } ],
+  "appName": "string (Nama aplikasi yang menarik & relevan)",
+  "appDescription": "string (Deskripsi singkat tujuan & visi sistem)",
+  "roles": [ 
+    { 
+      "name": "string (Nama Role yang sangat cocok dengan konteks aplikasi)", 
+      "features": ["string (Daftar menu/fitur spesifik & realistis untuk role ini)"], 
+      "aiAssistant": boolean 
+    } 
+  ],
+  "sections": [ 
+    { 
+      "name": "string (Nama section halaman)", 
+      "type": "string (Tipe section)", 
+      "description": "string (Deskripsi/tujuan section)", 
+      "elements": ["string (Elemen/komponen di dalam section)"] 
+    } 
+  ],
   "design": { 
     "styleDesign": "string", 
     "menuType": "string (HANYA 'sidebar', 'navbar', atau 'bottom')", 
@@ -1540,7 +1558,7 @@ STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
   "isOptimisticUI": boolean,
   "isSweetAlert": boolean,
   "isConfirmCrud": boolean,
-  "aiExplanation": "Penjelasan singkat dalam Bahasa Indonesia tentang perubahan rancangan"
+  "aiExplanation": "Penjelasan mendalam dalam Bahasa Indonesia tentang alasan pemilihan jumlah role, struktur fitur, serta kesesuaiannya dengan perintah pengguna"
 }
 KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
 
