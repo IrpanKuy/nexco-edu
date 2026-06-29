@@ -1526,27 +1526,28 @@
 Perbarui konfigurasi JSON berdasarkan instruksi pengguna dengan pemikiran analisis yang mendalam.
 
 ATURAN PERANCANGAN STRUKTUR ROLE & FITUR KHUSUS:
-1. Analisis Perintah Pengguna: Pikirkan secara cermat jenis aplikasi yang diminta. Analisis berapa jumlah role yang paling ideal, relevan, dan logis untuk aplikasi tersebut (contoh: apakah cukup 1 role, 2 role seperti Admin & Pembeli, atau 3 role seperti Admin, Kasir, & Pelanggan).
-2. Perancangan Fitur Spesifik: Jangan gunakan nama fitur generik. Buat daftar fitur yang sangat cocok, spesifik, dan realistis sesuai alur kerja bisnis nyata aplikasi yang diminta pengguna.
-3. Keselarasan Kontekstual: Pastikan seluruh nama role dan fitur yang dihasilkan 100% cocok dan saling mendukung sesuai skenario penggunaan aplikasi oleh pengguna.
+1. WAJIB BAHASA INDONESIA: Seluruh nama aplikasi, nama role, daftar menu/fitur, nama section, deskripsi, dan elemen hasil generasi HARUS 100% menggunakan Bahasa Indonesia yang alami, jelas, dan profesional (DILARANG keras menggunakan bahasa Inggris untuk nama role dan fitur, contoh gunakan 'Pengelola Sistem' / 'Manajer' / 'Pembeli', BUKAN 'Admin' / 'Manager' / 'Buyer').
+2. Analisis Perintah Pengguna: Pikirkan secara cermat jenis aplikasi yang diminta. Analisis berapa jumlah role yang paling ideal, relevan, dan logis untuk aplikasi tersebut (contoh: apakah cukup 1 role personal, 2 role seperti Pengelola & Pembeli, atau 3 role seperti Manajer, Kasir, & Pelanggan).
+3. Perancangan Fitur Spesifik: Jangan gunakan nama fitur generik. Buat daftar fitur dalam Bahasa Indonesia yang sangat cocok, spesifik, dan realistis sesuai alur kerja bisnis nyata aplikasi yang diminta pengguna.
+4. Keselarasan Kontekstual: Pastikan seluruh nama role dan fitur yang dihasilkan 100% cocok dan saling mendukung sesuai skenario penggunaan aplikasi oleh pengguna.
 
 STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
 {
-  "appName": "string (Nama aplikasi yang menarik & relevan)",
-  "appDescription": "string (Deskripsi singkat tujuan & visi sistem)",
+  "appName": "string (Nama aplikasi yang menarik dalam Bahasa Indonesia)",
+  "appDescription": "string (Deskripsi singkat tujuan & visi sistem dalam Bahasa Indonesia)",
   "roles": [ 
     { 
-      "name": "string (Nama Role yang sangat cocok dengan konteks aplikasi)", 
-      "features": ["string (Daftar menu/fitur spesifik & realistis untuk role ini)"], 
+      "name": "string (Nama Role WAJIB Bahasa Indonesia, contoh: Pengelola Toko, Manajer Gudang, Pembeli)", 
+      "features": ["string (Daftar menu/fitur spesifik & realistis dalam Bahasa Indonesia)"], 
       "aiAssistant": boolean 
     } 
   ],
   "sections": [ 
     { 
-      "name": "string (Nama section halaman)", 
+      "name": "string (Nama section halaman dalam Bahasa Indonesia)", 
       "type": "string (Tipe section)", 
-      "description": "string (Deskripsi/tujuan section)", 
-      "elements": ["string (Elemen/komponen di dalam section)"] 
+      "description": "string (Deskripsi/tujuan section dalam Bahasa Indonesia)", 
+      "elements": ["string (Elemen/komponen di dalam section dalam Bahasa Indonesia)"] 
     } 
   ],
   "design": { 
