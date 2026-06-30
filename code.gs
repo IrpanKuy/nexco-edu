@@ -358,7 +358,7 @@ function saveVideoOnServer(payload) {
           });
           SpreadsheetApp.flush();
           
-          const updatedObj = { id: payload.id, ...mappedData, created_at: rows[i][7] };
+           const updatedObj = { id: payload.id, ...mappedData, created_at: formatHelperDate(rows[i][7]) };
           return { success: true, data: updatedObj };
         }
       }
@@ -417,7 +417,7 @@ function saveCategoryOnServer(payload) {
           const rowNum = i + 1;
           sheet.getRange(rowNum, 2).setValue(payload.nama);
           SpreadsheetApp.flush();
-          return { success: true, data: { id: payload.id, nama: payload.nama, created_at: rows[i][2] } };
+          return { success: true, data: { id: payload.id, nama: payload.nama, created_at: formatHelperDate(rows[i][2]) } };
         }
       }
       throw new Error("Kategori tidak ditemukan.");
@@ -480,7 +480,7 @@ function saveGemOnServer(payload) {
             }
           });
           SpreadsheetApp.flush();
-          return { success: true, data: { id: payload.id, ...mappedData, created_at: rows[i][headers.indexOf('created_at')] } };
+           return { success: true, data: { id: payload.id, ...mappedData, created_at: formatHelperDate(rows[i][headers.indexOf('created_at')]) } };
         }
       }
       throw new Error("Tools AI tidak ditemukan.");
@@ -720,5 +720,19 @@ function deletePromptOnServer(id) {
     return { success: false, message: "Data tidak ditemukan." };
   } catch (e) {
     return { success: false, message: e.toString() };
+  }
+}
+
+// Helper: Format raw Google Sheets Date object or value to ISO String for safe JSON serialization
+function formatHelperDate(val) {
+  if (val instanceof Date) {
+    return val.toISOString();
+  }
+  if (!val) return new Date().toISOString();
+  try {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? String(val) : d.toISOString();
+  } catch (e) {
+    return String(val);
   }
 }

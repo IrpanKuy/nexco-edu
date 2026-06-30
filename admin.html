@@ -800,27 +800,71 @@
         document.getElementById('video-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-video-id').value;
+            const judul = document.getElementById('crud-video-judul').value.trim();
+            const kategori_id = document.getElementById('crud-video-kategori').value;
+            const urutan = parseInt(document.getElementById('crud-video-urutan').value) || 1;
+            const video_url = document.getElementById('crud-video-url').value.trim();
+            const ebook_url = document.getElementById('crud-video-ebook').value.trim();
+            const deskripsi = document.getElementById('crud-video-deskripsi').value.trim();
+
             const payload = {
                 id: id || null,
-                judul: document.getElementById('crud-video-judul').value.trim(),
-                kategori_id: document.getElementById('crud-video-kategori').value,
-                urutan: parseInt(document.getElementById('crud-video-urutan').value),
-                video_url: document.getElementById('crud-video-url').value.trim(),
-                ebook_url: document.getElementById('crud-video-ebook').value.trim(),
-                deskripsi: document.getElementById('crud-video-deskripsi').value.trim()
+                judul: judul,
+                kategori_id: kategori_id,
+                urutan: urutan,
+                video_url: video_url,
+                ebook_url: ebook_url,
+                deskripsi: deskripsi
             };
 
-            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            const backupVideos = [...appState.videos];
+            const tempId = id || 'v_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            const itemObj = {
+                id: tempId,
+                judul: judul,
+                kategori_id: kategori_id,
+                urutan: urutan,
+                video_url: video_url,
+                ebook_url: ebook_url,
+                deskripsi: deskripsi,
+                created_at: timestamp
+            };
+
+            if (id) {
+                const idx = appState.videos.findIndex(v => v.id === id);
+                if (idx !== -1) {
+                    itemObj.created_at = appState.videos[idx].created_at || timestamp;
+                    appState.videos[idx] = itemObj;
+                }
+            } else {
+                appState.videos.push(itemObj);
+            }
+
+            closeVideoFormModal();
+            renderAdminVideosTable();
+            showSuccessToast('Menyimpan video (proses latar belakang)...');
+
             google.script.run
                 .withSuccessHandler(res => {
-                    Swal.close();
                     if (res.success) {
-                        if (id) { const idx = appState.videos.findIndex(v => v.id === id); if (idx !== -1) appState.videos[idx] = res.data; }
-                        else { appState.videos.push(res.data); }
-                        closeVideoFormModal(); renderAdminVideosTable(); showSuccessAlert('Berhasil Disimpan!');
-                    } else { showErrorAlert(res.message); }
+                        const targetId = id ? id : tempId;
+                        const idx = appState.videos.findIndex(v => v.id === targetId);
+                        if (idx !== -1) appState.videos[idx] = res.data;
+                        renderAdminVideosTable();
+                        showSuccessToast('Video berhasil disimpan!');
+                    } else {
+                        appState.videos = backupVideos;
+                        renderAdminVideosTable();
+                        showErrorAlert('Gagal menyimpan video: ' + res.message + '. UI telah dikembalikan.');
+                    }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .withFailureHandler(err => {
+                    appState.videos = backupVideos;
+                    renderAdminVideosTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
                 .saveVideoOnServer(payload);
         });
 
@@ -828,17 +872,32 @@
         function deleteVideo(id) {
             Swal.fire({ title: 'Hapus modul?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    const backupVideos = [...appState.videos];
+                    const backupProgress = [...(appState.progress || [])];
+
+                    appState.videos = appState.videos.filter(v => v.id !== id);
+                    appState.progress = (appState.progress || []).filter(p => p.video_id !== id);
+
+                    renderAdminVideosTable();
+                    showSuccessToast('Menghapus video (proses latar belakang)...');
+
                     google.script.run
                         .withSuccessHandler(res => {
-                            Swal.close();
                             if (res.success) {
-                                appState.videos = appState.videos.filter(v => v.id !== id);
-                                appState.progress = appState.progress.filter(p => p.video_id !== id);
-                                renderAdminVideosTable(); showSuccessAlert('Berhasil Dihapus!');
-                            } else { showErrorAlert(res.message); }
+                                showSuccessToast('Video berhasil dihapus!');
+                            } else {
+                                appState.videos = backupVideos;
+                                appState.progress = backupProgress;
+                                renderAdminVideosTable();
+                                showErrorAlert('Gagal menghapus video: ' + res.message + '. UI telah dikembalikan.');
+                            }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .withFailureHandler(err => {
+                            appState.videos = backupVideos;
+                            appState.progress = backupProgress;
+                            renderAdminVideosTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
                         .deleteVideoOnServer(id);
                 }
             });
@@ -885,19 +944,43 @@
         document.getElementById('category-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-category-id').value;
-            const payload = { id: id || null, nama: document.getElementById('crud-category-nama').value.trim() };
+            const nama = document.getElementById('crud-category-nama').value.trim();
+            const payload = { id: id || null, nama: nama };
 
-            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            const backupCategories = [...appState.categories];
+            const tempId = id || 'c_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            if (id) {
+                const idx = appState.categories.findIndex(c => c.id === id);
+                if (idx !== -1) appState.categories[idx] = { ...appState.categories[idx], nama: nama };
+            } else {
+                appState.categories.push({ id: tempId, nama: nama, created_at: timestamp });
+            }
+
+            closeCategoryFormModal();
+            renderAdminCategoriesTable();
+            showSuccessToast('Menyimpan kategori (proses latar belakang)...');
+
             google.script.run
                 .withSuccessHandler(res => {
-                    Swal.close();
                     if (res.success) {
-                        if (id) { const idx = appState.categories.findIndex(c => c.id === id); if (idx !== -1) appState.categories[idx] = res.data; }
-                        else { appState.categories.push(res.data); }
-                        closeCategoryFormModal(); renderAdminCategoriesTable(); showSuccessAlert('Berhasil Disimpan!');
-                    } else { showErrorAlert(res.message); }
+                        const targetId = id ? id : tempId;
+                        const idx = appState.categories.findIndex(c => c.id === targetId);
+                        if (idx !== -1) appState.categories[idx] = res.data;
+                        renderAdminCategoriesTable();
+                        showSuccessToast('Kategori berhasil disimpan!');
+                    } else {
+                        appState.categories = backupCategories;
+                        renderAdminCategoriesTable();
+                        showErrorAlert('Gagal menyimpan: ' + res.message + '. UI telah dikembalikan.');
+                    }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .withFailureHandler(err => {
+                    appState.categories = backupCategories;
+                    renderAdminCategoriesTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
                 .saveCategoryOnServer(payload);
         });
 
@@ -905,16 +988,26 @@
         function deleteCategory(id) {
             Swal.fire({ title: 'Hapus kategori?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
                 if (res.isConfirmed) {
-                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    const backupCategories = [...appState.categories];
+                    appState.categories = appState.categories.filter(c => c.id !== id);
+                    renderAdminCategoriesTable();
+                    showSuccessToast('Menghapus kategori (proses latar belakang)...');
+
                     google.script.run
                         .withSuccessHandler(response => {
-                            Swal.close();
                             if (response.success) {
-                                appState.categories = appState.categories.filter(c => c.id !== id);
-                                renderAdminCategoriesTable(); showSuccessAlert('Berhasil Dihapus!');
-                            } else { showErrorAlert(response.message); }
+                                showSuccessToast('Kategori berhasil dihapus!');
+                            } else {
+                                appState.categories = backupCategories;
+                                renderAdminCategoriesTable();
+                                showErrorAlert('Gagal menghapus: ' + response.message + '. UI telah dikembalikan.');
+                            }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .withFailureHandler(err => {
+                            appState.categories = backupCategories;
+                            renderAdminCategoriesTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
                         .deleteCategoryOnServer(id);
                 }
             });
@@ -974,26 +1067,68 @@
         document.getElementById('gems-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-gem-id').value;
+            const nama = document.getElementById('crud-gem-nama').value.trim();
+            const akses_url = document.getElementById('crud-gem-url').value.trim();
+            const image_url = document.getElementById('crud-gem-image').value.trim();
+            const deskripsi = document.getElementById('crud-gem-deskripsi').value.trim();
+            const kategori_id = document.getElementById('crud-gem-kategori').value;
+
             const payload = {
                 id: id || null,
-                nama: document.getElementById('crud-gem-nama').value.trim(),
-                akses_url: document.getElementById('crud-gem-url').value.trim(),
-                image_url: document.getElementById('crud-gem-image').value.trim(),
-                deskripsi: document.getElementById('crud-gem-deskripsi').value.trim(),
-                kategori_id: document.getElementById('crud-gem-kategori').value
+                nama: nama,
+                akses_url: akses_url,
+                image_url: image_url,
+                deskripsi: deskripsi,
+                kategori_id: kategori_id
             };
 
-            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            const backupGems = [...appState.gems];
+            const tempId = id || 'g_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            const itemObj = {
+                id: tempId,
+                nama: nama,
+                akses_url: akses_url,
+                image_url: image_url,
+                deskripsi: deskripsi,
+                kategori_id: kategori_id,
+                created_at: timestamp
+            };
+
+            if (id) {
+                const idx = appState.gems.findIndex(g => g.id === id);
+                if (idx !== -1) {
+                    itemObj.created_at = appState.gems[idx].created_at || timestamp;
+                    appState.gems[idx] = itemObj;
+                }
+            } else {
+                appState.gems.push(itemObj);
+            }
+
+            closeGemFormModal();
+            renderAdminGemsTable();
+            showSuccessToast('Menyimpan tools (proses latar belakang)...');
+
             google.script.run
                 .withSuccessHandler(res => {
-                    Swal.close();
                     if (res.success) {
-                        if (id) { const idx = appState.gems.findIndex(g => g.id === id); if (idx !== -1) appState.gems[idx] = res.data; }
-                        else { appState.gems.push(res.data); }
-                        closeGemFormModal(); renderAdminGemsTable(); showSuccessAlert('Berhasil Disimpan!');
-                    } else { showErrorAlert(res.message); }
+                        const targetId = id ? id : tempId;
+                        const idx = appState.gems.findIndex(g => g.id === targetId);
+                        if (idx !== -1) appState.gems[idx] = res.data;
+                        renderAdminGemsTable();
+                        showSuccessToast('Tools AI berhasil disimpan!');
+                    } else {
+                        appState.gems = backupGems;
+                        renderAdminGemsTable();
+                        showErrorAlert('Gagal menyimpan tools: ' + res.message + '. UI telah dikembalikan.');
+                    }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .withFailureHandler(err => {
+                    appState.gems = backupGems;
+                    renderAdminGemsTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
                 .saveGemOnServer(payload);
         });
 
@@ -1001,16 +1136,26 @@
         function deleteGem(id) {
             Swal.fire({ title: 'Cabut Tools AI?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
                 if (res.isConfirmed) {
-                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    const backupGems = [...appState.gems];
+                    appState.gems = appState.gems.filter(g => g.id !== id);
+                    renderAdminGemsTable();
+                    showSuccessToast('Mencabut tools (proses latar belakang)...');
+
                     google.script.run
                         .withSuccessHandler(response => {
-                            Swal.close();
                             if (response.success) {
-                                appState.gems = appState.gems.filter(g => g.id !== id);
-                                renderAdminGemsTable(); showSuccessAlert('Berhasil Dicabut!');
-                            } else { showErrorAlert(response.message); }
+                                showSuccessToast('Tools AI berhasil dicabut!');
+                            } else {
+                                appState.gems = backupGems;
+                                renderAdminGemsTable();
+                                showErrorAlert('Gagal mencabut tools: ' + response.message + '. UI telah dikembalikan.');
+                            }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .withFailureHandler(err => {
+                            appState.gems = backupGems;
+                            renderAdminGemsTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
                         .deleteGemOnServer(id);
                 }
             });
@@ -1090,30 +1235,63 @@
         document.getElementById('user-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-user-id').value;
-
             const checkedCheckboxes = document.querySelectorAll('input[name="allowed-category"]:checked');
             const allowedTools = Array.from(checkedCheckboxes).map(cb => cb.value).join(',');
+            const nama = document.getElementById('crud-user-nama').value.trim();
+            const email = document.getElementById('crud-user-email').value.trim();
+            const role = document.getElementById('crud-user-role').value;
+            const password = document.getElementById('crud-user-password').value.trim();
 
             const payload = {
                 id: id || null,
-                nama: document.getElementById('crud-user-nama').value.trim(),
-                email: document.getElementById('crud-user-email').value.trim(),
-                role: document.getElementById('crud-user-role').value,
-                password: document.getElementById('crud-user-password').value.trim() || null,
+                nama: nama,
+                email: email,
+                role: role,
+                password: password || null,
                 allowed_tools: allowedTools
             };
 
-            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            const backupUsers = [...appState.users];
+            const tempId = id || 'u_temp_' + Date.now();
+
+            const itemObj = {
+                id: tempId,
+                nama: nama,
+                email: email,
+                role: role,
+                allowed_tools: allowedTools
+            };
+
+            if (id) {
+                const idx = appState.users.findIndex(u => u.id === id);
+                if (idx !== -1) appState.users[idx] = itemObj;
+            } else {
+                appState.users.push(itemObj);
+            }
+
+            closeUserFormModal();
+            renderAdminUsersTable();
+            showSuccessToast('Menyimpan pengguna (proses latar belakang)...');
+
             google.script.run
                 .withSuccessHandler(res => {
-                    Swal.close();
                     if (res.success) {
-                        if (id) { const idx = appState.users.findIndex(u => u.id === id); if (idx !== -1) appState.users[idx] = res.data; }
-                        else { appState.users.push(res.data); }
-                        closeUserFormModal(); renderAdminUsersTable(); showSuccessAlert('Pengguna Disimpan!');
-                    } else { showErrorAlert(res.message); }
+                        const targetId = id ? id : tempId;
+                        const idx = appState.users.findIndex(u => u.id === targetId);
+                        if (idx !== -1) appState.users[idx] = res.data;
+                        renderAdminUsersTable();
+                        showSuccessToast('Pengguna berhasil disimpan!');
+                    } else {
+                        appState.users = backupUsers;
+                        renderAdminUsersTable();
+                        showErrorAlert('Gagal menyimpan pengguna: ' + res.message + '. UI telah dikembalikan.');
+                    }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .withFailureHandler(err => {
+                    appState.users = backupUsers;
+                    renderAdminUsersTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
                 .saveUserOnServer(payload);
         });
 
@@ -1121,16 +1299,26 @@
         function deleteUser(id) {
             Swal.fire({ title: 'Hapus pengguna?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
                 if (res.isConfirmed) {
-                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    const backupUsers = [...appState.users];
+                    appState.users = appState.users.filter(u => u.id !== id);
+                    renderAdminUsersTable();
+                    showSuccessToast('Menghapus pengguna (proses latar belakang)...');
+
                     google.script.run
                         .withSuccessHandler(response => {
-                            Swal.close();
                             if (response.success) {
-                                appState.users = appState.users.filter(u => u.id !== id);
-                                renderAdminUsersTable(); showSuccessAlert('Pengguna Dihapus!');
-                            } else { showErrorAlert(response.message); }
+                                showSuccessToast('Pengguna berhasil dihapus!');
+                            } else {
+                                appState.users = backupUsers;
+                                renderAdminUsersTable();
+                                showErrorAlert('Gagal menghapus pengguna: ' + response.message + '. UI telah dikembalikan.');
+                            }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .withFailureHandler(err => {
+                            appState.users = backupUsers;
+                            renderAdminUsersTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
                         .deleteUserOnServer(id, appState.currentUser.id);
                 }
             });
@@ -1229,66 +1417,96 @@
         document.getElementById('prompts-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-prompt-id').value;
+            const judul = document.getElementById('crud-prompt-judul').value.trim();
+            const kategori_id = document.getElementById('crud-prompt-kategori').value;
+            const deskripsi = document.getElementById('crud-prompt-deskripsi').value.trim();
+            const prompt_text = document.getElementById('crud-prompt-text').value.trim();
+
             const payload = {
                 id: id || null,
-                judul: document.getElementById('crud-prompt-judul').value.trim(),
-                kategori_id: document.getElementById('crud-prompt-kategori').value,
-                deskripsi: document.getElementById('crud-prompt-deskripsi').value.trim(),
-                prompt_text: document.getElementById('crud-prompt-text').value.trim()
+                judul: judul,
+                kategori_id: kategori_id,
+                deskripsi: deskripsi,
+                prompt_text: prompt_text
             };
 
-            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            if (!appState.prompts) appState.prompts = [];
+            const backupPrompts = [...appState.prompts];
+            const tempId = id || 'p_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            const itemObj = {
+                id: tempId,
+                judul: judul,
+                kategori_id: kategori_id,
+                deskripsi: deskripsi,
+                prompt_text: prompt_text,
+                created_at: timestamp
+            };
+
+            if (id) {
+                const idx = appState.prompts.findIndex(p => p.id === id);
+                if (idx !== -1) {
+                    itemObj.created_at = appState.prompts[idx].created_at || timestamp;
+                    appState.prompts[idx] = itemObj;
+                }
+            } else {
+                appState.prompts.push(itemObj);
+            }
+
+            closePromptFormModal();
+            renderAdminPromptsTable();
+            showSuccessToast('Menyimpan prompt (proses latar belakang)...');
+
             google.script.run
                 .withSuccessHandler(res => {
-                    Swal.close();
                     if (res.success) {
-                        if (!appState.prompts) appState.prompts = [];
-                        
-                        const newObj = {
-                            id: res.id,
-                            judul: payload.judul,
-                            kategori_id: payload.kategori_id,
-                            deskripsi: payload.deskripsi,
-                            prompt_text: payload.prompt_text,
-                            created_at: new Date().toISOString()
-                        };
-
-                        if (id) { 
-                            const idx = appState.prompts.findIndex(item => item.id === id); 
-                            if (idx !== -1) appState.prompts[idx] = newObj; 
-                        } else { 
-                            appState.prompts.push(newObj); 
+                        const targetId = id ? id : tempId;
+                        const idx = appState.prompts.findIndex(p => p.id === targetId);
+                        if (idx !== -1) {
+                            appState.prompts[idx] = { ...itemObj, id: res.id };
                         }
-                        
-                        closePromptFormModal(); 
-                        renderAdminPromptsTable(); 
-                        showSuccessAlert('Berhasil Disimpan!');
-                    } else { 
-                        showErrorAlert(res.message); 
+                        renderAdminPromptsTable();
+                        showSuccessToast('Template Prompt berhasil disimpan!');
+                    } else {
+                        appState.prompts = backupPrompts;
+                        renderAdminPromptsTable();
+                        showErrorAlert('Gagal menyimpan prompt: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .withFailureHandler(err => {
+                    appState.prompts = backupPrompts;
+                    renderAdminPromptsTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
                 .savePromptOnServer(payload);
         });
 
         function editPrompt(id) { openPromptFormModal(id); }
-        
+
         function deletePrompt(id) {
             Swal.fire({ title: 'Hapus Template Prompt?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
                 if (res.isConfirmed) {
-                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    const backupPrompts = [...appState.prompts];
+                    appState.prompts = appState.prompts.filter(item => item.id !== id);
+                    renderAdminPromptsTable();
+                    showSuccessToast('Menghapus prompt (proses latar belakang)...');
+
                     google.script.run
                         .withSuccessHandler(response => {
-                            Swal.close();
                             if (response.success) {
-                                appState.prompts = appState.prompts.filter(item => item.id !== id);
-                                renderAdminPromptsTable(); 
-                                showSuccessAlert('Berhasil Dihapus!');
-                            } else { 
-                                showErrorAlert(response.message); 
+                                showSuccessToast('Template Prompt berhasil dihapus!');
+                            } else {
+                                appState.prompts = backupPrompts;
+                                renderAdminPromptsTable();
+                                showErrorAlert('Gagal menghapus prompt: ' + response.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .withFailureHandler(err => {
+                            appState.prompts = backupPrompts;
+                            renderAdminPromptsTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
                         .deletePromptOnServer(id);
                 }
             });
