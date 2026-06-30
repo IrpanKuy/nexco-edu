@@ -45,19 +45,24 @@ if (isExternalHosting) {
                     return;
                 }
 
-                fetch(GAS_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        action: prop,
-                        arguments: args
+                const maxRetries = 3;
+                let attempt = 0;
+
+                function makeRequest() {
+                    attempt++;
+                    fetch(GAS_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
+                        body: JSON.stringify({
+                            action: prop,
+                            arguments: args
+                        })
                     })
-                })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('HTTP Error: ' + response.status);
+                            throw new Error('HTTP Error ' + response.status);
                         }
                         return response.json();
                     })
@@ -65,9 +70,18 @@ if (isExternalHosting) {
                         if (success) success(data);
                     })
                     .catch(err => {
-                        if (failure) failure(err);
-                        else console.error('GAS API External Error:', err);
+                        if (attempt < maxRetries) {
+                            const delay = attempt * 800;
+                            console.warn(`GAS URL Request failed (${err.message}). Retrying (attempt ${attempt}/${maxRetries}) in ${delay}ms...`);
+                            setTimeout(makeRequest, delay);
+                        } else {
+                            if (failure) failure(err);
+                            else console.error('GAS API External Error:', err);
+                        }
                     });
+                }
+
+                makeRequest();
             };
         }
     };
