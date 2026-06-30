@@ -1,5 +1,5 @@
 // ================= CONFIGURATION & SHARED STATE FOR NEXCO EDU =================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzVY7ymnLO4rLugKNvtUAcRa9X-8WbB8zlMWVex1_IA8GX0hst-d2JvNnwFTasoR9cJ/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx3hP-6gPRF51NDA-zmqbY61XFqLxDgSWExVVrXBHp6t7reqvlgTbortRrEUmfrbVyF/exec";
 
 // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
 const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
@@ -87,10 +87,12 @@ let appState = {
     videos: [],
     gems: [],
     categories: [],
+    prompts: [],
     users: [],
     aiApiKey: '',
     activeView: '',
     categoryFilter: 'Semua',
+    promptCategoryFilter: 'Semua',
     charts: {}
 };
 window.appState = appState;
@@ -190,6 +192,7 @@ function loadSystemBundledData(userId, callback) {
                 appState.videos = res.videos || [];
                 appState.gems = res.gems || [];
                 appState.categories = res.categories || [];
+                appState.prompts = res.prompts || [];
                 appState.users = res.users || [];
                 appState.aiApiKey = res.aiApiKey || '';
                 window.appState = appState;

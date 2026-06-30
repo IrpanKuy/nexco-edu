@@ -78,6 +78,26 @@
             background: #415A77;
             border-radius: 3px;
         }
+
+        /* Sidebar transition styles */
+        #admin-sidebar {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #admin-sidebar.sidebar-collapsed {
+            width: 4rem; /* w-16 */
+        }
+        /* Hide text inside sidebar-collapsed */
+        #admin-sidebar.sidebar-collapsed .sidebar-text {
+            display: none !important;
+        }
+        #admin-sidebar.sidebar-collapsed .sidebar-expanded-only {
+            justify-content: center;
+        }
+        #admin-sidebar.sidebar-collapsed #desktop-nav button {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
     </style>
 
     <script src="data.js"></script>
@@ -95,76 +115,104 @@
     </div>
 
     <!-- ================= MAIN ADMIN DASHBOARD CONTAINER ================= -->
-    <div id="main-app" class="hidden flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
+    <div id="main-app" class="hidden min-h-screen flex flex-row w-full bg-slate-50 dark:bg-brand-dark px-0 pb-0">
+        <!-- SIDEBAR -->
+        <aside id="admin-sidebar" class="bg-white dark:bg-brand-navy border-r border-brand-slate/20 h-screen sticky top-0 flex flex-col justify-between transition-all duration-300 w-64 z-40 shrink-0">
+            <!-- Sidebar Header & Menu -->
+            <div class="flex flex-col overflow-y-auto flex-grow">
+                <!-- Sidebar Header / Logo -->
+                <div class="flex items-center justify-between p-4 border-b border-brand-slate/20">
+                    <div class="flex items-center gap-3 sidebar-expanded-only">
+                        <div class="w-8 h-8 bg-brand-accent/20 rounded-lg border border-brand-accent/40 overflow-hidden flex items-center justify-center shrink-0">
+                            <img src="/image/nexco.jpg" alt="Logo" class="w-full h-full object-cover"
+                                onerror="this.src='https://placehold.co/80x80/1b263b/ffffff?text=NE'">
+                        </div>
+                        <div class="sidebar-text">
+                            <h1 class="text-sm font-bold tracking-tight text-brand-navy dark:text-brand-platinum">Nexco Edu</h1>
+                            <span id="user-badge" class="text-[9px] bg-brand-slate/30 dark:bg-brand-slate/50 px-1.5 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold">ADMIN</span>
+                        </div>
+                    </div>
+                    <!-- Close/Collapse Button -->
+                    <button onclick="toggleSidebar()" class="p-1.5 hover:bg-brand-slate/10 dark:hover:bg-brand-slate/30 rounded-lg text-brand-slate dark:text-brand-platinum transition-colors" title="Ciutkan Sidebar">
+                        <i id="sidebar-toggle-icon" class="fa-solid fa-chevron-left"></i>
+                    </button>
+                </div>
 
-        <header class="glass-panel mt-4 rounded-2xl sticky top-4 z-40 px-4 py-3 shadow-lg text-brand-navy dark:text-brand-platinum">
-            <div class="flex items-center justify-between">
+                <!-- Desktop Nav (Sidebar List) -->
+                <nav id="desktop-nav" class="flex flex-col gap-1 p-3">
+                    <!-- Dipopulasikan secara dinamis oleh JS -->
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer (Theme & Profile & Logout) -->
+            <div class="p-3 border-t border-brand-slate/20 space-y-3 bg-slate-50/50 dark:bg-brand-navy/50">
+                <!-- Theme toggle -->
+                <div class="flex items-center justify-between sidebar-expanded-only">
+                    <span class="text-xs font-semibold text-brand-slate sidebar-text">Mode Tema</span>
+                    <button onclick="toggleTheme()" class="p-2 bg-brand-slate/10 hover:bg-brand-slate/20 dark:hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all shadow-sm">
+                        <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-sm text-yellow-400"></i>
+                    </button>
+                </div>
+                <!-- Profile Info -->
+                <div class="flex items-center gap-3 sidebar-expanded-only">
+                    <div class="w-8 h-8 bg-brand-accent text-white flex items-center justify-center font-bold text-xs rounded-full shrink-0">
+                        A
+                    </div>
+                    <div class="overflow-hidden sidebar-text">
+                        <p class="text-xs font-semibold truncate text-brand-navy dark:text-brand-platinum" id="profile-name">Nama Pengguna</p>
+                        <p class="text-[9px] text-brand-slate truncate" id="profile-email">email@domain.com</p>
+                    </div>
+                </div>
+                <!-- Logout Button -->
+                <button onclick="handleLogout()" class="w-full py-2 bg-brand-danger/10 hover:bg-brand-danger hover:text-white text-brand-danger rounded-xl border border-brand-danger/20 transition-all flex items-center justify-center gap-2 text-xs font-semibold">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="sidebar-text">Keluar</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <div class="flex-grow flex flex-col min-h-screen overflow-y-auto">
+            <!-- Mobile Top bar (Only visible on mobile) -->
+            <header class="md:hidden glass-panel m-4 rounded-2xl p-4 shadow-lg flex items-center justify-between text-brand-navy dark:text-brand-platinum z-30">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand-accent/20 rounded-xl border border-brand-accent/40 overflow-hidden flex items-center justify-center">
+                    <div class="w-8 h-8 bg-brand-accent/20 rounded-lg border border-brand-accent/40 overflow-hidden flex items-center justify-center">
                         <img src="/image/nexco.jpg" alt="Logo" class="w-full h-full object-cover"
                             onerror="this.src='https://placehold.co/80x80/1b263b/ffffff?text=NE'">
                     </div>
                     <div>
-                        <h1 class="text-base font-bold tracking-tight">Nexco Edu</h1>
-                        <span class="text-[10px] bg-brand-slate/30 dark:bg-brand-slate/50 px-2 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold" id="user-badge">ADMIN</span>
+                        <h1 class="text-sm font-bold tracking-tight">Nexco Edu</h1>
+                        <span class="text-[9px] bg-brand-slate/30 dark:bg-brand-slate/50 px-1.5 py-0.5 rounded text-brand-slate dark:text-brand-platinum font-semibold">ADMIN</span>
                     </div>
                 </div>
-
-                <nav class="hidden md:flex items-center gap-1.5 animate-fade-in" id="desktop-nav">
-                    <!-- Dipopulasikan secara dinamis oleh JS -->
-                </nav>
-
-                <div class="hidden md:flex items-center gap-3">
-                    <button onclick="toggleTheme()"
-                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 dark:hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all shadow-sm"
-                        title="Ubah Tema">
-                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
-                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleTheme()" class="p-2 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline text-yellow-400"></i>
                     </button>
-                    <div class="text-right">
-                        <p class="text-xs font-semibold" id="profile-name">Nama Pengguna</p>
-                        <p class="text-[10px] text-brand-slate" id="profile-email">email@domain.com</p>
-                    </div>
-                    <button onclick="handleLogout()"
-                        class="p-2.5 bg-brand-danger/10 hover:bg-brand-danger text-brand-danger hover:text-white rounded-xl border border-brand-danger/20 transition-all shadow-md"
-                        title="Keluar">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-2 md:hidden">
-                    <button onclick="toggleTheme()"
-                        class="p-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl border border-brand-slate/20 transition-all"
-                        title="Ubah Tema">
-                        <i class="fa-solid fa-moon dark:hidden text-md"></i>
-                        <i class="fa-solid fa-sun hidden dark:inline text-md text-yellow-400"></i>
-                    </button>
-                    <button onclick="toggleMobileMenu()"
-                        class="p-2.5 hover:bg-brand-slate/20 rounded-xl border border-brand-slate/30 transition-all">
+                    <button onclick="toggleMobileMenu()" class="p-2 hover:bg-brand-slate/20 rounded-xl border border-brand-slate/30">
                         <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
                     </button>
                 </div>
-            </div>
-
-            <div id="mobile-drawer"
-                class="hidden md:hidden mt-4 pt-3 border-t border-brand-slate/30 flex flex-col gap-2 transition-all">
-                <div id="mobile-nav" class="flex flex-col gap-1">
-                    <!-- Navigasi Dinamis Mobile -->
-                </div>
-                <div class="border-t border-brand-slate/20 mt-2 pt-3 flex items-center justify-between px-2">
-                    <div>
-                        <p class="text-xs font-semibold" id="profile-name-mobile">Nama Pengguna</p>
-                        <p class="text-[10px] text-brand-slate" id="profile-email-mobile">email@domain.com</p>
+                <!-- Mobile Drawer Menu -->
+                <div id="mobile-drawer" class="hidden absolute top-20 left-4 right-4 bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-2xl p-4 shadow-xl flex flex-col gap-2 z-50">
+                    <nav id="mobile-nav" class="flex flex-col gap-1">
+                        <!-- Navigasi Dinamis Mobile -->
+                    </nav>
+                    <div class="border-t border-brand-slate/20 mt-2 pt-3 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold" id="profile-name-mobile">Nama Pengguna</p>
+                            <p class="text-[10px] text-brand-slate" id="profile-email-mobile">email@domain.com</p>
+                        </div>
+                        <button onclick="handleLogout()" class="px-3 py-1.5 bg-brand-danger/20 text-brand-danger text-xs font-semibold rounded-lg border border-brand-danger/30 flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                        </button>
                     </div>
-                    <button onclick="handleLogout()"
-                        class="px-3 py-1.5 bg-brand-danger/20 text-brand-danger text-xs font-semibold rounded-lg border border-brand-danger/30 flex items-center gap-2">
-                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
-                    </button>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <main class="mt-6 flex-1 text-brand-navy dark:text-brand-platinum">
+            <main class="p-6 md:p-8 flex-1 text-brand-navy dark:text-brand-platinum">
 
             <!-- ================= VIEW: ADMIN KELOLA VIDEO ================= -->
             <section id="view-admin-manage-videos" class="hidden space-y-6">
@@ -248,6 +296,75 @@
                 </div>
             </section>
 
+            <!-- ================= VIEW: ADMIN KELOLA PROMPT TEMPLATE ================= -->
+            <section id="view-admin-manage-prompts" class="hidden space-y-6">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Template Prompt AI</h2>
+                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus template prompt yang bisa digunakan siswa.</p>
+                    </div>
+                    <button onclick="openPromptFormModal()"
+                        class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Template Baru
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Judul Prompt</th>
+                                <th class="px-6 py-3.5">Kategori</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-prompts-table-body">
+                            <!-- Baris Prompt Dinamis -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Prompt Modal Form -->
+                <div id="prompts-form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="prompts-modal-title">Template Prompt Baru</h3>
+                            <button onclick="closePromptFormModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="prompts-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <input type="hidden" id="crud-prompt-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Judul Prompt</label>
+                                <input type="text" id="crud-prompt-judul" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori</label>
+                                <select id="crud-prompt-kategori" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat</label>
+                                <textarea id="crud-prompt-deskripsi" rows="2" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Isi Prompt Lengkap</label>
+                                <textarea id="crud-prompt-text" rows="5" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs font-mono text-brand-navy dark:text-brand-platinum"></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closePromptFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
             <!-- ================= VIEW: ADMIN KELOLA TOOLS AI ================= -->
             <section id="view-admin-manage-gems" class="hidden space-y-6">
                 <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
@@ -266,6 +383,7 @@
                         <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
                             <tr>
                                 <th class="px-6 py-3.5">Nama Tools</th>
+                                <th class="px-6 py-3.5">Kategori</th>
                                 <th class="px-6 py-3.5">Deskripsi Singkat</th>
                                 <th class="px-6 py-3.5 text-center">Aksi</th>
                             </tr>
@@ -299,10 +417,16 @@
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-1 text-brand-slate">URL Gambar Banner/Logo Tools</label>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar Banner/Logo Tools</label>
                                 <input type="text" id="crud-gem-image" placeholder="https://images.unsplash.com/... atau logo url" required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                                 <span class="text-[10px] text-brand-slate/80 mt-1 block">Rekomendasi format gambar: 1920x1080 px (aspek rasio 16:9).</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori Tools</label>
+                                <select id="crud-gem-kategori" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat Keunggulan</label>
@@ -439,6 +563,13 @@
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
                                     placeholder="••••••••">
                             </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Akses Kategori Tools AI (Multi-select)</label>
+                                <div id="crud-user-allowed-categories" class="space-y-1.5 p-3 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl max-h-32 overflow-y-auto">
+                                    <!-- List category checkboxes dinamis -->
+                                </div>
+                                <p class="text-[10px] text-brand-slate mt-1">Pengguna hanya dapat mengakses Tools AI yang termasuk dalam kategori yang dipilih.</p>
+                            </div>
                             <div class="flex justify-end gap-3 pt-2">
                                 <button type="button" onclick="closeUserFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
                                 <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Pengguna</button>
@@ -488,6 +619,7 @@
             </section>
 
         </main>
+        </div>
     </div>
 
     <!-- ================= RUNTIME APP LOGIC (ADMIN DASHBOARD) ================= -->
@@ -530,6 +662,7 @@
 
             const items = [
                 { view: 'admin-manage-videos', icon: 'fa-video', label: 'Kelola Video' },
+                { view: 'admin-manage-prompts', icon: 'fa-file-lines', label: 'Kelola Prompt' },
                 { view: 'admin-manage-gems', icon: 'fa-robot', label: 'Kelola Tools' },
                 { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
                 { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
@@ -539,8 +672,8 @@
             items.forEach(item => {
                 const btnDesktop = document.createElement('button');
                 btnDesktop.id = 'nav-btn-desk-' + item.view;
-                btnDesktop.className = 'px-3 py-1.5 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all duration-200';
-                btnDesktop.innerHTML = '<i class="fa-solid ' + item.icon + ' text-inherit"></i> <span class="text-inherit">' + item.label + '</span>';
+                btnDesktop.className = 'w-full text-left px-4 py-3 text-xs font-semibold rounded-xl flex items-center gap-3 transition-all duration-200';
+                btnDesktop.innerHTML = '<i class="fa-solid ' + item.icon + ' text-base text-inherit shrink-0"></i> <span class="sidebar-text text-inherit font-medium">' + item.label + '</span>';
                 btnDesktop.onclick = function () { navigateTo(item.view); };
                 dNav.appendChild(btnDesktop);
 
@@ -559,7 +692,7 @@
         function navigateTo(viewId) {
             appState.activeView = viewId;
             const views = [
-                'view-admin-manage-videos', 'view-admin-manage-gems',
+                'view-admin-manage-videos', 'view-admin-manage-prompts', 'view-admin-manage-gems',
                 'view-admin-manage-categories', 'view-admin-manage-users', 'view-settings'
             ];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
@@ -578,6 +711,8 @@
 
             if (viewId === 'admin-manage-videos') {
                 renderAdminVideosTable();
+            } else if (viewId === 'admin-manage-prompts') {
+                renderAdminPromptsTable();
             } else if (viewId === 'admin-manage-gems') {
                 renderAdminGemsTable();
             } else if (viewId === 'admin-manage-categories') {
@@ -596,6 +731,18 @@
             } else {
                 drawer.classList.add('hidden');
                 icon.className = 'fa-solid fa-bars text-lg';
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                sidebar.classList.remove('sidebar-collapsed');
+                icon.className = 'fa-solid fa-chevron-left';
+            } else {
+                sidebar.classList.add('sidebar-collapsed');
+                icon.className = 'fa-solid fa-chevron-right';
             }
         }
 
@@ -777,13 +924,17 @@
         function renderAdminGemsTable() {
             const tbody = document.getElementById('admin-gems-table-body');
             tbody.innerHTML = '';
-            if (appState.gems.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center">Kosong</td></tr>'; return; }
+            if (appState.gems.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center">Kosong</td></tr>'; return; }
 
             appState.gems.forEach(gem => {
+                const cat = appState.categories.find(c => c.id === gem.kategori_id);
+                const catName = cat ? cat.nama : 'Umum';
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
                 tr.innerHTML = [
                     '<td class="px-6 py-4 font-bold text-xs">', gem.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-xs font-semibold text-brand-slate dark:text-brand-platinum/80">', catName, '</td>',
                     '<td class="px-6 py-4 text-xs line-clamp-1">', gem.deskripsi.replace(/"/g, '&quot;'), '</td>',
                     '<td class="px-6 py-4 text-center">',
                     '<button onclick="editGem(\'', gem.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
@@ -797,6 +948,10 @@
         function openGemFormModal(editId = '') {
             const modal = document.getElementById('gems-form-modal');
             document.getElementById('gems-crud-form').reset();
+            
+            // Populate category select
+            document.getElementById('crud-gem-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+
             if (editId) {
                 const gem = appState.gems.find(g => g.id === editId);
                 if (!gem) return;
@@ -806,6 +961,7 @@
                 document.getElementById('crud-gem-url').value = gem.akses_url;
                 document.getElementById('crud-gem-image').value = gem.image_url || '';
                 document.getElementById('crud-gem-deskripsi').value = gem.deskripsi;
+                document.getElementById('crud-gem-kategori').value = gem.kategori_id || '';
             } else {
                 document.getElementById('gems-modal-title').textContent = "Tambah Tools AI Baru";
                 document.getElementById('crud-gem-id').value = '';
@@ -823,7 +979,8 @@
                 nama: document.getElementById('crud-gem-nama').value.trim(),
                 akses_url: document.getElementById('crud-gem-url').value.trim(),
                 image_url: document.getElementById('crud-gem-image').value.trim(),
-                deskripsi: document.getElementById('crud-gem-deskripsi').value.trim()
+                deskripsi: document.getElementById('crud-gem-deskripsi').value.trim(),
+                kategori_id: document.getElementById('crud-gem-kategori').value
             };
 
             Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
@@ -891,6 +1048,10 @@
             const modal = document.getElementById('user-form-modal');
             document.getElementById('user-crud-form').reset();
 
+            const container = document.getElementById('crud-user-allowed-categories');
+            container.innerHTML = '';
+            
+            let allowedList = [];
             if (editId) {
                 const usr = appState.users.find(u => u.id === editId);
                 if (!usr) return;
@@ -900,11 +1061,27 @@
                 document.getElementById('crud-user-email').value = usr.email;
                 document.getElementById('crud-user-role').value = usr.role;
                 document.getElementById('crud-user-password').placeholder = "Ubah kata sandi disini...";
+                if (usr.allowed_tools) {
+                    allowedList = usr.allowed_tools.split(',').map(c => c.trim());
+                }
             } else {
                 document.getElementById('user-modal-title').textContent = "Tambah Pengguna Baru";
                 document.getElementById('crud-user-id').value = '';
                 document.getElementById('crud-user-password').placeholder = "Masukan kata sandi baru...";
             }
+
+            if (appState.categories && appState.categories.length > 0) {
+                appState.categories.forEach(cat => {
+                    const isChecked = allowedList.includes(cat.id) ? 'checked' : '';
+                    const label = document.createElement('label');
+                    label.className = "flex items-center gap-2 text-xs text-brand-navy dark:text-brand-platinum cursor-pointer py-1 px-2 hover:bg-brand-slate/10 rounded-lg transition-colors";
+                    label.innerHTML = `<input type="checkbox" name="allowed-category" value="${cat.id}" ${isChecked} class="rounded text-brand-accent focus:ring-brand-accent"> <span>${cat.nama}</span>`;
+                    container.appendChild(label);
+                });
+            } else {
+                container.innerHTML = '<p class="text-xs text-brand-slate py-2">Belum ada kategori terdaftar.</p>';
+            }
+
             modal.classList.remove('hidden');
         }
 
@@ -914,13 +1091,16 @@
             e.preventDefault();
             const id = document.getElementById('crud-user-id').value;
 
+            const checkedCheckboxes = document.querySelectorAll('input[name="allowed-category"]:checked');
+            const allowedTools = Array.from(checkedCheckboxes).map(cb => cb.value).join(',');
+
             const payload = {
                 id: id || null,
                 nama: document.getElementById('crud-user-nama').value.trim(),
                 email: document.getElementById('crud-user-email').value.trim(),
                 role: document.getElementById('crud-user-role').value,
                 password: document.getElementById('crud-user-password').value.trim() || null,
-                allowed_tools: ''
+                allowed_tools: allowedTools
             };
 
             Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
@@ -991,6 +1171,128 @@
                 })
                 .saveAiApiKeyOnServer(aiKey);
         });
+
+        /* --- CRUD TEMPLATE PROMPT --- */
+        function renderAdminPromptsTable() {
+            const tbody = document.getElementById('admin-prompts-table-body');
+            tbody.innerHTML = '';
+            const promptsList = appState.prompts || [];
+            if (promptsList.length === 0) { 
+                tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center text-brand-slate">Belum ada template prompt terdaftar.</td></tr>'; 
+                return; 
+            }
+
+            promptsList.forEach(p => {
+                const cat = appState.categories.find(c => c.id === p.kategori_id);
+                const catName = cat ? cat.nama : 'Tidak Diketahui';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold text-xs">', p.judul.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-xs">', catName, '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editPrompt(\'', p.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deletePrompt(\'', p.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openPromptFormModal(editId = '') {
+            const modal = document.getElementById('prompts-form-modal');
+            document.getElementById('prompts-crud-form').reset();
+            
+            // Populate category select
+            document.getElementById('crud-prompt-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+
+            if (editId) {
+                const promptsList = appState.prompts || [];
+                const p = promptsList.find(item => item.id === editId);
+                if (!p) return;
+                document.getElementById('prompts-modal-title').textContent = "Ubah Template Prompt";
+                document.getElementById('crud-prompt-id').value = p.id;
+                document.getElementById('crud-prompt-judul').value = p.judul;
+                document.getElementById('crud-prompt-kategori').value = p.kategori_id || '';
+                document.getElementById('crud-prompt-deskripsi').value = p.deskripsi;
+                document.getElementById('crud-prompt-text').value = p.prompt_text;
+            } else {
+                document.getElementById('prompts-modal-title').textContent = "Template Prompt Baru";
+                document.getElementById('crud-prompt-id').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closePromptFormModal() { document.getElementById('prompts-form-modal').classList.add('hidden'); }
+
+        document.getElementById('prompts-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-prompt-id').value;
+            const payload = {
+                id: id || null,
+                judul: document.getElementById('crud-prompt-judul').value.trim(),
+                kategori_id: document.getElementById('crud-prompt-kategori').value,
+                deskripsi: document.getElementById('crud-prompt-deskripsi').value.trim(),
+                prompt_text: document.getElementById('crud-prompt-text').value.trim()
+            };
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); } });
+            google.script.run
+                .withSuccessHandler(res => {
+                    Swal.close();
+                    if (res.success) {
+                        if (!appState.prompts) appState.prompts = [];
+                        
+                        const newObj = {
+                            id: res.id,
+                            judul: payload.judul,
+                            kategori_id: payload.kategori_id,
+                            deskripsi: payload.deskripsi,
+                            prompt_text: payload.prompt_text,
+                            created_at: new Date().toISOString()
+                        };
+
+                        if (id) { 
+                            const idx = appState.prompts.findIndex(item => item.id === id); 
+                            if (idx !== -1) appState.prompts[idx] = newObj; 
+                        } else { 
+                            appState.prompts.push(newObj); 
+                        }
+                        
+                        closePromptFormModal(); 
+                        renderAdminPromptsTable(); 
+                        showSuccessAlert('Berhasil Disimpan!');
+                    } else { 
+                        showErrorAlert(res.message); 
+                    }
+                })
+                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                .savePromptOnServer(payload);
+        });
+
+        function editPrompt(id) { openPromptFormModal(id); }
+        
+        function deletePrompt(id) {
+            Swal.fire({ title: 'Hapus Template Prompt?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            Swal.close();
+                            if (response.success) {
+                                appState.prompts = appState.prompts.filter(item => item.id !== id);
+                                renderAdminPromptsTable(); 
+                                showSuccessAlert('Berhasil Dihapus!');
+                            } else { 
+                                showErrorAlert(response.message); 
+                            }
+                        })
+                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
+                        .deletePromptOnServer(id);
+                }
+            });
+        }
     </script>
 </body>
 
