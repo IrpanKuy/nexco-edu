@@ -1,5 +1,5 @@
 // ================= CONFIGURATION & SHARED STATE FOR NEXCO EDU =================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbx3hP-6gPRF51NDA-zmqbY61XFqLxDgSWExVVrXBHp6t7reqvlgTbortRrEUmfrbVyF/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxQNr0OqRETBYRS5Asu5mzTERws0SrgNHPOjA2BTWWNPwXWM7pr2Qi6uRB7WRSbW8_M/exec";
 
 // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
 const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
