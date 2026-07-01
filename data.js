@@ -247,9 +247,29 @@ function handleLogout() {
 /* --- HELPER YOUTUBE ID & EMBED PARSER --- */
 function getYouTubeId(url) {
     if (!url) return '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : '';
+    const trimmedUrl = url.trim();
+    
+    // Check if it's already a clean 11-character YouTube ID
+    if (trimmedUrl.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trimmedUrl)) {
+        return trimmedUrl;
+    }
+    
+    // Match common YouTube URL patterns (watch, embed, shorts, live, youtu.be)
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = trimmedUrl.match(regExp);
+    
+    if (match && match[1]) {
+        return match[1];
+    }
+    
+    // Fallback: search for any 11-char sequence of alphanumeric/dash/underscore following / or =
+    const fallbackRegExp = /(?:\/|=)([a-zA-Z0-9_-]{11})(?:[&?.\s]|$)/;
+    const fallbackMatch = trimmedUrl.match(fallbackRegExp);
+    if (fallbackMatch && fallbackMatch[1]) {
+        return fallbackMatch[1];
+    }
+    
+    return '';
 }
 
 function getYouTubeEmbedUrl(url) {
