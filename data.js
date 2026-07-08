@@ -1,5 +1,5 @@
 // ================= CONFIGURATION & SHARED STATE FOR NEXCO EDU =================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxQNr0OqRETBYRS5Asu5mzTERws0SrgNHPOjA2BTWWNPwXWM7pr2Qi6uRB7WRSbW8_M/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyTMRwa8kz0tlFA09RDbl3kJTtYn0bwD0Co2EFtbI0a662L1eV9mo_-sA_jPhOWHENQ/exec";
 
 // DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
 const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
@@ -60,25 +60,25 @@ if (isExternalHosting) {
                             arguments: args
                         })
                     })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('HTTP Error ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (success) success(data);
-                    })
-                    .catch(err => {
-                        if (attempt < maxRetries) {
-                            const delay = attempt * 800;
-                            console.warn(`GAS URL Request failed (${err.message}). Retrying (attempt ${attempt}/${maxRetries}) in ${delay}ms...`);
-                            setTimeout(makeRequest, delay);
-                        } else {
-                            if (failure) failure(err);
-                            else console.error('GAS API External Error:', err);
-                        }
-                    });
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('HTTP Error ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (success) success(data);
+                        })
+                        .catch(err => {
+                            if (attempt < maxRetries) {
+                                const delay = attempt * 800;
+                                console.warn(`GAS URL Request failed (${err.message}). Retrying (attempt ${attempt}/${maxRetries}) in ${delay}ms...`);
+                                setTimeout(makeRequest, delay);
+                            } else {
+                                if (failure) failure(err);
+                                else console.error('GAS API External Error:', err);
+                            }
+                        });
                 }
 
                 makeRequest();
@@ -248,27 +248,27 @@ function handleLogout() {
 function getYouTubeId(url) {
     if (!url) return '';
     const trimmedUrl = url.trim();
-    
+
     // Check if it's already a clean 11-character YouTube ID
     if (trimmedUrl.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trimmedUrl)) {
         return trimmedUrl;
     }
-    
+
     // Match common YouTube URL patterns (watch, embed, shorts, live, youtu.be)
     const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = trimmedUrl.match(regExp);
-    
+
     if (match && match[1]) {
         return match[1];
     }
-    
+
     // Fallback: search for any 11-char sequence of alphanumeric/dash/underscore following / or =
     const fallbackRegExp = /(?:\/|=)([a-zA-Z0-9_-]{11})(?:[&?.\s]|$)/;
     const fallbackMatch = trimmedUrl.match(fallbackRegExp);
     if (fallbackMatch && fallbackMatch[1]) {
         return fallbackMatch[1];
     }
-    
+
     return '';
 }
 
