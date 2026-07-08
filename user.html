@@ -227,7 +227,8 @@
                 <div
                     class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
                     <div class="flex justify-between items-center p-4 border-b border-brand-slate/20 shrink-0">
-                        <h3 class="font-bold text-base line-clamp-1" id="player-modal-title">Pemutar Video Pembelajaran</h3>
+                        <h3 class="font-bold text-base line-clamp-1" id="player-modal-title">Pemutar Video Pembelajaran
+                        </h3>
                         <button onclick="closeVideoPlayerModal()"
                             class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-2xl px-2">
                             <i class="fa-solid fa-circle-xmark"></i>
@@ -261,20 +262,24 @@
                     <div class="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
                         <div>
                             <h4 class="text-xs font-semibold text-brand-slate mb-1">Deskripsi</h4>
-                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed" id="prompt-modal-desc"></p>
+                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed"
+                                id="prompt-modal-desc"></p>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <h4 class="text-xs font-semibold text-brand-slate">Isi Prompt</h4>
-                                <button onclick="copyPromptText()" class="px-2.5 py-1 bg-brand-accent hover:bg-opacity-90 text-white rounded-lg text-[10px] font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+                                <button onclick="copyPromptText()"
+                                    class="px-2.5 py-1 bg-brand-accent hover:bg-opacity-90 text-white rounded-lg text-[10px] font-semibold flex items-center gap-1.5 shadow-sm transition-all">
                                     <i class="fa-solid fa-copy"></i> <span id="copy-btn-text">Salin Prompt</span>
                                 </button>
                             </div>
-                            <pre class="w-full p-4 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/20 rounded-2xl text-xs font-mono whitespace-pre-wrap break-words text-brand-navy dark:text-brand-platinum max-h-[300px] overflow-y-auto select-all" id="prompt-modal-text"></pre>
+                            <pre class="w-full p-4 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/20 rounded-2xl text-xs font-mono whitespace-pre-wrap break-words text-brand-navy dark:text-brand-platinum max-h-[300px] overflow-y-auto select-all"
+                                id="prompt-modal-text"></pre>
                         </div>
                     </div>
                     <div class="p-4 border-t border-brand-slate/20 flex justify-end shrink-0">
-                        <button onclick="closePromptDetailModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Tutup</button>
+                        <button onclick="closePromptDetailModal()"
+                            class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -284,8 +289,10 @@
                 <div
                     class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cyan-500/10 dark:bg-cyan-500/20 p-6 rounded-3xl border border-cyan-500/30 shadow-sm">
                     <div>
-                        <h2 class="text-xl font-extrabold tracking-tight text-cyan-700 dark:text-cyan-400">Tools AI Workspace</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Akses cepat ke jajaran asisten pintar AI resmi untuk mempercepat alur kerja harian Anda.</p>
+                        <h2 class="text-xl font-extrabold tracking-tight text-cyan-700 dark:text-cyan-400">Tools AI
+                            Workspace</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Akses cepat ke jajaran
+                            asisten pintar AI resmi untuk mempercepat alur kerja harian Anda.</p>
                     </div>
                 </div>
 
@@ -299,8 +306,10 @@
                 <div
                     class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
                     <div>
-                        <h2 class="text-xl font-extrabold tracking-tight text-brand-navy dark:text-brand-platinum">Template Prompt AI</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Gunakan template prompt pilihan untuk memaksimalkan hasil AI Anda.</p>
+                        <h2 class="text-xl font-extrabold tracking-tight text-brand-navy dark:text-brand-platinum">
+                            Template Prompt AI</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Gunakan template prompt
+                            pilihan untuk memaksimalkan hasil AI Anda.</p>
                     </div>
                 </div>
 
@@ -1210,7 +1219,7 @@
             const container = document.getElementById('category-filters-container');
             container.innerHTML = '';
 
-            const categoriesWithVideos = appState.categories.filter(cat => 
+            const categoriesWithVideos = appState.categories.filter(cat =>
                 appState.videos.some(vid => vid.kategori_id === cat.id)
             );
 
@@ -1321,7 +1330,7 @@
             const container = document.getElementById('user-gems-categories-container');
             const section = document.createElement('div');
             section.className = "space-y-4";
-            
+
             const heading = document.createElement('h3');
             heading.className = "text-xs font-extrabold text-brand-navy dark:text-brand-platinum border-l-4 border-cyan-500 pl-3 uppercase tracking-wider";
             heading.textContent = categoryName;
@@ -1329,7 +1338,7 @@
 
             const grid = document.createElement('div');
             grid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6";
-            
+
             gems.forEach(gem => {
                 const card = document.createElement('div');
                 card.className = "glass-panel rounded-3xl p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
@@ -1346,7 +1355,7 @@
                 `;
                 grid.appendChild(card);
             });
-            
+
             section.appendChild(grid);
             container.appendChild(section);
         }
@@ -1359,7 +1368,7 @@
             container.innerHTML = '';
 
             const promptsList = appState.prompts || [];
-            const categoriesWithPrompts = appState.categories.filter(cat => 
+            const categoriesWithPrompts = appState.categories.filter(cat =>
                 promptsList.some(p => p.kategori_id === cat.id)
             );
 
@@ -1624,54 +1633,55 @@
                     sections.value[sectionIndex].elements.splice(elementIndex, 1);
                 };
 
+                const sanitizeAIWord = (str) => {
+                    if (typeof str !== 'string') return str;
+                    let s = str;
+                    s = s.replace(/\bAnalisis\s+S(?:i|y)stem\s+A[Ii]\b/gi, "Analisis System");
+                    s = s.replace(/\bA[Ii]\b/gi, "");
+                    return s.replace(/\s+/g, " ").trim();
+                };
+
                 const generatedPrompt = computed(() => {
                     let str = '';
-                    if (activeTab.value === "webapp") {
+                    if (activeTab.value === "webapp" || activeTab.value === "ai") {
                         str += `### 1. TARGET SISTEM & DESKRIPSI WEB APP\n`;
-                        str += `- **Nama Aplikasi**: ${appName.value || "(Belum Ditentukan)"}\n`;
-                        str += `- **Deskripsi Sistem**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
+                        str += `- **Nama Aplikasi**: ${sanitizeAIWord(appName.value) || "(Belum Ditentukan)"}\n`;
+                        str += `- **Deskripsi Sistem**: ${sanitizeAIWord(appDescription.value) || "(Belum Ditentukan)"}\n\n`;
                         str += `### 2. STRUKTUR ROLE & HAK AKSES MENU\n`;
                         roles.value.forEach((role, idx) => {
-                            str += `${idx + 1}. **Role: ${role.name}**\n`;
-                            role.features.forEach((feat, fIdx) => { str += `   - Menu ${fIdx + 1}: ${feat}\n`; });
+                            str += `${idx + 1}. **Role: ${sanitizeAIWord(role.name)}**\n`;
+                            role.features.forEach((feat, fIdx) => {
+                                str += `   - Menu ${fIdx + 1}: ${sanitizeAIWord(feat)}\n`;
+                            });
                             str += `\n`;
-                        });
-                    } else if (activeTab.value === "ai") {
-                        str += `### 1. TARGET SISTEM WEB APP DENGAN INTEGRASI ASISTEN AI (AI MODE)\n`;
-                        str += `- **Nama Aplikasi**: ${appName.value || "(Belum Ditentukan)"}\n`;
-                        str += `- **Deskripsi Sistem**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
-                        str += `### 2. STRUKTUR ROLE, HAK AKSES, DAN AKSES ASISTEN AI\n`;
-                        roles.value.forEach((role, idx) => {
-                            str += `${idx + 1}. **Role: ${role.name}**\n`;
-                            role.features.forEach((feat, fIdx) => { str += `   - Menu ${fIdx + 1}: ${feat}\n`; });
-                            str += `   - **Akses AI Assistant**: ${role.aiAssistant ? 'AKTIF' : 'TIDAK AKTIF'}\n\n`;
                         });
                     } else {
                         str += `### 1. TARGET PRODUK & MARKETING DESKRIPSI LANDING PAGE\n`;
-                        str += `- **Nama Produk**: ${appName.value || "(Belum Ditentukan)"}\n`;
-                        str += `- **Deskripsi Bisnis**: ${appDescription.value || "(Belum Ditentukan)"}\n\n`;
+                        str += `- **Nama Produk**: ${sanitizeAIWord(appName.value) || "(Belum Ditentukan)"}\n`;
+                        str += `- **Deskripsi Bisnis**: ${sanitizeAIWord(appDescription.value) || "(Belum Ditentukan)"}\n\n`;
                         str += `### 2. STRUKTUR SECTIONS & ISI HALAMAN KAMPANYE\n`;
                         sections.value.forEach((sect, idx) => {
-                            str += `${idx + 1}. **Section: ${sect.name}** (Tipe: ${sect.type})\n`;
-                            if (sect.description) str += `   - **Deskripsi/Tujuan**: ${sect.description}\n`;
-                            sect.elements.forEach((elem, eIdx) => { str += `   - Elemen ${eIdx + 1}: ${elem}\n`; });
+                            str += `${idx + 1}. **Section: ${sanitizeAIWord(sect.name)}** (Tipe: ${sanitizeAIWord(sect.type)})\n`;
+                            if (sect.description) str += `   - **Deskripsi/Tujuan**: ${sanitizeAIWord(sect.description)}\n`;
+                            sect.elements.forEach((elem, eIdx) => {
+                                str += `   - Elemen ${eIdx + 1}: ${sanitizeAIWord(elem)}\n`;
+                            });
                             str += `\n`;
                         });
                     }
 
                     str += `### 3. DETAIL ESTETIKA & GAYA DESAIN\n`;
-                    str += `- **Gaya Desain Khusus**: ${design.value.styleDesign || "None"}\n`;
+                    str += `- **Gaya Desain Khusus**: ${sanitizeAIWord(design.value.styleDesign) || "None"}\n`;
                     str += `- **Palet Warna HEX**: ${design.value.palette || "#0F172A, #1E293B, #F1F5F9"}\n`;
                     if (activeTab.value === "webapp" || activeTab.value === "ai") {
                         str += `- **Tipe Bar Menu**: ${design.value.menuType}\n`;
                         if (isMobileFocus.value) str += `- **MOBILE FOCUS ON**: Fokus penuh ke desain Mobile View (Responsivitas maksimal).\n`;
                     }
-                    str += `- **Deskripsi Tambahan**: ${design.value.visualDescription || "Bersih dan responsif."}\n\n`;
+                    str += `- **Deskripsi Tambahan**: ${sanitizeAIWord(design.value.visualDescription) || "Bersih dan responsif."}\n\n`;
 
                     let extraFeatures = '';
                     if (isOptimisticUI.value) extraFeatures += `- **OPTIMISTIC UI ON**: Implementasikan mutasi state instan pada setiap operasi CRUD dengan Toast Notifications.\n`;
                     if (isSweetAlert.value) extraFeatures += `- **SWEETALERT2 INTEGRATION**: Gunakan SweetAlert2 untuk modal dialog konfirmasi dan alert.\n`;
-                    if (activeTab.value === "ai" && isConfirmCrud.value) extraFeatures += `- **KONFIRMASI SEBELUM MERUBAH DATA**: AI wajib meminta konfirmasi sebelum melakukan aksi CRUD data.\n`;
 
                     if (extraFeatures) {
                         str += `### 4. FITUR TAMBAHAN\n` + extraFeatures + `\n### 5. INSTRUKSI TEKNIS PENGERJAAN KODE\n`;
@@ -1734,7 +1744,7 @@
                         isConfirmCrud: isConfirmCrud.value
                     };
 
-                    const systemPrompt = `Anda adalah AI Assistant cerdas & konsultan arsitektur sistem ahli yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? (activeTab.value === "ai" ? "Web Application Dashboard dengan Asisten AI" : "Web Application Dashboard") : "Marketing Landing Page"}. 
+                    const systemPrompt = `Anda adalah AI Assistant cerdas & konsultan arsitektur sistem ahli yang membantu merancang arsitektur ${(activeTab.value === "webapp" || activeTab.value === "ai") ? "Web Application Dashboard" : "Marketing Landing Page"}. 
 Perbarui konfigurasi JSON berdasarkan instruksi pengguna dengan pemikiran analisis yang mendalam.
 
 ATURAN PERANCANGAN STRUKTUR ROLE & FITUR KHUSUS:
@@ -1792,15 +1802,33 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
                         const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
                         if (rawText) {
                             const parsed = JSON.parse(rawText);
-                            if (parsed.appName) appName.value = parsed.appName;
-                            if (parsed.appDescription) appDescription.value = parsed.appDescription;
+                            if (parsed.appName) appName.value = sanitizeAIWord(parsed.appName);
+                            if (parsed.appDescription) appDescription.value = sanitizeAIWord(parsed.appDescription);
                             if (parsed.roles && (activeTab.value === 'webapp' || activeTab.value === 'ai')) {
-                                roles.value = parsed.roles.map((r, i) => ({ id: i + 1, name: r.name, features: r.features || [], newFeature: "", aiAssistant: r.aiAssistant ?? false }));
+                                roles.value = parsed.roles.map((r, i) => ({
+                                    id: i + 1,
+                                    name: sanitizeAIWord(r.name),
+                                    features: (r.features || []).map(f => sanitizeAIWord(f)),
+                                    newFeature: "",
+                                    aiAssistant: r.aiAssistant ?? false
+                                }));
                             }
                             if (parsed.sections && activeTab.value === 'landing') {
-                                sections.value = parsed.sections.map((s, i) => ({ id: i + 1, name: s.name, type: s.type || 'Custom', description: s.description || '', elements: s.elements || [], newElement: "" }));
+                                sections.value = parsed.sections.map((s, i) => ({
+                                    id: i + 1,
+                                    name: sanitizeAIWord(s.name),
+                                    type: sanitizeAIWord(s.type) || 'Custom',
+                                    description: sanitizeAIWord(s.description) || '',
+                                    elements: (s.elements || []).map(e => sanitizeAIWord(e)),
+                                    newElement: ""
+                                }));
                             }
-                            if (parsed.design) Object.assign(design.value, parsed.design);
+                            if (parsed.design) {
+                                design.value.styleDesign = sanitizeAIWord(parsed.design.styleDesign);
+                                design.value.menuType = parsed.design.menuType;
+                                design.value.palette = parsed.design.palette;
+                                design.value.visualDescription = sanitizeAIWord(parsed.design.visualDescription);
+                            }
                             if (typeof parsed.isOptimisticUI === 'boolean') isOptimisticUI.value = parsed.isOptimisticUI;
                             if (typeof parsed.isSweetAlert === 'boolean') isSweetAlert.value = parsed.isSweetAlert;
                             if (typeof parsed.isConfirmCrud === 'boolean') isConfirmCrud.value = parsed.isConfirmCrud;
