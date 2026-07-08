@@ -1490,9 +1490,9 @@
                 const activeDropdown = ref(null);
 
                 const activeTabModeLabel = computed(() => {
-                    if (activeTab.value === 'webapp') return 'Mode Web App (Biru)';
-                    if (activeTab.value === 'ai') return 'Mode Chatbot AI (Ungu)';
-                    return 'Mode Landing Page (Hijau)';
+                    if (activeTab.value === 'webapp') return 'Mode Web App';
+                    if (activeTab.value === 'ai') return 'Mode Chatbot AI';
+                    return 'Mode Landing Page';
                 });
 
                 const activeTabTitle = computed(() => {
@@ -1675,13 +1675,16 @@
                     str += `- **Palet Warna HEX**: ${design.value.palette || "#0F172A, #1E293B, #F1F5F9"}\n`;
                     if (activeTab.value === "webapp" || activeTab.value === "ai") {
                         str += `- **Tipe Bar Menu**: ${design.value.menuType}\n`;
-                        if (isMobileFocus.value) str += `- **MOBILE FOCUS ON**: Fokus penuh ke desain Mobile View (Responsivitas maksimal).\n`;
+                        if (isMobileFocus.value) str += `- **MOBILE FOCUS ON**: Fokus penuh ke desain Mobile View (Responsivitas maksimal). Gunakan batasan max-width pada container utama untuk representasi mobile app. Fokus penuh pada tampilan mobile dengan tampilan yang mobile friendly dari layout ukuran dan menu di bagian bawah..\n`;
                     }
                     str += `- **Deskripsi Tambahan**: ${sanitizeAIWord(design.value.visualDescription) || "Bersih dan responsif."}\n\n`;
 
                     let extraFeatures = '';
-                    if (isOptimisticUI.value) extraFeatures += `- **OPTIMISTIC UI ON**: Implementasikan mutasi state instan pada setiap operasi CRUD dengan Toast Notifications.\n`;
+                    if (isOptimisticUI.value) extraFeatures += `- **OPTIMISTIC UI ON**: Implementasikan mutasi state instan pada setiap operasi CRUD. Gunakan sistem Toast Notification modern untuk status (Loading: "Sedang diproses...", Success: "Data berhasil disimpan!", Error: "Gagal memproses data"). Wajib ada logika rollback jika operasi API gagal, pastikan UX mulus, jangan sampai user mendapatkan loading apapun dari loading pengambilan data ulang atau loading lainnya yang memaksa user menunggu.\n`;
                     if (isSweetAlert.value) extraFeatures += `- **SWEETALERT2 INTEGRATION**: Gunakan SweetAlert2 untuk modal dialog konfirmasi dan alert.\n`;
+                    if (activeTab.value === "ai" && isConfirmCrud.value) {
+                        extraFeatures += `- **KONFIRMASI SEBELUM MERUBAH DATA**: Sebelum asisten AI mengeksekusi operasi CRUD (Create, Update, Delete) pada data, wajib tampilkan konfirmasi ke pengguna mengenai data apa saja yang akan diproses CRUD.\n`;
+                    }
 
                     if (extraFeatures) {
                         str += `### 4. FITUR TAMBAHAN\n` + extraFeatures + `\n### 5. INSTRUKSI TEKNIS PENGERJAAN KODE\n`;
