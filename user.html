@@ -247,42 +247,7 @@
                 </div>
             </div>
 
-            <!-- ================= TEMPLATE PROMPT DETAIL MODAL ================= -->
-            <div id="prompt-detail-modal"
-                class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                <div
-                    class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
-                    <div class="flex justify-between items-center p-4 border-b border-brand-slate/20 shrink-0">
-                        <h3 class="font-bold text-base line-clamp-1" id="prompt-modal-title">Template Prompt</h3>
-                        <button onclick="closePromptDetailModal()"
-                            class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-2xl px-2">
-                            <i class="fa-solid fa-circle-xmark"></i>
-                        </button>
-                    </div>
-                    <div class="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
-                        <div>
-                            <h4 class="text-xs font-semibold text-brand-slate mb-1">Deskripsi</h4>
-                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed"
-                                id="prompt-modal-desc"></p>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="text-xs font-semibold text-brand-slate">Isi Prompt</h4>
-                                <button onclick="copyPromptText()"
-                                    class="px-2.5 py-1 bg-brand-accent hover:bg-opacity-90 text-white rounded-lg text-[10px] font-semibold flex items-center gap-1.5 shadow-sm transition-all">
-                                    <i class="fa-solid fa-copy"></i> <span id="copy-btn-text">Salin Prompt</span>
-                                </button>
-                            </div>
-                            <pre class="w-full p-4 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/20 rounded-2xl text-xs font-mono whitespace-pre-wrap break-words text-brand-navy dark:text-brand-platinum max-h-[300px] overflow-y-auto select-all"
-                                id="prompt-modal-text"></pre>
-                        </div>
-                    </div>
-                    <div class="p-4 border-t border-brand-slate/20 flex justify-end shrink-0">
-                        <button onclick="closePromptDetailModal()"
-                            class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Tutup</button>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- ================= VIEW: USER TOOLS AI WORKSPACE ================= -->
             <section id="view-user-gems" class="hidden space-y-6">
@@ -301,27 +266,7 @@
                 </div>
             </section>
 
-            <!-- ================= VIEW: USER TEMPLATE PROMPT ================= -->
-            <section id="view-user-prompts" class="hidden space-y-6">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
-                    <div>
-                        <h2 class="text-xl font-extrabold tracking-tight text-brand-navy dark:text-brand-platinum">
-                            Template Prompt AI</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Gunakan template prompt
-                            pilihan untuk memaksimalkan hasil AI Anda.</p>
-                    </div>
-                </div>
 
-                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"
-                    id="prompt-category-filters-container">
-                    <!-- Filter Kategori Dinamis -->
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-prompts-grid">
-                    <!-- Kartu Prompt Dinamis -->
-                </div>
-            </section>
 
             <!-- ================= VIEW: USER PROMPT BUILDER ================= -->
             <section id="view-user-prompt-builder" class="hidden space-y-6">
@@ -1079,10 +1024,7 @@
             dNav.appendChild(vBtn.desk);
             mNav.appendChild(vBtn.mob);
 
-            // NEW: Template Prompt
-            const pBtn = createNavBtn('user-prompts', 'fa-file-code', 'Template Prompt');
-            dNav.appendChild(pBtn.desk);
-            mNav.appendChild(pBtn.mob);
+
 
             // 2. Tools AI
             const gBtn = createNavBtn('user-gems', 'fa-robot', 'Tools AI');
@@ -1142,7 +1084,7 @@
 
         function navigateTo(viewId) {
             appState.activeView = viewId;
-            const views = ['view-user-videos', 'view-user-gems', 'view-user-prompts', 'view-user-prompt-builder', 'view-settings'];
+            const views = ['view-user-videos', 'view-user-gems', 'view-user-prompt-builder', 'view-settings'];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
             document.getElementById('view-' + viewId).classList.remove('hidden');
 
@@ -1166,9 +1108,6 @@
             if (viewId === 'user-videos') {
                 renderCategoryFilters();
                 renderVideosGrid();
-            } else if (viewId === 'user-prompts') {
-                renderPromptCategoryFilters();
-                renderPromptsGrid();
             } else if (viewId === 'user-gems') {
                 renderGemsGrid();
             }
@@ -1360,101 +1299,7 @@
             container.appendChild(section);
         }
 
-        /* --- RENDERING TEMPLATE PROMPT --- */
-        let activePromptText = "";
-        function renderPromptCategoryFilters() {
-            const container = document.getElementById('prompt-category-filters-container');
-            if (!container) return;
-            container.innerHTML = '';
 
-            const promptsList = appState.prompts || [];
-            const categoriesWithPrompts = appState.categories.filter(cat =>
-                promptsList.some(p => p.kategori_id === cat.id)
-            );
-
-            const categories = ['Semua', ...categoriesWithPrompts.map(c => c.nama)];
-            categories.forEach(catName => {
-                const btn = document.createElement('button');
-                btn.className = `px-4 py-2 rounded-xl text-xs font-semibold transition-all flex-shrink-0 ${appState.promptCategoryFilter === catName ? 'bg-brand-accent text-white shadow-md' : 'glass-card text-brand-slate hover:bg-brand-slate/20'}`;
-                btn.textContent = catName;
-                btn.onclick = () => {
-                    appState.promptCategoryFilter = catName;
-                    renderPromptCategoryFilters();
-                    renderPromptsGrid();
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function renderPromptsGrid() {
-            const grid = document.getElementById('user-prompts-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            const promptsList = appState.prompts || [];
-            let filtered = promptsList;
-            if (appState.promptCategoryFilter && appState.promptCategoryFilter !== 'Semua') {
-                const selectedCat = appState.categories.find(c => c.nama === appState.promptCategoryFilter);
-                if (selectedCat) {
-                    filtered = promptsList.filter(p => p.kategori_id === selectedCat.id);
-                }
-            }
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-file-code text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada template prompt dalam kategori ini.</p></div>';
-                return;
-            }
-
-            filtered.forEach(p => {
-                const cat = appState.categories.find(c => c.id === p.kategori_id);
-                const card = document.createElement('div');
-                card.className = "glass-panel rounded-3xl p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
-                card.innerHTML = [
-                    '<div>',
-                    '  <div class="flex justify-between items-start mb-3">',
-                    '    <span class="px-2.5 py-1 bg-brand-dark/10 dark:bg-brand-dark/40 rounded-lg text-[10px] font-bold text-brand-slate dark:text-brand-platinum uppercase tracking-wider">', (cat ? cat.nama : 'UMUM'), '</span>',
-                    '  </div>',
-                    '  <h3 class="font-bold text-base line-clamp-1 text-brand-navy dark:text-brand-platinum mb-2">', p.judul.replace(/"/g, '&quot;'), '</h3>',
-                    '  <p class="text-xs text-brand-slate dark:text-brand-slate/80 line-clamp-3 leading-relaxed mb-4">', p.deskripsi.replace(/"/g, '&quot;'), '</p>',
-                    '</div>',
-                    '<div class="pt-2 border-t border-brand-slate/10 flex items-center justify-between">',
-                    '  <button onclick="showPromptDetail(\'', p.id, '\')" class="px-3.5 py-2 bg-brand-accent hover:bg-opacity-90 text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm w-full justify-center"><i class="fa-solid fa-eye"></i> Lihat Prompt</button>',
-                    '</div>'
-                ].join('');
-                grid.appendChild(card);
-            });
-        }
-
-        function showPromptDetail(promptId) {
-            const promptData = appState.prompts.find(p => p.id === promptId);
-            if (!promptData) return;
-
-            activePromptText = promptData.prompt_text;
-            document.getElementById('prompt-modal-title').textContent = promptData.judul;
-            document.getElementById('prompt-modal-desc').textContent = promptData.deskripsi;
-            document.getElementById('prompt-modal-text').textContent = promptData.prompt_text;
-            document.getElementById('copy-btn-text').textContent = "Salin Prompt";
-
-            document.getElementById('prompt-detail-modal').classList.remove('hidden');
-        }
-
-        function closePromptDetailModal() {
-            document.getElementById('prompt-detail-modal').classList.add('hidden');
-        }
-
-        function copyPromptText() {
-            if (!activePromptText) return;
-            navigator.clipboard.writeText(activePromptText).then(() => {
-                const btnText = document.getElementById('copy-btn-text');
-                btnText.textContent = "Tersalin!";
-                showSuccessToast("Prompt berhasil disalin!");
-                setTimeout(() => {
-                    btnText.textContent = "Salin Prompt";
-                }, 2000);
-            }).catch(err => {
-                showErrorToast("Gagal menyalin prompt: " + err.toString());
-            });
-        }
 
         document.getElementById('settings-form').addEventListener('submit', (e) => {
             e.preventDefault();

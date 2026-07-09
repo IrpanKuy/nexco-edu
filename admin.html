@@ -296,74 +296,7 @@
                 </div>
             </section>
 
-            <!-- ================= VIEW: ADMIN KELOLA PROMPT TEMPLATE ================= -->
-            <section id="view-admin-manage-prompts" class="hidden space-y-6">
-                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
-                    <div>
-                        <h2 class="text-lg font-bold">Kelola Template Prompt AI</h2>
-                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus template prompt yang bisa digunakan siswa.</p>
-                    </div>
-                    <button onclick="openPromptFormModal()"
-                        class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Template Baru
-                    </button>
-                </div>
 
-                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
-                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
-                        <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
-                            <tr>
-                                <th class="px-6 py-3.5">Judul Prompt</th>
-                                <th class="px-6 py-3.5">Kategori</th>
-                                <th class="px-6 py-3.5 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-brand-slate/10" id="admin-prompts-table-body">
-                            <!-- Baris Prompt Dinamis -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Prompt Modal Form -->
-                <div id="prompts-form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
-                    <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
-                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
-                            <h3 class="font-bold text-base" id="prompts-modal-title">Template Prompt Baru</h3>
-                            <button onclick="closePromptFormModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
-                                <i class="fa-solid fa-circle-xmark"></i>
-                            </button>
-                        </div>
-                        <form id="prompts-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-                            <input type="hidden" id="crud-prompt-id">
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Judul Prompt</label>
-                                <input type="text" id="crud-prompt-judul" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori</label>
-                                <select id="crud-prompt-kategori" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat</label>
-                                <textarea id="crud-prompt-deskripsi" rows="2" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Isi Prompt Lengkap</label>
-                                <textarea id="crud-prompt-text" rows="5" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs font-mono text-brand-navy dark:text-brand-platinum"></textarea>
-                            </div>
-                            <div class="flex justify-end gap-3 pt-2">
-                                <button type="button" onclick="closePromptFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
-                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Data</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </section>
 
             <!-- ================= VIEW: ADMIN KELOLA TOOLS AI ================= -->
             <section id="view-admin-manage-gems" class="hidden space-y-6">
@@ -662,7 +595,6 @@
 
             const items = [
                 { view: 'admin-manage-videos', icon: 'fa-video', label: 'Kelola Video' },
-                { view: 'admin-manage-prompts', icon: 'fa-file-lines', label: 'Kelola Prompt' },
                 { view: 'admin-manage-gems', icon: 'fa-robot', label: 'Kelola Tools' },
                 { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
                 { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
@@ -692,7 +624,7 @@
         function navigateTo(viewId) {
             appState.activeView = viewId;
             const views = [
-                'view-admin-manage-videos', 'view-admin-manage-prompts', 'view-admin-manage-gems',
+                'view-admin-manage-videos', 'view-admin-manage-gems',
                 'view-admin-manage-categories', 'view-admin-manage-users', 'view-settings'
             ];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
@@ -711,8 +643,6 @@
 
             if (viewId === 'admin-manage-videos') {
                 renderAdminVideosTable();
-            } else if (viewId === 'admin-manage-prompts') {
-                renderAdminPromptsTable();
             } else if (viewId === 'admin-manage-gems') {
                 renderAdminGemsTable();
             } else if (viewId === 'admin-manage-categories') {
@@ -1360,157 +1290,7 @@
                 .saveAiApiKeyOnServer(aiKey);
         });
 
-        /* --- CRUD TEMPLATE PROMPT --- */
-        function renderAdminPromptsTable() {
-            const tbody = document.getElementById('admin-prompts-table-body');
-            tbody.innerHTML = '';
-            const promptsList = appState.prompts || [];
-            if (promptsList.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center text-brand-slate">Belum ada template prompt terdaftar.</td></tr>'; 
-                return; 
-            }
 
-            promptsList.forEach(p => {
-                const cat = appState.categories.find(c => c.id === p.kategori_id);
-                const catName = cat ? cat.nama : 'Tidak Diketahui';
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
-                tr.innerHTML = [
-                    '<td class="px-6 py-4 font-bold text-xs">', p.judul.replace(/"/g, '&quot;'), '</td>',
-                    '<td class="px-6 py-4 text-xs">', catName, '</td>',
-                    '<td class="px-6 py-4 text-center">',
-                    '<button onclick="editPrompt(\'', p.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
-                    '<button onclick="deletePrompt(\'', p.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
-                    '</td>'
-                ].join('');
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openPromptFormModal(editId = '') {
-            const modal = document.getElementById('prompts-form-modal');
-            document.getElementById('prompts-crud-form').reset();
-            
-            // Populate category select
-            document.getElementById('crud-prompt-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
-
-            if (editId) {
-                const promptsList = appState.prompts || [];
-                const p = promptsList.find(item => item.id === editId);
-                if (!p) return;
-                document.getElementById('prompts-modal-title').textContent = "Ubah Template Prompt";
-                document.getElementById('crud-prompt-id').value = p.id;
-                document.getElementById('crud-prompt-judul').value = p.judul;
-                document.getElementById('crud-prompt-kategori').value = p.kategori_id || '';
-                document.getElementById('crud-prompt-deskripsi').value = p.deskripsi;
-                document.getElementById('crud-prompt-text').value = p.prompt_text;
-            } else {
-                document.getElementById('prompts-modal-title').textContent = "Template Prompt Baru";
-                document.getElementById('crud-prompt-id').value = '';
-            }
-            modal.classList.remove('hidden');
-        }
-
-        function closePromptFormModal() { document.getElementById('prompts-form-modal').classList.add('hidden'); }
-
-        document.getElementById('prompts-crud-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('crud-prompt-id').value;
-            const judul = document.getElementById('crud-prompt-judul').value.trim();
-            const kategori_id = document.getElementById('crud-prompt-kategori').value;
-            const deskripsi = document.getElementById('crud-prompt-deskripsi').value.trim();
-            const prompt_text = document.getElementById('crud-prompt-text').value.trim();
-
-            const payload = {
-                id: id || null,
-                judul: judul,
-                kategori_id: kategori_id,
-                deskripsi: deskripsi,
-                prompt_text: prompt_text
-            };
-
-            if (!appState.prompts) appState.prompts = [];
-            const backupPrompts = [...appState.prompts];
-            const tempId = id || 'p_temp_' + Date.now();
-            const timestamp = new Date().toISOString();
-
-            const itemObj = {
-                id: tempId,
-                judul: judul,
-                kategori_id: kategori_id,
-                deskripsi: deskripsi,
-                prompt_text: prompt_text,
-                created_at: timestamp
-            };
-
-            if (id) {
-                const idx = appState.prompts.findIndex(p => p.id === id);
-                if (idx !== -1) {
-                    itemObj.created_at = appState.prompts[idx].created_at || timestamp;
-                    appState.prompts[idx] = itemObj;
-                }
-            } else {
-                appState.prompts.push(itemObj);
-            }
-
-            closePromptFormModal();
-            renderAdminPromptsTable();
-            showSuccessToast('Menyimpan prompt (proses latar belakang)...');
-
-            google.script.run
-                .withSuccessHandler(res => {
-                    if (res.success) {
-                        const targetId = id ? id : tempId;
-                        const idx = appState.prompts.findIndex(p => p.id === targetId);
-                        if (idx !== -1) {
-                            appState.prompts[idx] = { ...itemObj, id: res.id };
-                        }
-                        renderAdminPromptsTable();
-                        showSuccessToast('Template Prompt berhasil disimpan!');
-                    } else {
-                        appState.prompts = backupPrompts;
-                        renderAdminPromptsTable();
-                        showErrorAlert('Gagal menyimpan prompt: ' + res.message + '. UI telah dikembalikan.');
-                    }
-                })
-                .withFailureHandler(err => {
-                    appState.prompts = backupPrompts;
-                    renderAdminPromptsTable();
-                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .savePromptOnServer(payload);
-        });
-
-        function editPrompt(id) { openPromptFormModal(id); }
-
-        function deletePrompt(id) {
-            Swal.fire({ title: 'Hapus Template Prompt?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
-                if (res.isConfirmed) {
-                    const backupPrompts = [...appState.prompts];
-                    appState.prompts = appState.prompts.filter(item => item.id !== id);
-                    renderAdminPromptsTable();
-                    showSuccessToast('Menghapus prompt (proses latar belakang)...');
-
-                    google.script.run
-                        .withSuccessHandler(response => {
-                            if (response.success) {
-                                showSuccessToast('Template Prompt berhasil dihapus!');
-                            } else {
-                                appState.prompts = backupPrompts;
-                                renderAdminPromptsTable();
-                                showErrorAlert('Gagal menghapus prompt: ' + response.message + '. UI telah dikembalikan.');
-                            }
-                        })
-                        .withFailureHandler(err => {
-                            appState.prompts = backupPrompts;
-                            renderAdminPromptsTable();
-                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deletePromptOnServer(id);
-                }
-            });
-        }
     </script>
 </body>
 
