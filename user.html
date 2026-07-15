@@ -994,6 +994,12 @@
 
     <!-- ================= RUNTIME APP LOGIC (USER DASHBOARD) ================= -->
     <script>
+        function isValidImageUrl(url) {
+            if (!url) return false;
+            const s = String(url).trim().toLowerCase();
+            return s !== '' && s !== 'null' && s !== 'undefined' && s !== 'none' && (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:'));
+        }
+
         let vuePromptApp = null;
 
         window.addEventListener('load', () => {
@@ -1389,7 +1395,7 @@
                 const card = document.createElement('div');
                 card.className = "glass-panel rounded-3xl p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
                 
-                const appImage = tpl.foto_app ? `<img src="${tpl.foto_app}" alt="${tpl.nama_app}" class="w-full h-32 object-cover rounded-2xl mb-3 border border-brand-slate/10 group-hover:scale-[1.02] transition-transform duration-300">` : '<div class="w-full h-32 bg-slate-100 dark:bg-brand-navy rounded-2xl mb-3 flex items-center justify-center border border-brand-slate/10"><i class="fa-solid fa-image text-brand-slate text-2xl"></i></div>';
+                const appImage = isValidImageUrl(tpl.foto_app) ? `<img src="${tpl.foto_app}" alt="${tpl.nama_app}" class="w-full h-32 object-cover rounded-2xl mb-3 border border-brand-slate/10 group-hover:scale-[1.02] transition-transform duration-300">` : '<div class="w-full h-32 bg-slate-100 dark:bg-brand-navy rounded-2xl mb-3 flex items-center justify-center border border-brand-slate/10"><i class="fa-solid fa-image text-brand-slate text-2xl"></i></div>';
                 const displayTitle = limitWords(tpl.nama_app, 10);
                 const displayDesc = limitWords(tpl.deskripsi_app, 25);
 

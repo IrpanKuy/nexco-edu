@@ -679,6 +679,12 @@
 
     <!-- ================= RUNTIME APP LOGIC (ADMIN DASHBOARD) ================= -->
     <script>
+        function isValidImageUrl(url) {
+            if (!url) return false;
+            const s = String(url).trim().toLowerCase();
+            return s !== '' && s !== 'null' && s !== 'undefined' && s !== 'none' && (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:'));
+        }
+
         window.addEventListener('load', () => {
             verifySessionAndInit('admin', (user) => {
                 showLoader("Sinkronisasi Kurikulum & Data Administrator...");
@@ -1437,7 +1443,7 @@
                 tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
                 tr.innerHTML = [
                     '<td class="px-6 py-4 flex items-center gap-3">',
-                    tpl.foto_app ? `<img src="${tpl.foto_app}" class="w-10 h-10 object-cover rounded-lg border border-brand-slate/20">` : '<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center"><i class="fa-solid fa-image text-slate-400"></i></div>',
+                    isValidImageUrl(tpl.foto_app) ? `<img src="${tpl.foto_app}" class="w-10 h-10 object-cover rounded-lg border border-brand-slate/20">` : '<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center"><i class="fa-solid fa-image text-slate-400"></i></div>',
                     '<div><p class="font-bold text-xs sm:text-sm">', tpl.nama_app.replace(/"/g, '&quot;'), '</p><p class="text-[10px] text-brand-slate line-clamp-1">', tpl.deskripsi_app.replace(/"/g, '&quot;'), '</p></div>',
                     '</td>',
                     '<td class="px-6 py-4 text-xs font-semibold text-brand-slate dark:text-brand-platinum/80">', catName, '</td>',
