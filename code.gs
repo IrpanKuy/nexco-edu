@@ -3,15 +3,6 @@
  * Sesi dikelola sepenuhnya secara stateless oleh Client eksternal.
  */
 
-// Fungsi ini berguna untuk memaksa Google Apps Script memunculkan dialog persetujuan akses Google Drive di editor online Anda.
-function triggerAuthorizationPrompt() {
-  try {
-    const root = DriveApp.getRootFolder();
-    return "Koneksi sukses! Nama Root Folder Drive: " + root.getName();
-  } catch (e) {
-    return "Gagal otorisasi: " + e.toString();
-  }
-}
 
 // Mengambil Spreadsheet aktif secara aman (skrip harus terikat/bound dengan Spreadsheet)
 function getActiveSS() {
@@ -795,91 +786,6 @@ function deleteTemplateOnServer(id) {
   }
 }
 
-// 12. FITUR UPLOAD GAMBAR KE GOOGLE DRIVE
-function uploadFileToDrive(base64Data, fileName, mimeType) {
-  try {
-    const parts = base64Data.split(",");
-    const meta = parts[0];
-    const rawData = parts[1] || parts[0];
-    
-    let mime = mimeType || "image/jpeg";
-    const mimeMatch = meta.match(/:(.*?);/);
-    if (mimeMatch) {
-      mime = mimeMatch[1];
-    }
-    
-    const decoded = Utilities.base64Decode(rawData);
-    const blob = Utilities.newBlob(decoded, mime, fileName);
-    
-    let folder;
-    let folderId = "";
-    
-    // Look up settings for drive_folder_id
-    try {
-      const ss = getActiveSS();
-      const settingsSheet = ss.getSheetByName("settings");
-      if (settingsSheet) {
-        const rows = settingsSheet.getDataRange().getValues();
-        for (let i = 1; i < rows.length; i++) {
-          if (rows[i][0] === "drive_folder_id") {
-            const rawId = rows[i][1];
-            if (rawId) {
-              const match = rawId.match(/folders\/([a-zA-Z0-9-_]+)/) || rawId.match(/id=([a-zA-Z0-9-_]+)/);
-              folderId = match ? match[1] : rawId.trim();
-            }
-            break;
-          }
-        }
-      }
-    } catch (e) {
-      Logger.log("Gagal mengambil folder_id dari settings: " + e.toString());
-    }
-    
-    if (folderId) {
-      try {
-        folder = DriveApp.getFolderById(folderId);
-      } catch (err) {
-        Logger.log("Folder ID dari settings tidak valid, fallback ke default. Error: " + err.toString());
-      }
-    }
-    
-    if (!folder) {
-      const folders = DriveApp.getFoldersByName("Nexco Edu Uploads");
-      while (folders.hasNext()) {
-        const f = folders.next();
-        if (!f.isTrashed()) {
-          folder = f;
-          break;
-        }
-      }
-      if (!folder) {
-        folder = DriveApp.createFolder("Nexco Edu Uploads");
-      }
-    }
-    
-    const file = folder.createFile(blob);
-    
-    try {
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (shareErr) {
-      Logger.log("Sharing restriction active: " + shareErr.toString());
-    }
-    
-    const fileId = file.getId();
-    const imageUrl = "https://docs.google.com/uc?export=view&id=" + fileId;
-    
-    return {
-      success: true,
-      url: imageUrl,
-      fileId: fileId
-    };
-  } catch (err) {
-    return {
-      success: false,
-      message: "Gagal mengunggah file ke Google Drive: " + err.toString()
-    };
-  }
-}
 
 // 13. MANAJEMEN DINAMIS KOLOM SPREADSHEET
 function addColumnToSheet(sheetName, columnName) {
