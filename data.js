@@ -102,6 +102,7 @@ let appState = {
     gems: [],
     categories: [],
     prompts: [],
+    templates: [],
     users: [],
     aiApiKey: '',
     activeView: '',
@@ -207,6 +208,7 @@ function loadSystemBundledData(userId, callback) {
                 appState.gems = res.gems || [];
                 appState.categories = res.categories || [];
                 appState.prompts = res.prompts || [];
+                appState.templates = res.templates || [];
                 appState.users = res.users || [];
                 appState.aiApiKey = res.aiApiKey || '';
                 window.appState = appState;
