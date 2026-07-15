@@ -94,7 +94,8 @@ function setupDatabase() {
       'gems': ['id', 'nama', 'akses_url', 'image_url', 'deskripsi', 'kategori_id', 'created_at'],
       'categories': ['id', 'nama', 'created_at'],
       'prompts': ['id', 'judul', 'deskripsi', 'prompt_text', 'kategori_id', 'created_at'],
-      'settings': ['key', 'value', 'updated_at']
+      'settings': ['key', 'value', 'updated_at'],
+      'templates': ['id', 'foto_app', 'kategori_id', 'nama_app', 'deskripsi_app', 'demo_url', 'link_code', 'created_at']
     };
 
     // Buat sheet secara otomatis jika belum terkonfigurasi
@@ -115,34 +116,6 @@ function setupDatabase() {
       const userPass = hashPassword('user123');
       userSheet.appendRow(['u_admin', 'admin@nexcoedu.com', adminPass, 'Iwan Setiawan (Admin)', 'admin', '', new Date().toISOString()]);
       userSheet.appendRow(['u_user', 'user@nexcoedu.com', userPass, 'Budi Siswanto', 'user', 'c1', new Date().toISOString()]);
-    }
-
-    // Seeder Kategori Default
-    const catSheet = ss.getSheetByName('categories');
-    if (catSheet.getLastRow() <= 1) {
-      catSheet.appendRow(['c1', 'Prompt Engineering', new Date().toISOString()]);
-      catSheet.appendRow(['c2', 'Python AI', new Date().toISOString()]);
-      catSheet.appendRow(['c3', 'Advanced AI', new Date().toISOString()]);
-    }
-
-    // Seeder Modul Video Default
-    const videoSheet = ss.getSheetByName('videos');
-    if (videoSheet.getLastRow() <= 1) {
-      videoSheet.appendRow(['v1', 'Pengenalan Prompt Engineering Dasar', 'Pelajari cara berinteraksi secara optimal dengan LLMs.', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://example.com/ebook-prompt.pdf', 'c1', 1, new Date().toISOString()]);
-      videoSheet.appendRow(['v2', 'Membuat Agentic AI dengan Python', 'Tutorial membangun agen cerdas otomatis.', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://example.com/ebook-python.pdf', 'c2', 2, new Date().toISOString()]);
-    }
-
-    // Seeder Tools AI Default
-    const gemSheet = ss.getSheetByName('gems');
-    if (gemSheet.getLastRow() <= 1) {
-      gemSheet.appendRow(['g1', 'ChatGPT Workspace', 'https://chat.openai.com', 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=1920&h=1080&fit=crop', 'Gunakan ChatGPT Workspace untuk membantu koding terstruktur.', 'c1', new Date().toISOString()]);
-    }
-
-    // Seeder Prompt Templates Default
-    const promptSheet = ss.getSheetByName('prompts');
-    if (promptSheet.getLastRow() <= 1) {
-      promptSheet.appendRow(['p1', 'Prompt Pembuat Landing Page Berkonversi Tinggi', 'Gunakan prompt ini untuk membuat struktur landing page yang berfokus pada konversi penjualan.', 'Tulis teks landing page untuk produk saas HRIS dengan format bento grid. Fokuskan pada value proposition kemudahan onboarding karyawan baru. Sediakan headline, subheadline, 3 benefit utama, dan tombol Call to Action (CTA).', 'c1', new Date().toISOString()]);
-      promptSheet.appendRow(['p2', 'Prompt Script Python Chatbot Dasar', 'Template prompt untuk generate script python chatbot telegram.', 'Buatkan script python sederhana menggunakan library python-telegram-bot versi terbaru untuk chatbot auto reply yang membalas kata kunci /start dan info produk.', 'c2', new Date().toISOString()]);
     }
 
     return "Database Nexco Edu Berhasil Dikonfigurasi!";
@@ -254,6 +227,7 @@ function fetchInitialBundledData(userId) {
     const gems = sanitizeData(readSheetData('gems'));
     const categories = sanitizeData(readSheetData('categories'));
     const prompts = sanitizeData(readSheetData('prompts'));
+    const templates = sanitizeData(readSheetData('templates'));
     
     let users = [];
     
@@ -277,6 +251,7 @@ function fetchInitialBundledData(userId) {
       gems: gems,
       categories: categories,
       prompts: prompts,
+      templates: templates,
       users: users,
       aiApiKey: aiApiKey
     };
@@ -734,5 +709,158 @@ function formatHelperDate(val) {
     return isNaN(d.getTime()) ? String(val) : d.toISOString();
   } catch (e) {
     return String(val);
+  }
+}
+
+// 11. MANAJEMEN CRUD TEMPLATE APP
+function saveTemplateOnServer(payload) {
+  try {
+    const ss = getActiveSS();
+    let sheet = ss.getSheetByName('templates');
+    if (!sheet) {
+      sheet = ss.insertSheet('templates');
+      sheet.appendRow(['id', 'foto_app', 'kategori_id', 'nama_app', 'deskripsi_app', 'demo_url', 'link_code', 'created_at']);
+    }
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows[0];
+
+    const mappedData = {
+      foto_app: payload.foto_app,
+      kategori_id: payload.kategori_id,
+      nama_app: payload.nama_app,
+      deskripsi_app: payload.deskripsi_app,
+      demo_url: payload.demo_url,
+      link_code: payload.link_code
+    };
+
+    if (payload.id) {
+      // Edit mode
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][0] === payload.id) {
+          const rowNum = i + 1;
+          headers.forEach((header, colIdx) => {
+            if (header !== 'id' && header !== 'created_at' && mappedData[header] !== undefined) {
+              sheet.getRange(rowNum, colIdx + 1).setValue(mappedData[header]);
+            }
+          });
+          SpreadsheetApp.flush();
+          return { success: true, data: { id: payload.id, ...mappedData, created_at: formatHelperDate(rows[i][headers.indexOf('created_at')]) } };
+        }
+      }
+      throw new Error("Template tidak ditemukan.");
+    } else {
+      // Create mode
+      const newId = 't_' + new Date().getTime();
+      const timestamp = new Date().toISOString();
+      const newRow = headers.map(header => {
+        if (header === 'id') return newId;
+        if (header === 'created_at') return timestamp;
+        return mappedData[header] !== undefined ? mappedData[header] : '';
+      });
+      sheet.appendRow(newRow);
+      SpreadsheetApp.flush();
+      return { success: true, data: { id: newId, ...mappedData, created_at: timestamp } };
+    }
+  } catch (err) {
+    return { success: false, message: "Gagal menyimpan Template App: " + err.toString() };
+  }
+}
+
+function deleteTemplateOnServer(id) {
+  try {
+    const ss = getActiveSS();
+    const sheet = ss.getSheetByName('templates');
+    if (!sheet) throw new Error("Tabel templates tidak ditemukan.");
+    const rows = sheet.getDataRange().getValues();
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === id) {
+        sheet.deleteRow(i + 1);
+        SpreadsheetApp.flush();
+        return { success: true };
+      }
+    }
+    throw new Error("Template tidak ditemukan.");
+  } catch (err) {
+    return { success: false, message: "Gagal menghapus Template App: " + err.toString() };
+  }
+}
+
+// 12. FITUR UPLOAD GAMBAR KE GOOGLE DRIVE
+function uploadFileToDrive(base64Data, fileName, mimeType) {
+  try {
+    const bytes = Utilities.base64Decode(base64Data);
+    const blob = Utilities.newBlob(bytes, mimeType, fileName);
+    
+    let folder;
+    const folders = DriveApp.getFoldersByName("Nexco Edu Uploads");
+    if (folders.hasNext()) {
+      folder = folders.next();
+    } else {
+      folder = DriveApp.createFolder("Nexco Edu Uploads");
+    }
+    
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    
+    const fileId = file.getId();
+    const imageUrl = "https://drive.google.com/uc?export=view&id=" + fileId;
+    
+    return {
+      success: true,
+      url: imageUrl,
+      fileId: fileId
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: "Gagal mengunggah file ke Google Drive: " + err.toString()
+    };
+  }
+}
+
+// 13. MANAJEMEN DINAMIS KOLOM SPREADSHEET
+function addColumnToSheet(sheetName, columnName) {
+  try {
+    const ss = getActiveSS();
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) return { success: false, message: "Sheet " + sheetName + " tidak ditemukan." };
+    
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows[0];
+    
+    if (headers.indexOf(columnName) !== -1) {
+      return { success: true, message: "Kolom " + columnName + " sudah ada di sheet " + sheetName + "." };
+    }
+    
+    const nextColIdx = headers.length + 1;
+    sheet.getRange(1, nextColIdx).setValue(columnName);
+    SpreadsheetApp.flush();
+    
+    return { success: true, message: "Kolom " + columnName + " berhasil ditambahkan ke sheet " + sheetName + "." };
+  } catch (err) {
+    return { success: false, message: "Gagal menambah kolom: " + err.toString() };
+  }
+}
+
+function deleteColumnFromSheet(sheetName, columnName) {
+  try {
+    const ss = getActiveSS();
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) return { success: false, message: "Sheet " + sheetName + " tidak ditemukan." };
+    
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows[0];
+    
+    const colIdx = headers.indexOf(columnName);
+    if (colIdx === -1) {
+      return { success: false, message: "Kolom " + columnName + " tidak ditemukan di sheet " + sheetName + "." };
+    }
+    
+    sheet.deleteColumn(colIdx + 1);
+    SpreadsheetApp.flush();
+    
+    return { success: true, message: "Kolom " + columnName + " berhasil dihapus dari sheet " + sheetName + "." };
+  } catch (err) {
+    return { success: false, message: "Gagal menghapus kolom: " + err.toString() };
   }
 }

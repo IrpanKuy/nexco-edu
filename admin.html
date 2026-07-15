@@ -349,12 +349,7 @@
                                 <input type="url" id="crud-gem-url" placeholder="https://claude.ai/..." required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar Banner/Logo Tools</label>
-                                <input type="text" id="crud-gem-image" placeholder="https://images.unsplash.com/... atau logo url" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
-                                <span class="text-[10px] text-brand-slate/80 mt-1 block">Rekomendasi format gambar: 1920x1080 px (aspek rasio 16:9).</span>
-                            </div>
+                            <input type="hidden" id="crud-gem-image" value="">
                             <div>
                                 <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori Tools</label>
                                 <select id="crud-gem-kategori" required
@@ -370,6 +365,100 @@
                             <div class="flex justify-end gap-3 pt-2">
                                 <button type="button" onclick="closeGemFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
                                 <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Tools</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: ADMIN KELOLA TEMPLATE APP ================= -->
+            <section id="view-admin-manage-templates" class="hidden space-y-6">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Kelola Template App</h2>
+                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus template aplikasi yang dapat dipelajari oleh siswa.</p>
+                    </div>
+                    <button onclick="openTemplateFormModal()"
+                        class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Template Baru
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Nama App</th>
+                                <th class="px-6 py-3.5">Kategori</th>
+                                <th class="px-6 py-3.5">Demo & Code</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-templates-table-body">
+                            <!-- Baris Template App Dinamis -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Template App Modal Form -->
+                <div id="templates-form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="templates-modal-title">Konfigurasi Template App</h3>
+                            <button onclick="closeTemplateFormModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="templates-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <input type="hidden" id="crud-template-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama App</label>
+                                <input type="text" id="crud-template-nama" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="misal: Nexco Portal">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori</label>
+                                    <select id="crud-template-kategori" required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Link Code</label>
+                                    <input type="url" id="crud-template-code" placeholder="https://github.com/..." required
+                                        class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Demo URL (Opsional)</label>
+                                <input type="url" id="crud-template-demo" placeholder="https://example.com/demo"
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Upload Foto App</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="file" id="crud-template-file" accept="image/*" class="hidden" onchange="handleTemplateImageUpload(this)">
+                                    <button type="button" onclick="document.getElementById('crud-template-file').click()"
+                                        class="px-4 py-2 bg-brand-slate/20 hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum text-xs font-semibold rounded-xl flex items-center gap-2">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i> Pilih File Gambar
+                                    </button>
+                                    <span id="crud-template-file-status" class="text-[10px] text-brand-slate">Belum ada file dipilih</span>
+                                </div>
+                                <input type="hidden" id="crud-template-foto">
+                                <div class="mt-3 relative hidden" id="crud-template-preview-container">
+                                    <img id="crud-template-preview" class="w-full h-32 object-cover rounded-xl border border-brand-slate/20">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi App</label>
+                                <textarea id="crud-template-deskripsi" rows="3" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="Jelaskan mengenai kegunaan aplikasi ini..."></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeTemplateFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Template</button>
                             </div>
                         </form>
                     </div>
@@ -549,6 +638,45 @@
                         <i class="fa-solid fa-save"></i> Simpan Perubahan Pengaturan
                     </button>
                 </form>
+
+                <!-- PANEL BARU: MANAJEMEN KOLOM SPREADSHEET -->
+                <div class="glass-panel p-6 rounded-2xl border border-brand-slate/20 space-y-5 shadow-sm text-brand-navy dark:text-brand-platinum mt-6">
+                    <div class="border-b border-brand-slate/20 pb-3">
+                        <h3 class="text-sm font-bold flex items-center gap-2"><i class="fa-solid fa-table-columns text-brand-accent"></i> Manajemen Kolom Spreadsheet</h3>
+                        <p class="text-[10px] text-brand-slate">Tambah atau hapus kolom pada tabel tanpa menghapus seluruh datanya.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-2 text-brand-slate">Pilih Tabel (Sheet)</label>
+                            <select id="col-sheet-name" class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                                <option value="users">users</option>
+                                <option value="videos">videos</option>
+                                <option value="gems">gems</option>
+                                <option value="categories">categories</option>
+                                <option value="prompts">prompts</option>
+                                <option value="templates">templates</option>
+                                <option value="settings">settings</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Kolom baru/yang akan dihapus</label>
+                            <input type="text" id="col-name" placeholder="misal: allowed_tools"
+                                class="w-full px-4 py-2.5 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs focus:ring-1 focus:ring-brand-accent focus:outline-none text-brand-navy dark:text-brand-platinum">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="handleAddColumn()"
+                            class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                            <i class="fa-solid fa-plus"></i> Tambah Kolom
+                        </button>
+                        <button type="button" onclick="handleDeleteColumn()"
+                            class="flex-1 py-2.5 bg-brand-danger/20 hover:bg-brand-danger hover:text-white text-brand-danger text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 border border-brand-danger/20 shadow-md">
+                            <i class="fa-solid fa-trash-can"></i> Hapus Kolom
+                        </button>
+                    </div>
+                </div>
             </section>
 
         </main>
@@ -596,6 +724,7 @@
             const items = [
                 { view: 'admin-manage-videos', icon: 'fa-video', label: 'Kelola Video' },
                 { view: 'admin-manage-gems', icon: 'fa-robot', label: 'Kelola Tools' },
+                { view: 'admin-manage-templates', icon: 'fa-laptop-code', label: 'Kelola Template' },
                 { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
                 { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
                 { view: 'settings', icon: 'fa-user-gear', label: 'Pengaturan' }
@@ -624,7 +753,7 @@
         function navigateTo(viewId) {
             appState.activeView = viewId;
             const views = [
-                'view-admin-manage-videos', 'view-admin-manage-gems',
+                'view-admin-manage-videos', 'view-admin-manage-gems', 'view-admin-manage-templates',
                 'view-admin-manage-categories', 'view-admin-manage-users', 'view-settings'
             ];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
@@ -645,6 +774,8 @@
                 renderAdminVideosTable();
             } else if (viewId === 'admin-manage-gems') {
                 renderAdminGemsTable();
+            } else if (viewId === 'admin-manage-templates') {
+                renderAdminTemplatesTable();
             } else if (viewId === 'admin-manage-categories') {
                 renderAdminCategoriesTable();
             } else if (viewId === 'admin-manage-users') {
@@ -988,6 +1119,7 @@
             } else {
                 document.getElementById('gems-modal-title').textContent = "Tambah Tools AI Baru";
                 document.getElementById('crud-gem-id').value = '';
+                document.getElementById('crud-gem-image').value = '';
             }
             modal.classList.remove('hidden');
         }
@@ -1290,7 +1422,327 @@
                 .saveAiApiKeyOnServer(aiKey);
         });
 
+        /* --- UPLOAD GAMBAR HELPER --- */
+        function handleGemImageUpload(input) {
+            uploadFileHelper(input, 'crud-gem-image', 'crud-gem-file-status', 'crud-gem-preview', 'crud-gem-preview-container');
+        }
 
+        function handleTemplateImageUpload(input) {
+            uploadFileHelper(input, 'crud-template-foto', 'crud-template-file-status', 'crud-template-preview', 'crud-template-preview-container');
+        }
+
+        function uploadFileHelper(input, hiddenInputId, statusSpanId, previewImgId, previewContainerId) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const statusSpan = document.getElementById(statusSpanId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const previewImg = document.getElementById(previewImgId);
+            const previewContainer = document.getElementById(previewContainerId);
+
+            statusSpan.textContent = 'Membaca file...';
+            
+            Swal.fire({
+                title: 'Mengunggah Gambar...',
+                text: 'Sedang menyimpan gambar ke Google Drive',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64Data = e.target.result.split(',')[1];
+                const fileName = file.name;
+                const mimeType = file.type;
+
+                google.script.run
+                    .withSuccessHandler(res => {
+                        Swal.close();
+                        if (res.success) {
+                            hiddenInput.value = res.url;
+                            previewImg.src = res.url;
+                            previewContainer.classList.remove('hidden');
+                            statusSpan.textContent = 'Berhasil diunggah!';
+                            showSuccessToast('Gambar berhasil diunggah ke Drive!');
+                        } else {
+                            statusSpan.textContent = 'Gagal mengunggah';
+                            showErrorAlert('Gagal upload: ' + res.message);
+                        }
+                    })
+                    .withFailureHandler(err => {
+                        Swal.close();
+                        statusSpan.textContent = 'Koneksi gagal';
+                        showErrorAlert('Koneksi gagal: ' + err.toString());
+                    })
+                    .uploadFileToDrive(base64Data, fileName, mimeType);
+            };
+            reader.onerror = function () {
+                Swal.close();
+                statusSpan.textContent = 'Gagal membaca file';
+                showErrorAlert('Gagal membaca file lokal.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* --- CRUD TEMPLATE APP --- */
+        function renderAdminTemplatesTable() {
+            const tbody = document.getElementById('admin-templates-table-body');
+            tbody.innerHTML = '';
+            
+            const templates = appState.templates || [];
+            if (templates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Belum ada template app terdaftar.</td></tr>';
+                return;
+            }
+
+            templates.forEach(tpl => {
+                const cat = appState.categories.find(c => c.id === tpl.kategori_id);
+                const catName = cat ? cat.nama : 'Umum';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 flex items-center gap-3">',
+                    tpl.foto_app ? `<img src="${tpl.foto_app}" class="w-10 h-10 object-cover rounded-lg border border-brand-slate/20">` : '<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center"><i class="fa-solid fa-image text-slate-400"></i></div>',
+                    '<div><p class="font-bold text-xs sm:text-sm">', tpl.nama_app.replace(/"/g, '&quot;'), '</p><p class="text-[10px] text-brand-slate line-clamp-1">', tpl.deskripsi_app.replace(/"/g, '&quot;'), '</p></div>',
+                    '</td>',
+                    '<td class="px-6 py-4 text-xs font-semibold text-brand-slate dark:text-brand-platinum/80">', catName, '</td>',
+                    '<td class="px-6 py-4 text-xs space-y-1">',
+                    tpl.demo_url ? `<div><a href="${tpl.demo_url}" target="_blank" class="text-brand-accent hover:underline font-semibold"><i class="fa-solid fa-up-right-from-square"></i> Demo App</a></div>` : '',
+                    `<div><a href="${tpl.link_code}" target="_blank" class="text-blue-500 hover:underline font-semibold"><i class="fa-solid fa-code"></i> Source Code</a></div>`,
+                    '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editTemplate(\'', tpl.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteTemplate(\'', tpl.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openTemplateFormModal(editId = '') {
+            const modal = document.getElementById('templates-form-modal');
+            document.getElementById('templates-crud-form').reset();
+
+            // Populate category select
+            document.getElementById('crud-template-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+
+            document.getElementById('crud-template-file').value = '';
+            document.getElementById('crud-template-file-status').textContent = 'Belum ada file dipilih';
+            document.getElementById('crud-template-preview-container').classList.add('hidden');
+
+            if (editId) {
+                const tpl = appState.templates.find(t => t.id === editId);
+                if (!tpl) return;
+                document.getElementById('templates-modal-title').textContent = "Ubah Template App";
+                document.getElementById('crud-template-id').value = tpl.id;
+                document.getElementById('crud-template-nama').value = tpl.nama_app;
+                document.getElementById('crud-template-kategori').value = tpl.kategori_id || '';
+                document.getElementById('crud-template-code').value = tpl.link_code;
+                document.getElementById('crud-template-demo').value = tpl.demo_url || '';
+                document.getElementById('crud-template-foto').value = tpl.foto_app || '';
+                document.getElementById('crud-template-deskripsi').value = tpl.deskripsi_app;
+
+                if (tpl.foto_app) {
+                    document.getElementById('crud-template-preview').src = tpl.foto_app;
+                    document.getElementById('crud-template-preview-container').classList.remove('hidden');
+                    document.getElementById('crud-template-file-status').textContent = 'Foto tersimpan di server';
+                }
+            } else {
+                document.getElementById('templates-modal-title').textContent = "Tambah Template App Baru";
+                document.getElementById('crud-template-id').value = '';
+                document.getElementById('crud-template-foto').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeTemplateFormModal() { document.getElementById('templates-form-modal').classList.add('hidden'); }
+
+        document.getElementById('templates-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-template-id').value;
+            const nama_app = document.getElementById('crud-template-nama').value.trim();
+            const kategori_id = document.getElementById('crud-template-kategori').value;
+            const link_code = document.getElementById('crud-template-code').value.trim();
+            const demo_url = document.getElementById('crud-template-demo').value.trim();
+            const foto_app = document.getElementById('crud-template-foto').value.trim();
+            const deskripsi_app = document.getElementById('crud-template-deskripsi').value.trim();
+
+            const payload = {
+                id: id || null,
+                nama_app: nama_app,
+                kategori_id: kategori_id,
+                link_code: link_code,
+                demo_url: demo_url || null,
+                foto_app: foto_app || null,
+                deskripsi_app: deskripsi_app
+            };
+
+            const backupTemplates = [...(appState.templates || [])];
+            const tempId = id || 't_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            const itemObj = {
+                id: tempId,
+                nama_app: nama_app,
+                kategori_id: kategori_id,
+                link_code: link_code,
+                demo_url: demo_url || null,
+                foto_app: foto_app || null,
+                deskripsi_app: deskripsi_app,
+                created_at: timestamp
+            };
+
+            if (!appState.templates) appState.templates = [];
+
+            if (id) {
+                const idx = appState.templates.findIndex(t => t.id === id);
+                if (idx !== -1) {
+                    itemObj.created_at = appState.templates[idx].created_at || timestamp;
+                    appState.templates[idx] = itemObj;
+                }
+            } else {
+                appState.templates.push(itemObj);
+            }
+
+            closeTemplateFormModal();
+            renderAdminTemplatesTable();
+            showSuccessToast('Menyimpan template (proses latar belakang)...');
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        const targetId = id ? id : tempId;
+                        const idx = appState.templates.findIndex(t => t.id === targetId);
+                        if (idx !== -1) appState.templates[idx] = res.data;
+                        renderAdminTemplatesTable();
+                        showSuccessToast('Template App berhasil disimpan!');
+                    } else {
+                        appState.templates = backupTemplates;
+                        renderAdminTemplatesTable();
+                        showErrorAlert('Gagal menyimpan template: ' + res.message + '. UI telah dikembalikan.');
+                    }
+                })
+                .withFailureHandler(err => {
+                    appState.templates = backupTemplates;
+                    renderAdminTemplatesTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                })
+                .saveTemplateOnServer(payload);
+        });
+
+        function editTemplate(id) { openTemplateFormModal(id); }
+        
+        function deleteTemplate(id) {
+            Swal.fire({ title: 'Hapus Template App?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then((res) => {
+                if (res.isConfirmed) {
+                    const backupTemplates = [...(appState.templates || [])];
+                    appState.templates = (appState.templates || []).filter(t => t.id !== id);
+                    renderAdminTemplatesTable();
+                    showSuccessToast('Menghapus template (proses latar belakang)...');
+
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            if (response.success) {
+                                showSuccessToast('Template App berhasil dihapus!');
+                            } else {
+                                appState.templates = backupTemplates;
+                                renderAdminTemplatesTable();
+                                showErrorAlert('Gagal menghapus template: ' + response.message + '. UI telah dikembalikan.');
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            appState.templates = backupTemplates;
+                            renderAdminTemplatesTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
+                        })
+                        .deleteTemplateOnServer(id);
+                }
+            });
+        }
+
+        /* --- SPREADSHEET COLUMN MANAGEMENT JS --- */
+        function handleAddColumn() {
+            const sheetName = document.getElementById('col-sheet-name').value;
+            const columnName = document.getElementById('col-name').value.trim();
+
+            if (!columnName) {
+                showErrorToast('Nama kolom tidak boleh kosong!');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Tambah Kolom Baru?',
+                text: `Anda akan menambahkan kolom "${columnName}" pada sheet "${sheetName}".`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10B981',
+                cancelButtonColor: '#415A77',
+                confirmButtonText: 'Ya, Tambahkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Memproses penambahan kolom...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            Swal.close();
+                            if (res.success) {
+                                document.getElementById('col-name').value = '';
+                                showSuccessAlert(res.message);
+                            } else {
+                                showErrorAlert(res.message);
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            Swal.close();
+                            showErrorAlert('Koneksi gagal: ' + err.toString());
+                        })
+                        .addColumnToSheet(sheetName, columnName);
+                }
+            });
+        }
+
+        function handleDeleteColumn() {
+            const sheetName = document.getElementById('col-sheet-name').value;
+            const columnName = document.getElementById('col-name').value.trim();
+
+            if (!columnName) {
+                showErrorToast('Nama kolom tidak boleh kosong!');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Hapus Kolom?',
+                text: `PERINGATAN: Menghapus kolom "${columnName}" pada sheet "${sheetName}" akan menghapus seluruh isi kolom tersebut untuk selamanya!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#415A77',
+                confirmButtonText: 'Ya, Hapus Permanen!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Memproses penghapusan kolom...', didOpen: () => { Swal.showLoading(); } });
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            Swal.close();
+                            if (res.success) {
+                                document.getElementById('col-name').value = '';
+                                showSuccessAlert(res.message);
+                            } else {
+                                showErrorAlert(res.message);
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            Swal.close();
+                            showErrorAlert('Koneksi gagal: ' + err.toString());
+                        })
+                        .deleteColumnFromSheet(sheetName, columnName);
+                }
+            });
+        }
     </script>
 </body>
 

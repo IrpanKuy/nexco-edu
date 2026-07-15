@@ -266,6 +266,25 @@
                 </div>
             </section>
 
+            <!-- ================= VIEW: USER TEMPLATE APP ================= -->
+            <section id="view-user-templates" class="hidden space-y-6">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-indigo-500/10 dark:bg-indigo-500/20 p-6 rounded-3xl border border-indigo-500/30 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-extrabold tracking-tight text-indigo-700 dark:text-indigo-400">Template Aplikasi</h2>
+                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Eksplorasi template aplikasi siap pakai dari Administrator untuk mempercepat proses pembuatan project Anda.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="template-category-filters-container">
+                    <!-- Filter Kategori Dinamis -->
+                </div>
+
+                <div id="user-templates-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Dinamis oleh JS: Kartu Template App -->
+                </div>
+            </section>
+
 
 
             <!-- ================= VIEW: USER PROMPT BUILDER ================= -->
@@ -1031,6 +1050,11 @@
             dNav.appendChild(gBtn.desk);
             mNav.appendChild(gBtn.mob);
 
+            // 2b. Template App
+            const tBtn = createNavBtn('user-templates', 'fa-laptop-code', 'Template App');
+            dNav.appendChild(tBtn.desk);
+            mNav.appendChild(tBtn.mob);
+
             // 3. Prompt Builder (WITH DROPDOWN MENU FOR WEBAPP, CHATBOT, LANDING PAGE)
             const pbDeskGroup = document.createElement('div');
             pbDeskGroup.className = 'relative group';
@@ -1084,7 +1108,7 @@
 
         function navigateTo(viewId) {
             appState.activeView = viewId;
-            const views = ['view-user-videos', 'view-user-gems', 'view-user-prompt-builder', 'view-settings'];
+            const views = ['view-user-videos', 'view-user-gems', 'view-user-templates', 'view-user-prompt-builder', 'view-settings'];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
             document.getElementById('view-' + viewId).classList.remove('hidden');
 
@@ -1110,6 +1134,8 @@
                 renderVideosGrid();
             } else if (viewId === 'user-gems') {
                 renderGemsGrid();
+            } else if (viewId === 'user-templates') {
+                renderTemplatesGrid();
             }
         }
 
@@ -1281,10 +1307,16 @@
             gems.forEach(gem => {
                 const card = document.createElement('div');
                 card.className = "glass-panel rounded-3xl p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
+                
+                const displayTitle = limitWords(gem.nama, 10);
+                const displayDesc = limitWords(gem.deskripsi, 25);
+
                 card.innerHTML = `
-                    <div class="space-y-2">
-                        <h4 class="font-bold text-sm line-clamp-1 text-brand-navy dark:text-brand-platinum group-hover:text-cyan-500 transition-colors">${gem.nama.replace(/"/g, '&quot;')}</h4>
-                        <p class="text-xs text-brand-slate dark:text-brand-slate/80 line-clamp-3 leading-relaxed">${gem.deskripsi.replace(/"/g, '&quot;')}</p>
+                    <div>
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-sm text-brand-navy dark:text-brand-platinum group-hover:text-cyan-500 transition-colors leading-snug">${displayTitle.replace(/"/g, '&quot;')}</h4>
+                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed">${displayDesc.replace(/"/g, '&quot;')}</p>
+                        </div>
                     </div>
                     <div class="pt-4">
                         <a href="${gem.akses_url}" target="_blank" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
@@ -1297,6 +1329,97 @@
 
             section.appendChild(grid);
             container.appendChild(section);
+        }
+
+        /* --- RENDERING TEMPLATE APP GRID --- */
+        function renderTemplateCategoryFilters() {
+            const container = document.getElementById('template-category-filters-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const categoriesWithTemplates = appState.categories.filter(cat =>
+                (appState.templates || []).some(tpl => tpl.kategori_id === cat.id)
+            );
+
+            if (!appState.templateCategoryFilter) appState.templateCategoryFilter = 'Semua';
+
+            const categories = ['Semua', ...categoriesWithTemplates.map(c => c.nama)];
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-xl text-xs font-semibold transition-all flex-shrink-0 ${appState.templateCategoryFilter === cat ? 'bg-indigo-600 text-white shadow-md' : 'glass-panel text-brand-slate hover:bg-brand-slate/20 dark:text-brand-platinum dark:hover:bg-brand-slate/40'}`;
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    appState.templateCategoryFilter = cat;
+                    renderTemplateCategoryFilters();
+                    renderTemplatesGrid();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderTemplatesGrid() {
+            renderTemplateCategoryFilters();
+
+            const grid = document.getElementById('user-templates-grid');
+            grid.innerHTML = '';
+
+            let userTemplates = appState.templates || [];
+            if (appState.currentUser && appState.currentUser.role !== 'admin') {
+                const allowedCats = appState.currentUser.allowed_tools ? appState.currentUser.allowed_tools.split(',').map(c => c.trim()) : [];
+                userTemplates = (appState.templates || []).filter(tpl => allowedCats.includes(tpl.kategori_id));
+            }
+
+            if (!appState.templateCategoryFilter) appState.templateCategoryFilter = 'Semua';
+            if (appState.templateCategoryFilter !== 'Semua') {
+                const selectedCat = appState.categories.find(c => c.nama === appState.templateCategoryFilter);
+                if (selectedCat) {
+                    userTemplates = userTemplates.filter(t => t.kategori_id === selectedCat.id);
+                }
+            }
+
+            if (userTemplates.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada Template App dalam kategori ini.</p></div>';
+                return;
+            }
+
+            userTemplates.forEach(tpl => {
+                const cat = appState.categories.find(c => c.id === tpl.kategori_id);
+                const catName = cat ? cat.nama : 'Umum';
+
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-3xl p-5 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
+                
+                const appImage = tpl.foto_app ? `<img src="${tpl.foto_app}" alt="${tpl.nama_app}" class="w-full h-32 object-cover rounded-2xl mb-3 border border-brand-slate/10 group-hover:scale-[1.02] transition-transform duration-300">` : '<div class="w-full h-32 bg-slate-100 dark:bg-brand-navy rounded-2xl mb-3 flex items-center justify-center border border-brand-slate/10"><i class="fa-solid fa-image text-brand-slate text-2xl"></i></div>';
+                const displayTitle = limitWords(tpl.nama_app, 10);
+                const displayDesc = limitWords(tpl.deskripsi_app, 25);
+
+                const demoBtn = tpl.demo_url ? `<a href="${tpl.demo_url}" target="_blank" class="flex-1 py-2 bg-brand-accent hover:opacity-90 text-white rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-sm"><i class="fa-solid fa-circle-play"></i> Demo</a>` : '';
+                const codeBtn = `<a href="${tpl.link_code}" target="_blank" class="flex-1 py-2 bg-brand-slate/20 hover:bg-brand-slate/30 text-brand-slate dark:text-brand-platinum rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-brand-slate/30"><i class="fa-solid fa-code"></i> Code</a>`;
+
+                card.innerHTML = `
+                    <div>
+                        ${appImage}
+                        <div class="space-y-2">
+                            <span class="px-2 py-0.5 bg-brand-slate/10 dark:bg-brand-slate/40 rounded-lg text-[9px] font-bold text-brand-slate dark:text-brand-platinum/80 uppercase tracking-wider">${catName}</span>
+                            <h4 class="font-bold text-sm text-brand-navy dark:text-brand-platinum group-hover:text-indigo-500 transition-colors leading-snug mt-1">${displayTitle.replace(/"/g, '&quot;')}</h4>
+                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed">${displayDesc.replace(/"/g, '&quot;')}</p>
+                        </div>
+                    </div>
+                    <div class="pt-4 flex gap-2">
+                        ${demoBtn}
+                        ${codeBtn}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* --- STRING WORD LIMIT HELPER --- */
+        function limitWords(str, maxWords) {
+            if (!str) return '';
+            const words = str.split(/\s+/);
+            if (words.length <= maxWords) return str;
+            return words.slice(0, maxWords).join(' ') + '...';
         }
 
 
