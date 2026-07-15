@@ -3,6 +3,16 @@
  * Sesi dikelola sepenuhnya secara stateless oleh Client eksternal.
  */
 
+// Fungsi ini berguna untuk memaksa Google Apps Script memunculkan dialog persetujuan akses Google Drive di editor online Anda.
+function triggerAuthorizationPrompt() {
+  try {
+    const root = DriveApp.getRootFolder();
+    return "Koneksi sukses! Nama Root Folder Drive: " + root.getName();
+  } catch (e) {
+    return "Gagal otorisasi: " + e.toString();
+  }
+}
+
 // Mengambil Spreadsheet aktif secara aman (skrip harus terikat/bound dengan Spreadsheet)
 function getActiveSS() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -792,15 +802,34 @@ function uploadFileToDrive(base64Data, fileName, mimeType) {
     const blob = Utilities.newBlob(bytes, mimeType, fileName);
     
     let folder;
-    const folders = DriveApp.getFoldersByName("Nexco Edu Uploads");
-    if (folders.hasNext()) {
-      folder = folders.next();
-    } else {
-      folder = DriveApp.createFolder("Nexco Edu Uploads");
+    try {
+      const folders = DriveApp.getFoldersByName("Nexco Edu Uploads");
+      while (folders.hasNext()) {
+        const f = folders.next();
+        if (!f.isTrashed()) {
+          folder = f;
+          break;
+        }
+      }
+      if (!folder) {
+        folder = DriveApp.createFolder("Nexco Edu Uploads");
+      }
+    } catch (folderErr) {
+      Logger.log("Folder retrieval failed, falling back to Root Drive: " + folderErr.toString());
     }
     
-    const file = folder.createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    let file;
+    if (folder) {
+      file = folder.createFile(blob);
+    } else {
+      file = DriveApp.createFile(blob);
+    }
+    
+    try {
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (shareErr) {
+      Logger.log("Sharing restriction active: " + shareErr.toString());
+    }
     
     const fileId = file.getId();
     const imageUrl = "https://drive.google.com/uc?export=view&id=" + fileId;
