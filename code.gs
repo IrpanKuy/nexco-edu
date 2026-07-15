@@ -798,11 +798,52 @@ function deleteTemplateOnServer(id) {
 // 12. FITUR UPLOAD GAMBAR KE GOOGLE DRIVE
 function uploadFileToDrive(base64Data, fileName, mimeType) {
   try {
-    const bytes = Utilities.base64Decode(base64Data);
-    const blob = Utilities.newBlob(bytes, mimeType, fileName);
+    const parts = base64Data.split(",");
+    const meta = parts[0];
+    const rawData = parts[1] || parts[0];
+    
+    let mime = mimeType || "image/jpeg";
+    const mimeMatch = meta.match(/:(.*?);/);
+    if (mimeMatch) {
+      mime = mimeMatch[1];
+    }
+    
+    const decoded = Utilities.base64Decode(rawData);
+    const blob = Utilities.newBlob(decoded, mime, fileName);
     
     let folder;
+    let folderId = "";
+    
+    // Look up settings for drive_folder_id
     try {
+      const ss = getActiveSS();
+      const settingsSheet = ss.getSheetByName("settings");
+      if (settingsSheet) {
+        const rows = settingsSheet.getDataRange().getValues();
+        for (let i = 1; i < rows.length; i++) {
+          if (rows[i][0] === "drive_folder_id") {
+            const rawId = rows[i][1];
+            if (rawId) {
+              const match = rawId.match(/folders\/([a-zA-Z0-9-_]+)/) || rawId.match(/id=([a-zA-Z0-9-_]+)/);
+              folderId = match ? match[1] : rawId.trim();
+            }
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      Logger.log("Gagal mengambil folder_id dari settings: " + e.toString());
+    }
+    
+    if (folderId) {
+      try {
+        folder = DriveApp.getFolderById(folderId);
+      } catch (err) {
+        Logger.log("Folder ID dari settings tidak valid, fallback ke default. Error: " + err.toString());
+      }
+    }
+    
+    if (!folder) {
       const folders = DriveApp.getFoldersByName("Nexco Edu Uploads");
       while (folders.hasNext()) {
         const f = folders.next();
@@ -814,16 +855,9 @@ function uploadFileToDrive(base64Data, fileName, mimeType) {
       if (!folder) {
         folder = DriveApp.createFolder("Nexco Edu Uploads");
       }
-    } catch (folderErr) {
-      Logger.log("Folder retrieval failed, falling back to Root Drive: " + folderErr.toString());
     }
     
-    let file;
-    if (folder) {
-      file = folder.createFile(blob);
-    } else {
-      file = DriveApp.createFile(blob);
-    }
+    const file = folder.createFile(blob);
     
     try {
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
@@ -832,7 +866,7 @@ function uploadFileToDrive(base64Data, fileName, mimeType) {
     }
     
     const fileId = file.getId();
-    const imageUrl = "https://drive.google.com/uc?export=view&id=" + fileId;
+    const imageUrl = "https://docs.google.com/uc?export=view&id=" + fileId;
     
     return {
       success: true,

@@ -1453,7 +1453,7 @@
 
             const reader = new FileReader();
             reader.onload = function (e) {
-                const base64Data = e.target.result.split(',')[1];
+                const base64Data = e.target.result;
                 const fileName = file.name;
                 const mimeType = file.type;
 
