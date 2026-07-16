@@ -1370,10 +1370,7 @@
             grid.innerHTML = '';
 
             let userTemplates = appState.templates || [];
-            if (appState.currentUser && appState.currentUser.role !== 'admin') {
-                const allowedCats = appState.currentUser.allowed_tools ? appState.currentUser.allowed_tools.split(',').map(c => c.trim()) : [];
-                userTemplates = (appState.templates || []).filter(tpl => allowedCats.includes(tpl.kategori_id));
-            }
+
 
             if (!appState.templateCategoryFilter) appState.templateCategoryFilter = 'Semua';
             if (appState.templateCategoryFilter !== 'Semua') {
