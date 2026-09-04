@@ -16,6 +16,17 @@
     rel="stylesheet" />
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Firebase SDK Compat Mode -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/cache-manager.js"></script>
+  <script src="js/firebase-service.js"></script>
+  <!-- Shared Core App Script -->
+  <script src="js/app-core.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -106,6 +117,7 @@
         <a href="#cara-kerja" class="hover:text-brand-lightBlue transition-colors">CARA KERJA</a>
         <a href="#tools" class="hover:text-brand-lightBlue transition-colors">TOOLS KAMI</a>
         <a href="#custom-services" class="hover:text-brand-lightBlue transition-colors">LAYANAN</a>
+        <a href="#request-app-section" class="hover:text-brand-lightBlue transition-colors">REQUEST APLIKASI</a>
       </nav>
 
       <!-- Header CTA (Tablet & Desktop Only) -->
@@ -137,6 +149,7 @@
         <a href="#tools" onclick="closeMobileMenu()" class="hover:text-brand-lightBlue py-1 transition-colors">TOOLS
           KAMI</a>
         <a href="#custom-services" onclick="closeMobileMenu()" class="hover:text-brand-lightBlue py-1 transition-colors">LAYANAN</a>
+        <a href="#request-app-section" onclick="closeMobileMenu()" class="hover:text-brand-lightBlue py-1 transition-colors">REQUEST APLIKASI</a>
       </nav>
       <div class="border-t border-slate-100 pt-3 flex flex-col gap-2.5">
         <a href="#cara-kerja" onclick="closeMobileMenu()"
@@ -1039,6 +1052,39 @@
           </div>
 
         </div>
+
+        <!-- FORM REQUEST PEMBUATAN APLIKASI CUSTOM (Di Bawah Jasa Kami) -->
+        <div id="request-app-section" class="mt-16 pt-12 border-t border-slate-200/80">
+          <div class="text-center space-y-3 mb-8">
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight">
+              Request Pembuatan Aplikasi Custom
+            </h3>
+            <p class="text-slate-600 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed font-medium">
+              Isi formulir di bawah ini untuk mengajukan pembuatan aplikasi yang ingin dibuat, App akan dibuat ketika live berlangsung
+            </p>
+          </div>
+
+          <form id="landing-app-request-form" onsubmit="handleLandingAppRequestSubmit(event)" class="bg-brand-cream border border-slate-200/80 p-6 sm:p-8 rounded-3xl shadow-flat-md space-y-5 text-left max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Atas Nama / Nama Pemohon <span class="text-red-500">*</span></label>
+                <input type="text" id="req-nama" required placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-brand-lightBlue font-medium text-slate-800 shadow-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Judul Aplikasi <span class="text-red-500">*</span></label>
+                <input type="text" id="req-judul" required placeholder="Contoh: Sistem Kasir & Inventaris Toko" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-brand-lightBlue font-medium text-slate-800 shadow-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Deskripsi Aplikasi & Kebutuhan Fitur <span class="text-red-500">*</span></label>
+              <textarea id="req-deskripsi" required rows="4" placeholder="Jelaskan alur kerja, fitur utama, dan tujuan aplikasi yang Anda butuhkan secara rinci..." class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-brand-lightBlue font-medium text-slate-800 shadow-sm leading-relaxed"></textarea>
+            </div>
+            <button type="submit" id="btn-submit-req" class="w-full py-4 bg-brand-blue hover:bg-brand-dark text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center gap-2 group">
+              <i data-lucide="send" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i> Kirim Request Pembuatan Aplikasi
+            </button>
+          </form>
+        </div>
+
       </div>
     </section>
 
@@ -1149,6 +1195,58 @@
 
   <!-- SCRIPT LOGIC FOR INTERACTIONS -->
   <script>
+    function handleLandingAppRequestSubmit(e) {
+      e.preventDefault();
+      const nama = document.getElementById('req-nama').value.trim();
+      const judul = document.getElementById('req-judul').value.trim();
+      const deskripsi = document.getElementById('req-deskripsi').value.trim();
+
+      if (!nama || !judul || !deskripsi) {
+        Swal.fire({ icon: 'warning', title: 'Data Tidak Lengkap', text: 'Harap isi Nama, Judul App, dan Deskripsi secara lengkap.', confirmButtonColor: '#1E3E62' });
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit-req');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Request...';
+      if (window.lucide) lucide.createIcons();
+
+      const payload = {
+        nama_pemohon: nama,
+        judul_app: judul,
+        deskripsi_app: deskripsi,
+        status: 'Pending'
+      };
+
+      const handleSuccess = (res) => {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Request Pembuatan Aplikasi';
+        if (window.lucide) lucide.createIcons();
+
+        if (res && res.success !== false) {
+          document.getElementById('landing-app-request-form').reset();
+          Swal.fire({
+            icon: 'success',
+            title: 'Request Berhasil Terkirim!',
+            text: 'Terima kasih! Request pembuatan aplikasi Anda telah tercatat di spreadsheet dan akan segera ditinjau oleh Admin.',
+            confirmButtonColor: '#1E3E62'
+          });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Gagal Mengirim Request', text: (res ? res.message : 'Terjadi kesalahan sistem'), confirmButtonColor: '#1E3E62' });
+        }
+      };
+
+      if (window.FirebaseService) {
+        FirebaseService.saveAppRequestOnServer(payload).then(res => {
+          handleSuccess(res);
+        }).catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Request Pembuatan Aplikasi';
+          if (window.lucide) lucide.createIcons();
+          Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: err.toString(), confirmButtonColor: '#1E3E62' });
+        });
+      }
+    }
     // Data untuk Contoh Demo WebApp
     const demoData = [
       {

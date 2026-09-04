@@ -49,7 +49,14 @@
         }
     </style>
 
-    <script src="data.js"></script>
+    <!-- FIREBASE SDK COMPAT MODE -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/cache-manager.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script src="js/app-core.js"></script>
 </head>
 
 <body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
@@ -120,22 +127,18 @@
             if (storedUser) {
                 try {
                     const parsedUser = JSON.parse(storedUser);
-                    google.script.run
-                        .withSuccessHandler(res => {
-                            if (res.active) {
-                                // Redirect otomatis berdasarkan role saat ini
-                                window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
-                            } else {
-                                localStorage.removeItem('edu_user');
-                                hideLoader();
-                                document.getElementById('login-screen').classList.remove('hidden');
-                            }
-                        })
-                        .withFailureHandler(err => {
+                    FirebaseService.checkServerSession(parsedUser.id || parsedUser.email).then(res => {
+                        if (res && res.active) {
+                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
+                        } else {
+                            localStorage.removeItem('edu_user');
                             hideLoader();
                             document.getElementById('login-screen').classList.remove('hidden');
-                        })
-                        .checkServerSession(parsedUser.id);
+                        }
+                    }).catch(err => {
+                        hideLoader();
+                        document.getElementById('login-screen').classList.remove('hidden');
+                    });
                 } catch (e) {
                     localStorage.removeItem('edu_user');
                     hideLoader();
@@ -154,35 +157,31 @@
 
             showLoader("Memvalidasi Kredensial & Membuat Sesi...");
 
-            google.script.run
-                .withSuccessHandler(res => {
-                    if (res.success) {
-                        appState.currentUser = res.user;
-                        localStorage.setItem('edu_user', JSON.stringify(res.user));
-                        Swal.fire({
-                            icon: 'success',
-                            title: `Selamat Datang, ${res.user.nama}!`,
-                            text: 'Sesi disimpan secara lokal di perangkat Anda.',
-                            timer: 1200,
-                            showConfirmButton: false,
-                            background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
-                            color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
-                        }).then(() => {
-                            // Redirect ke halaman UI sesuai role saat login
-                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
-                        });
-                    } else {
-                        hideLoader();
-                        showErrorToast(res.message);
-                    }
-                })
-                .withFailureHandler(err => {
+            FirebaseService.loginUser(email, pass).then(res => {
+                if (res && res.success) {
+                    appState.currentUser = res.user;
+                    localStorage.setItem('edu_user', JSON.stringify(res.user));
+                    Swal.fire({
+                        icon: 'success',
+                        title: `Selamat Datang, ${res.user.nama}!`,
+                        text: 'Sesi disimpan secara lokal di perangkat Anda.',
+                        timer: 1200,
+                        showConfirmButton: false,
+                        background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                        color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+                    }).then(() => {
+                        window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
+                    });
+                } else {
                     hideLoader();
-                    showErrorToast('Autentikasi gagal: ' + err.toString());
-                })
-                .loginUser(email, pass);
+                    showErrorToast(res ? res.message : "Gagal memproses autentikasi.");
+                }
+            }).catch(err => {
+                hideLoader();
+                showErrorToast('Autentikasi gagal: ' + err.toString());
+            });
         });
     </script>
 </body>
 
-</html>
+</html>

@@ -100,7 +100,22 @@
         }
     </style>
 
-    <script src="data.js"></script>
+    <!-- FIREBASE SDK COMPAT MODE -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/cache-manager.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script src="js/app-core.js"></script>
+
+    <!-- USER MODULAR MENU MODULES -->
+    <script src="js/user/user-videos.js"></script>
+    <script src="js/user/user-gems.js"></script>
+    <script src="js/user/user-prompts.js"></script>
+    <script src="js/user/user-templates.js"></script>
+    <script src="js/user/user-app-requests.js"></script>
+    <script src="js/user/user-profile.js"></script>
 </head>
 
 <body
@@ -201,23 +216,67 @@
         <main class="mt-6 flex-1 text-brand-navy dark:text-brand-platinum">
 
             <!-- ================= VIEW: USER KATALOG VIDEO ================= -->
+            <!-- ================= VIEW: USER KATALOG VIDEO ================= -->
             <section id="view-user-videos" class="hidden space-y-6">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
-                    <div>
-                        <h2 class="text-xl font-extrabold tracking-tight">Katalog Pembelajaran AI</h2>
-                        <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Eksplorasi modul video
-                            interaktif dan e-book pendukung untuk meningkatkan efisiensi kerja Anda.</p>
+                <!-- Mode 1: List Nama Kategori Utama -->
+                <div id="user-video-category-list-mode" class="space-y-6">
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-accent/10 dark:bg-brand-accent/20 p-6 rounded-3xl border border-brand-accent/30 shadow-sm">
+                        <div>
+                            <h2 class="text-xl font-extrabold tracking-tight">Katalog Pembelajaran AI</h2>
+                            <p class="text-xs text-brand-slate dark:text-brand-platinum/80 mt-1">Pilih kategori modul video pembelajaran untuk membuka materi lengkap interaktif.</p>
+                        </div>
+                    </div>
+
+                    <div id="user-category-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- List Nama Kategori Dinamis -->
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"
-                    id="category-filters-container">
-                    <!-- Filter Kategori Dinamis -->
-                </div>
+                <!-- Mode 2: Detail Kategori Layout 70:30 (Mobile Responsive) -->
+                <div id="user-video-detail-mode" class="hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-brand-slate/20">
+                        <button onclick="backToVideoCategoryList()" class="px-4 py-2.5 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-navy dark:text-brand-platinum text-xs font-bold rounded-xl transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Kategori
+                        </button>
+                        <h3 id="user-video-active-category-title" class="font-extrabold text-base sm:text-lg text-brand-accent">
+                            Nama Kategori
+                        </h3>
+                    </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-videos-grid">
-                    <!-- Kartu Video Dinamis -->
+                    <!-- Layout Grid 70:30 (Stacked 100% on Mobile) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">
+                        <!-- 70% Area Utama Pemutar & Info Video (lg:col-span-7) -->
+                        <div class="lg:col-span-7 space-y-4">
+                            <div id="user-video-player-container-70" class="relative aspect-video w-full bg-black rounded-3xl overflow-hidden shadow-2xl border border-brand-slate/20">
+                                <!-- Pemutar iframe video aktif -->
+                            </div>
+                            <div class="glass-panel p-5 rounded-3xl border border-brand-slate/20 space-y-3 shadow-sm">
+                                <h2 id="user-video-title-70" class="text-lg sm:text-xl font-extrabold leading-snug text-brand-navy dark:text-white">
+                                    Judul Video Pembelajaran
+                                </h2>
+                                <p id="user-video-desc-70" class="text-xs sm:text-sm text-brand-slate dark:text-brand-slate/90 leading-relaxed whitespace-pre-line">
+                                    Deskripsi lengkap modul video...
+                                </p>
+                                <div id="user-video-ebook-container-70" class="pt-2">
+                                    <!-- Button Ebook jika ada -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 30% Sidebar Related Videos in Category (lg:col-span-3) -->
+                        <div class="lg:col-span-3 glass-panel p-4 rounded-3xl border border-brand-slate/20 space-y-4 shadow-sm">
+                            <div class="flex items-center justify-between pb-2 border-b border-brand-slate/15">
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-brand-slate dark:text-brand-slate/80">
+                                    Daftar Video Kategori Ini
+                                </h4>
+                                <span id="user-video-sidebar-count" class="px-2 py-0.5 bg-brand-accent/20 text-brand-accent font-extrabold text-[10px] rounded-full">0 Video</span>
+                            </div>
+                            <div id="user-video-sidebar-list" class="space-y-3 max-h-[650px] overflow-y-auto pr-1">
+                                <!-- List video dengan Youtube thumbnail & judul -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -432,28 +491,42 @@
                                             <label
                                                 class="block text-[10px] font-extrabold uppercase mb-1.5 flex items-center gap-1"
                                                 :class="activeTab === 'webapp' ? 'text-blue-700 dark:text-cyan-300' : 'text-purple-700 dark:text-violet-300'">
-                                                <i class="fa-solid fa-list-check text-[9px]"></i> Daftar Fitur / Menu
-                                                Akses
+                                                <i class="fa-solid fa-list-check text-[9px]"></i> Daftar Fitur / Menu Akses (Nama & Deskripsi)
                                             </label>
-                                            <div class="space-y-2">
+                                            <div class="space-y-2.5">
                                                 <div v-for="(feat, fIndex) in role.features" :key="fIndex"
-                                                    class="flex items-center gap-2">
-                                                    <input type="text" v-model="role.features[fIndex]"
-                                                        :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white'"
-                                                        class="flex-1 px-3 py-1.5 bg-white border-2 border-brand-slate/20 rounded-xl text-xs font-semibold outline-none shadow-sm">
-                                                    <button @click="removeFeature(rIndex, fIndex)"
-                                                        class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i
-                                                            class="fa-solid fa-xmark"></i></button>
+                                                    class="p-2.5 bg-slate-50 dark:bg-[#070e24]/60 border-2 border-brand-slate/20 rounded-xl space-y-1.5">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[10px] font-bold text-brand-slate">#{{ fIndex + 1 }}</span>
+                                                        <input type="text" v-model="getFeatureObj(role, fIndex).name"
+                                                            placeholder="Nama Menu / Fitur..."
+                                                            :class="activeTab === 'webapp' ? 'dark:bg-[#070e24] dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421] dark:border-purple-500/40 text-brand-navy dark:text-white'"
+                                                            class="flex-1 px-3 py-1.5 bg-white border border-brand-slate/20 rounded-lg text-xs font-semibold outline-none shadow-sm">
+                                                        <button @click="removeFeature(rIndex, fIndex)"
+                                                            class="text-slate-400 dark:text-slate-300 hover:text-red-500 text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"><i
+                                                                class="fa-solid fa-xmark"></i></button>
+                                                    </div>
+                                                    <input type="text" v-model="getFeatureObj(role, fIndex).description"
+                                                        placeholder="Deskripsi singkat fungsi menu..."
+                                                        :class="activeTab === 'webapp' ? 'dark:bg-[#070e24]/80 dark:border-blue-500/30 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421]/80 dark:border-purple-500/30 text-brand-navy dark:text-white'"
+                                                        class="w-full px-3 py-1 bg-white/70 border border-brand-slate/20 rounded-lg text-[11px] outline-none">
                                                 </div>
-                                                <div class="flex items-center gap-2 pt-1">
-                                                    <input type="text" v-model="role.newFeature"
-                                                        @keyup.enter="addFeature(rIndex)"
-                                                        placeholder="Tambah fitur baru..."
+
+                                                <div class="p-2.5 bg-white/60 dark:bg-[#070e24]/40 border-2 border-dashed border-brand-slate/30 rounded-xl space-y-2">
+                                                    <input type="text" v-model="role.newFeatureName"
+                                                        placeholder="Nama Menu baru..."
                                                         :class="activeTab === 'webapp' ? 'dark:bg-[#070e24]/60 dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421]/60 dark:border-purple-500/40 text-brand-navy dark:text-white'"
-                                                        class="flex-1 px-3 py-1.5 bg-white/70 border-2 border-dashed border-brand-slate/30 rounded-xl text-xs outline-none">
-                                                    <button @click="addFeature(rIndex)"
-                                                        :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 text-white' : 'bg-purple-600 dark:bg-violet-500 text-white'"
-                                                        class="px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                        class="w-full px-3 py-1.5 bg-white/70 border border-brand-slate/20 rounded-lg text-xs outline-none">
+                                                    <div class="flex items-center gap-2">
+                                                        <input type="text" v-model="role.newFeatureDesc"
+                                                            @keyup.enter="addFeature(rIndex)"
+                                                            placeholder="Deskripsi menu baru..."
+                                                            :class="activeTab === 'webapp' ? 'dark:bg-[#070e24]/60 dark:border-blue-500/40 text-brand-navy dark:text-white' : 'dark:bg-[#0e0421]/60 dark:border-purple-500/40 text-brand-navy dark:text-white'"
+                                                            class="flex-1 px-3 py-1 bg-white/70 border border-brand-slate/20 rounded-lg text-[11px] outline-none">
+                                                        <button @click="addFeature(rIndex)"
+                                                            :class="activeTab === 'webapp' ? 'bg-blue-600 dark:bg-cyan-500 text-white' : 'bg-purple-600 dark:bg-violet-500 text-white'"
+                                                            class="px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-all">Tambah</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1136,8 +1209,8 @@
             });
 
             if (viewId === 'user-videos') {
-                renderCategoryFilters();
-                renderVideosGrid();
+                backToVideoCategoryList();
+                renderCategoryListMode();
             } else if (viewId === 'user-gems') {
                 renderGemsGrid();
             } else if (viewId === 'user-templates') {
@@ -1171,11 +1244,7 @@
             document.getElementById('player-modal-title').textContent = vid.judul;
             document.getElementById('player-modal-desc').textContent = vid.deskripsi;
             const ebookContainer = document.getElementById('player-modal-ebook-link');
-            if (vid.ebook_url) {
-                ebookContainer.innerHTML = `<a href="${vid.ebook_url}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-accent text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-all"><i class="fa-solid fa-file-pdf"></i> Buka E-Book Terkait</a>`;
-            } else {
-                ebookContainer.innerHTML = '';
-            }
+            if (ebookContainer) ebookContainer.innerHTML = '';
             document.getElementById('video-player-modal').classList.remove('hidden');
         }
 
@@ -1185,75 +1254,168 @@
             document.getElementById('video-player-modal').classList.add('hidden');
         }
 
-        /* --- RENDERING VIDEO KATALOG --- */
-        function renderCategoryFilters() {
-            const container = document.getElementById('category-filters-container');
-            container.innerHTML = '';
-
-            const categoriesWithVideos = appState.categories.filter(cat =>
-                appState.videos.some(vid => vid.kategori_id === cat.id)
-            );
-
-            const categories = ['Semua', ...categoriesWithVideos.map(c => c.nama)];
-            categories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = `px-4 py-2 rounded-xl text-xs font-semibold transition-all flex-shrink-0 ${appState.categoryFilter === cat ? 'bg-brand-accent text-white shadow-md' : 'glass-card text-brand-slate hover:bg-brand-slate/20'}`;
-                btn.textContent = cat;
-                btn.onclick = () => {
-                    appState.categoryFilter = cat;
-                    renderCategoryFilters();
-                    renderVideosGrid();
-                };
-                container.appendChild(btn);
-            });
+        /* --- USER PERMISSIONS HELPER --- */
+        function getUserAllowedCategoryIds() {
+            if (!appState.currentUser) return [];
+            if (appState.currentUser.role === 'admin') {
+                return (appState.categories || []).map(c => c.id);
+            }
+            const val = (appState.currentUser.category_template_id || appState.currentUser.allowed_tools || '').trim();
+            if (!val) return [];
+            
+            // Check if val matches a category_template ID or template's kategori_ids
+            const tpl = (appState.category_templates || []).find(t => t.id === val);
+            if (tpl) {
+                return (tpl.kategori_ids || '').split(',').map(c => c.trim()).filter(Boolean);
+            }
+            return val.split(',').map(c => c.trim()).filter(Boolean);
         }
 
-        function renderVideosGrid() {
-            const grid = document.getElementById('user-videos-grid');
+        /* --- RENDERING VIDEO KATALOG (LAYOUT KATEGORI & DETAIL 70:30) --- */
+        let currentActiveCategoryVideoId = null;
+
+        function renderCategoryListMode() {
+            const grid = document.getElementById('user-category-cards-grid');
+            if (!grid) return;
             grid.innerHTML = '';
 
-            let filtered = appState.videos;
-            if (appState.categoryFilter !== 'Semua') {
-                const selectedCat = appState.categories.find(c => c.nama === appState.categoryFilter);
-                if (selectedCat) {
-                    filtered = appState.videos.filter(v => v.kategori_id === selectedCat.id);
-                }
+            const allowedCatIds = getUserAllowedCategoryIds();
+            let categoriesToRender = appState.categories || [];
+            
+            if (appState.currentUser && appState.currentUser.role !== 'admin') {
+                categoriesToRender = categoriesToRender.filter(c => allowedCatIds.includes(c.id));
             }
 
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-video-slash text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada video dalam kategori ini.</p></div>';
+            if (categoriesToRender.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada kategori video yang dapat Anda akses saat ini.</p></div>';
                 return;
             }
 
-            filtered.sort((a, b) => a.urutan - b.urutan).forEach(vid => {
-                const videoId = getYouTubeId(vid.video_url);
-                const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : 'https://placehold.co/600x400/1b263b/ffffff?text=Video';
-                const cat = appState.categories.find(c => c.id === vid.kategori_id);
-
+            categoriesToRender.forEach(cat => {
+                const catVideos = (appState.videos || []).filter(v => v.kategori_id === cat.id);
                 const card = document.createElement('div');
-                card.className = "glass-panel rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-brand-slate/20 group";
-                card.innerHTML = [
-                    '<div>',
-                    '  <div onclick="playVideoModal(\'', vid.id, '\')" class="relative aspect-video bg-black overflow-hidden cursor-pointer">',
-                    '    <img src="', thumbUrl, '" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">',
-                    '    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>',
-                    '    <span class="absolute top-3 left-3 px-2.5 py-1 bg-brand-dark/80 backdrop-blur-md rounded-lg text-[10px] font-bold text-white uppercase tracking-wider">', (cat ? cat.nama : 'UMUM'), '</span>',
-                    '    <div class="absolute inset-0 flex items-center justify-center">',
-                    '      <div class="w-12 h-12 rounded-full bg-brand-accent/90 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform"><i class="fa-solid fa-play text-lg ml-1"></i></div>',
-                    '    </div>',
-                    '  </div>',
-                    '  <div class="p-5">',
-                    '    <h3 onclick="playVideoModal(\'', vid.id, '\')" class="font-bold text-base text-brand-navy dark:text-brand-platinum mb-2 cursor-pointer hover:text-brand-accent transition-colors leading-snug">', limitWords(vid.judul, 10).replace(/"/g, '&quot;'), '</h3>',
-                    '    <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed">', limitWords(vid.deskripsi, 25).replace(/"/g, '&quot;'), '</p>',
-                    '  </div>',
-                    '</div>',
-                    '<div class="px-5 pb-5 pt-2 border-t border-brand-slate/10 flex items-center justify-between">',
-                    '  <button onclick="playVideoModal(\'', vid.id, '\')" class="px-3.5 py-2 bg-brand-accent hover:bg-opacity-90 text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-play"></i> Tonton Video</button>',
-                    (vid.ebook_url ? `<a href="${vid.ebook_url}" target="_blank" class="px-3 py-2 bg-brand-slate/10 hover:bg-brand-slate/20 text-brand-slate dark:text-brand-platinum rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"><i class="fa-solid fa-file-pdf text-red-500"></i> E-Book</a>` : ''),
-                    '</div>'
-                ].join('');
+                card.className = "glass-panel p-6 rounded-3xl border border-brand-slate/20 hover:border-brand-accent/50 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer";
+                card.onclick = () => openCategoryDetailView(cat.id);
+                
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-accent/15 text-brand-accent flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform shadow-inner">
+                                <i class="fa-solid fa-play"></i>
+                            </div>
+                            <span class="px-3 py-1 bg-brand-navy/10 dark:bg-brand-navy/50 text-brand-slate dark:text-brand-platinum text-xs font-bold rounded-full">
+                                ${catVideos.length} Video
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-base text-brand-navy dark:text-brand-platinum group-hover:text-brand-accent transition-colors">
+                                ${cat.nama}
+                            </h3>
+                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 mt-1 line-clamp-2">
+                                Klik untuk menjelajahi ${catVideos.length} modul pembelajaran video dalam kategori ini.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-brand-slate/10 flex items-center justify-between text-xs font-bold text-brand-accent">
+                        <span>Buka Katalog Video</span>
+                        <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                `;
                 grid.appendChild(card);
             });
+        }
+
+        function openCategoryDetailView(catId) {
+            const cat = (appState.categories || []).find(c => c.id === catId);
+            if (!cat) return;
+
+            document.getElementById('user-video-category-list-mode').classList.add('hidden');
+            document.getElementById('user-video-detail-mode').classList.remove('hidden');
+            document.getElementById('user-video-active-category-title').textContent = cat.nama;
+
+            const catVideos = (appState.videos || []).filter(v => v.kategori_id === catId).sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+            const sidebarCount = document.getElementById('user-video-sidebar-count');
+            if (sidebarCount) sidebarCount.textContent = catVideos.length + ' Video';
+
+            if (catVideos.length === 0) {
+                document.getElementById('user-video-player-container-70').innerHTML = '<div class="w-full h-full flex items-center justify-center text-brand-slate text-sm font-semibold">Belum ada video dalam kategori ini.</div>';
+                document.getElementById('user-video-title-70').textContent = 'Video Belum Tersedia';
+                document.getElementById('user-video-desc-70').textContent = 'Administrator belum menambahkan modul video ke kategori ini.';
+                document.getElementById('user-video-ebook-container-70').innerHTML = '';
+                document.getElementById('user-video-sidebar-list').innerHTML = '<p class="text-xs text-brand-slate text-center py-6">Tidak ada video.</p>';
+                return;
+            }
+
+            // Set 1st video active by default
+            setActiveVideo70(catVideos[0].id, catVideos);
+        }
+
+        function setActiveVideo70(vidId, videoListParam) {
+            currentActiveCategoryVideoId = vidId;
+            const vid = (appState.videos || []).find(v => v.id === vidId);
+            if (!vid) return;
+
+            const catId = vid.kategori_id;
+            const catVideos = videoListParam || (appState.videos || []).filter(v => v.kategori_id === catId).sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+
+            // Update 70% Player
+            const embedUrl = getYouTubeEmbedUrl(vid.video_url);
+            const container = document.getElementById('user-video-player-container-70');
+            if (container) {
+                container.innerHTML = `<iframe class="w-full h-full rounded-3xl" src="${embedUrl}?autoplay=1" title="${vid.judul.replace(/"/g, '&quot;')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            }
+
+            // Update 70% Title & Desc
+            const titleEl = document.getElementById('user-video-title-70');
+            if (titleEl) titleEl.textContent = vid.judul;
+
+            const descEl = document.getElementById('user-video-desc-70');
+            if (descEl) descEl.innerHTML = vid.deskripsi || 'Tidak ada deskripsi.';
+
+            const ebookEl = document.getElementById('user-video-ebook-container-70');
+            if (ebookEl) {
+                ebookEl.innerHTML = '';
+            }
+
+            // Render 30% Sidebar list
+            const sidebarList = document.getElementById('user-video-sidebar-list');
+            if (!sidebarList) return;
+            sidebarList.innerHTML = '';
+
+            catVideos.forEach(v => {
+                const ytId = getYouTubeId(v.video_url);
+                const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : 'https://placehold.co/300x200/1b263b/ffffff?text=Video';
+                const isActive = v.id === vidId;
+
+                const item = document.createElement('div');
+                item.className = `p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3 border ${isActive ? 'bg-brand-accent/15 border-brand-accent shadow-md' : 'glass-card border-brand-slate/15 hover:bg-brand-slate/10'}`;
+                item.onclick = () => setActiveVideo70(v.id, catVideos);
+
+                item.innerHTML = `
+                    <div class="relative w-24 aspect-video rounded-xl overflow-hidden bg-black shrink-0 shadow-sm">
+                        <img src="${thumbUrl}" alt="Thumbnail" class="w-full h-full object-cover">
+                        ${isActive ? '<div class="absolute inset-0 bg-brand-accent/40 flex items-center justify-center text-white"><i class="fa-solid fa-volume-high text-xs animate-pulse"></i></div>' : '<div class="absolute inset-0 bg-black/30 flex items-center justify-center text-white/80"><i class="fa-solid fa-play text-xs"></i></div>'}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h5 class="font-bold text-xs text-brand-navy dark:text-brand-platinum line-clamp-2 leading-snug ${isActive ? 'text-brand-accent dark:text-brand-accent font-extrabold' : ''}">
+                            ${v.judul}
+                        </h5>
+                        <p class="text-[10px] text-brand-slate mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-layer-group"></i> Modul #${v.urutan || 1}
+                        </p>
+                    </div>
+                `;
+                sidebarList.appendChild(item);
+            });
+        }
+
+        function backToVideoCategoryList() {
+            const detailMode = document.getElementById('user-video-detail-mode');
+            const listMode = document.getElementById('user-video-category-list-mode');
+            if (detailMode) detailMode.classList.add('hidden');
+            if (listMode) listMode.classList.remove('hidden');
+            const container = document.getElementById('user-video-player-container-70');
+            if (container) container.innerHTML = '';
         }
 
         /* --- RENDERING TOOLS AI WORKSPACE --- */
@@ -1262,13 +1424,15 @@
             container.innerHTML = '';
 
             let userGems = appState.gems || [];
+            let allowedCategories = appState.categories || [];
             if (appState.currentUser && appState.currentUser.role !== 'admin') {
-                const allowedCats = appState.currentUser.allowed_tools ? appState.currentUser.allowed_tools.split(',').map(c => c.trim()) : [];
-                userGems = appState.gems.filter(gem => allowedCats.includes(gem.kategori_id));
+                const allowedCatIds = getUserAllowedCategoryIds();
+                userGems = appState.gems.filter(gem => allowedCatIds.includes(gem.kategori_id));
+                allowedCategories = allowedCategories.filter(cat => allowedCatIds.includes(cat.id));
             }
 
             if (userGems.length === 0) {
-                container.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-robot text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada Tools AI yang tersedia untuk Anda saat ini.</p></div>';
+                container.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-robot text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada Tools AI yang dapat Anda akses saat ini.</p></div>';
                 return;
             }
 
@@ -1282,8 +1446,8 @@
                 toolsByCategory[catId].push(gem);
             });
 
-            // Render sections for each category
-            appState.categories.forEach(cat => {
+            // Render sections for allowed categories only
+            allowedCategories.forEach(cat => {
                 const gems = toolsByCategory[cat.id];
                 if (gems && gems.length > 0) {
                     renderCategorySection(cat.nama, gems);
@@ -1319,10 +1483,13 @@
 
                 card.innerHTML = `
                     <div>
-                        <div class="space-y-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-2xl bg-cyan-500/15 text-cyan-500 flex items-center justify-center text-base font-bold shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
                             <h4 class="font-bold text-sm text-brand-navy dark:text-brand-platinum group-hover:text-cyan-500 transition-colors leading-snug">${displayTitle.replace(/"/g, '&quot;')}</h4>
-                            <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed">${displayDesc.replace(/"/g, '&quot;')}</p>
                         </div>
+                        <p class="text-xs text-brand-slate dark:text-brand-slate/80 leading-relaxed">${displayDesc.replace(/"/g, '&quot;')}</p>
                     </div>
                     <div class="pt-4">
                         <a href="${gem.akses_url}" target="_blank" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
@@ -1343,7 +1510,13 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const categoriesWithTemplates = appState.categories.filter(cat =>
+            let allowedCategories = appState.categories || [];
+            if (appState.currentUser && appState.currentUser.role !== 'admin') {
+                const allowedCatIds = getUserAllowedCategoryIds();
+                allowedCategories = allowedCategories.filter(cat => allowedCatIds.includes(cat.id));
+            }
+
+            const categoriesWithTemplates = allowedCategories.filter(cat =>
                 (appState.templates || []).some(tpl => tpl.kategori_id === cat.id)
             );
 
@@ -1370,7 +1543,10 @@
             grid.innerHTML = '';
 
             let userTemplates = appState.templates || [];
-
+            if (appState.currentUser && appState.currentUser.role !== 'admin') {
+                const allowedCatIds = getUserAllowedCategoryIds();
+                userTemplates = userTemplates.filter(tpl => allowedCatIds.includes(tpl.kategori_id));
+            }
 
             if (!appState.templateCategoryFilter) appState.templateCategoryFilter = 'Semua';
             if (appState.templateCategoryFilter !== 'Semua') {
@@ -1433,8 +1609,8 @@
             const pass = document.getElementById('settings-password').value.trim();
 
             Swal.fire({ title: 'Mengamankan Profil...', didOpen: () => { Swal.showLoading(); } });
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.updateProfileOnServer(appState.currentUser.id, nama, pass)
+                .then(res => {
                     Swal.close();
                     if (res.success) {
                         appState.currentUser.nama = res.nama;
@@ -1444,8 +1620,7 @@
                         showSuccessAlert('Profil Diperbarui!');
                     } else { showErrorAlert(res.message); }
                 })
-                .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
-                .updateProfileOnServer(appState.currentUser.id, nama, pass);
+                .catch(err => { Swal.close(); showErrorAlert(err.toString()); });
         });
 
         /* ================= VUE 3 APP MOUNTING (PROMPT BUILDER FULL VERSION) ================= */
@@ -1489,7 +1664,18 @@
                 const appDescription = ref("");
 
                 const roles = ref([
-                    { id: 1, name: "Super Admin", features: ["Dashboard Utama", "Kelola Pengguna", "Analisis System"], newFeature: "", aiAssistant: true }
+                    {
+                        id: 1,
+                        name: "Super Admin",
+                        features: [
+                            { name: "Dashboard Utama", description: "Ringkasan statistik & KPI performa" },
+                            { name: "Kelola Pengguna", description: "Manajemen akun, peranan, dan hak akses user" },
+                            { name: "Analisis System", description: "Audit log & laporan aktivitas sistem" }
+                        ],
+                        newFeatureName: "",
+                        newFeatureDesc: "",
+                        aiAssistant: true
+                    }
                 ]);
 
                 const sections = ref([
@@ -1566,17 +1752,34 @@
                     activeDropdown.value = null;
                 };
 
+                const getFeatureObj = (role, fIndex) => {
+                    const feat = role.features[fIndex];
+                    if (typeof feat === 'string') {
+                        role.features[fIndex] = { name: feat, description: "" };
+                        return role.features[fIndex];
+                    }
+                    if (!feat) {
+                        role.features[fIndex] = { name: "", description: "" };
+                        return role.features[fIndex];
+                    }
+                    return feat;
+                };
+
                 const addRole = () => {
                     const nextId = roles.value.length > 0 ? Math.max(...roles.value.map(r => r.id)) + 1 : 1;
-                    roles.value.push({ id: nextId, name: `Role Baru #${nextId}`, features: ["Dashboard Utama"], newFeature: "", aiAssistant: false });
+                    roles.value.push({ id: nextId, name: `Role Baru #${nextId}`, features: [{ name: "Dashboard Utama", description: "Halaman ringkasan informasi" }], newFeatureName: "", newFeatureDesc: "", aiAssistant: false });
                 };
 
                 const removeRole = (index) => { roles.value.splice(index, 1); };
 
                 const addFeature = (roleIndex) => {
                     const role = roles.value[roleIndex];
-                    if (role.newFeature && role.newFeature.trim()) {
-                        role.features.push(role.newFeature.trim());
+                    const name = (role.newFeatureName || role.newFeature || "").trim();
+                    const desc = (role.newFeatureDesc || "").trim();
+                    if (name) {
+                        role.features.push({ name: name, description: desc });
+                        role.newFeatureName = "";
+                        role.newFeatureDesc = "";
                         role.newFeature = "";
                     }
                 };
@@ -1622,7 +1825,10 @@
                         roles.value.forEach((role, idx) => {
                             str += `${idx + 1}. **Role: ${sanitizeAIWord(role.name)}**\n`;
                             role.features.forEach((feat, fIdx) => {
-                                str += `   - Menu ${fIdx + 1}: ${sanitizeAIWord(feat)}\n`;
+                                const name = typeof feat === 'object' ? feat.name : feat;
+                                const desc = typeof feat === 'object' ? feat.description : "";
+                                const descText = desc ? ` (Deskripsi: ${sanitizeAIWord(desc)})` : "";
+                                str += `   - Menu ${fIdx + 1}: ${sanitizeAIWord(name)}${descText}\n`;
                             });
                             str += `\n`;
                         });
@@ -1782,7 +1988,14 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
                                 roles.value = parsed.roles.map((r, i) => ({
                                     id: i + 1,
                                     name: sanitizeAIWord(r.name),
-                                    features: (r.features || []).map(f => sanitizeAIWord(f)),
+                                    features: (r.features || []).map(f => {
+                                        if (typeof f === 'object' && f !== null) {
+                                            return { name: sanitizeAIWord(f.name || f.nama || ""), description: sanitizeAIWord(f.description || f.deskripsi || "") };
+                                        }
+                                        return { name: sanitizeAIWord(String(f)), description: "" };
+                                    }),
+                                    newFeatureName: "",
+                                    newFeatureDesc: "",
                                     newFeature: "",
                                     aiAssistant: r.aiAssistant ?? false
                                 }));
@@ -1849,6 +2062,7 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
                     aiLoading,
                     addRole,
                     removeRole,
+                    getFeatureObj,
                     addFeature,
                     removeFeature,
                     addSection,

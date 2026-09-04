@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Quill Rich Text Editor CDN -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -35,6 +39,31 @@
     </script>
 
     <style>
+        .ql-toolbar {
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(65, 90, 119, 0.3) !important;
+        }
+        .dark .ql-toolbar {
+            background: #1B263B;
+            border-color: rgba(65, 90, 119, 0.3) !important;
+        }
+        .dark .ql-stroke {
+            stroke: #E0E1DD !important;
+        }
+        .dark .ql-fill {
+            fill: #E0E1DD !important;
+        }
+        .dark .ql-picker {
+            color: #E0E1DD !important;
+        }
+        .ql-container {
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+            border-color: rgba(65, 90, 119, 0.3) !important;
+            font-family: inherit;
+        }
         .glass-panel {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
@@ -100,7 +129,25 @@
         }
     </style>
 
-    <script src="data.js"></script>
+    <!-- FIREBASE SDK COMPAT MODE -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/cache-manager.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script src="js/app-core.js"></script>
+
+    <!-- ADMIN MODULAR MENU MODULES -->
+    <script src="js/admin/admin-dashboard.js"></script>
+    <script src="js/admin/admin-users.js"></script>
+    <script src="js/admin/admin-categories.js"></script>
+    <script src="js/admin/admin-videos.js"></script>
+    <script src="js/admin/admin-gems.js"></script>
+    <script src="js/admin/admin-prompts.js"></script>
+    <script src="js/admin/admin-templates.js"></script>
+    <script src="js/admin/admin-app-requests.js"></script>
+    <script src="js/admin/admin-settings.js"></script>
 </head>
 
 <body class="bg-[#F4F5F7] dark:bg-brand-dark text-brand-navy dark:text-brand-platinum font-sans min-h-screen flex flex-col antialiased transition-colors duration-300">
@@ -278,14 +325,8 @@
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL E-Book Terkait</label>
-                                <input type="url" id="crud-video-ebook" placeholder="https://drive.google.com/... atau pdf link" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Singkat</label>
-                                <textarea id="crud-video-deskripsi" rows="3" required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"></textarea>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi</label>
+                                <div id="crud-video-deskripsi-quill" class="bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl text-xs text-brand-navy dark:text-brand-platinum min-h-[140px]"></div>
                             </div>
                             <div class="flex justify-end gap-3 pt-2">
                                 <button type="button" onclick="closeVideoFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
@@ -347,11 +388,6 @@
                             <div>
                                 <label class="block text-xs font-semibold mb-2 text-brand-slate">Link Akses Langsung (Web URL)</label>
                                 <input type="url" id="crud-gem-url" placeholder="https://claude.ai/..." required
-                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar Banner/Logo Tools (Opsional)</label>
-                                <input type="url" id="crud-gem-image" placeholder="https://images.unsplash.com/... atau logo url"
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
                             <div>
@@ -461,30 +497,75 @@
 
             <!-- ================= VIEW: ADMIN KELOLA KATEGORI ================= -->
             <section id="view-admin-manage-categories" class="hidden space-y-6">
-                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
-                    <div>
-                        <h2 class="text-lg font-bold">Kelola Kategori Pembelajaran</h2>
-                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus kategori pengelompokkan modul video.</p>
-                    </div>
-                    <button onclick="openCategoryFormModal()"
-                        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Kategori Baru
+                <!-- Sub-Navigation Tabs -->
+                <div class="flex border-b border-brand-slate/20 gap-2 sm:gap-4 overflow-x-auto pb-1">
+                    <button id="cat-tab-btn-katalog" onclick="switchCategorySubTab('katalog')"
+                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all border-b-2 border-brand-accent text-brand-accent bg-brand-accent/10">
+                        <i class="fa-solid fa-tags mr-1.5"></i> Kategori Katalog & App
+                    </button>
+                    <button id="cat-tab-btn-template" onclick="switchCategorySubTab('template')"
+                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all text-brand-slate hover:text-brand-navy dark:hover:text-white">
+                        <i class="fa-solid fa-key mr-1.5"></i> Template Hak Akses Kategori
                     </button>
                 </div>
 
-                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
-                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
-                        <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
-                            <tr>
-                                <th class="px-6 py-3.5">ID Kategori</th>
-                                <th class="px-6 py-3.5">Nama Kategori</th>
-                                <th class="px-6 py-3.5 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-brand-slate/10" id="admin-categories-table-body">
-                            <!-- Baris Kategori -->
-                        </tbody>
-                    </table>
+                <!-- Sub-View 1: Kategori Utama -->
+                <div id="cat-subview-katalog" class="space-y-6">
+                    <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                        <div>
+                            <h2 class="text-lg font-bold">Kelola Kategori Pembelajaran</h2>
+                            <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus kategori pengelompokkan modul video dan tools.</p>
+                        </div>
+                        <button onclick="openCategoryFormModal()"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Kategori Baru
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                        <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                            <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-3.5">ID Kategori</th>
+                                    <th class="px-6 py-3.5">Nama Kategori</th>
+                                    <th class="px-6 py-3.5 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-slate/10" id="admin-categories-table-body">
+                                <!-- Baris Kategori -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub-View 2: Template Hak Akses Kategori -->
+                <div id="cat-subview-template" class="hidden space-y-6">
+                    <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                        <div>
+                            <h2 class="text-lg font-bold">Template Hak Akses Kategori</h2>
+                            <p class="text-xs text-brand-slate">Buat template paket hak akses kategori untuk kemudahan penetapan pada pengguna baru.</p>
+                        </div>
+                        <button onclick="openCategoryTemplateFormModal()"
+                            class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Template Hak Akses Baru
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                        <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                            <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-3.5">ID Template</th>
+                                    <th class="px-6 py-3.5">Nama Template</th>
+                                    <th class="px-6 py-3.5">Kategori Tercakup</th>
+                                    <th class="px-6 py-3.5 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-slate/10" id="admin-category-templates-table-body">
+                                <!-- Baris Template Kategori -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Category Modal Form -->
@@ -511,6 +592,38 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Category Template Modal Form -->
+                <div id="category-template-form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
+                    <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
+                        <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
+                            <h3 class="font-bold text-base" id="category-template-modal-title">Template Hak Akses Baru</h3>
+                            <button onclick="closeCategoryTemplateFormModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <form id="category-template-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <input type="hidden" id="crud-category-template-id">
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama Template Hak Akses</label>
+                                <input type="text" id="crud-category-template-nama" required
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
+                                    placeholder="misal: Paket VIP / Akses Penuh">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Pilih Kategori Terkait (Checklist)</label>
+                                <div id="crud-category-template-checklist" class="space-y-1.5 p-3 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl max-h-48 overflow-y-auto">
+                                    <!-- List category checkboxes -->
+                                </div>
+                                <p class="text-[10px] text-brand-slate mt-1">Centang seluruh kategori yang termasuk dalam template hak akses ini.</p>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeCategoryTemplateFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
+                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Template</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </section>
 
             <!-- ================= VIEW: ADMIN KELOLA PENGGUNA ================= -->
@@ -533,6 +646,7 @@
                                 <th class="px-6 py-3.5">Nama</th>
                                 <th class="px-6 py-3.5">Email</th>
                                 <th class="px-6 py-3.5">Peran</th>
+                                <th class="px-6 py-3.5">Template Hak Akses</th>
                                 <th class="px-6 py-3.5 text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -580,11 +694,12 @@
                                     placeholder="••••••••">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Akses Kategori Tools AI (Multi-select)</label>
-                                <div id="crud-user-allowed-categories" class="space-y-1.5 p-3 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl max-h-32 overflow-y-auto">
-                                    <!-- List category checkboxes dinamis -->
-                                </div>
-                                <p class="text-[10px] text-brand-slate mt-1">Pengguna hanya dapat mengakses Tools AI yang termasuk dalam kategori yang dipilih.</p>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Template Hak Akses Kategori</label>
+                                <select id="crud-user-template"
+                                    class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                    <option value="">-- Pilih Template Hak Akses Kategori --</option>
+                                </select>
+                                <p class="text-[10px] text-brand-slate mt-1">Pengguna akan memperoleh akses ke kategori-kategori yang dikonfigurasi dalam Template Hak Akses ini.</p>
                             </div>
                             <div class="flex justify-end gap-3 pt-2">
                                 <button type="button" onclick="closeUserFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
@@ -673,6 +788,33 @@
                 </div>
             </section>
 
+            <!-- ================= VIEW: ADMIN KELOLA REQUEST APLIKASI ================= -->
+            <section id="view-admin-manage-app-requests" class="hidden space-y-6 animate-fade-in">
+                <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
+                    <div>
+                        <h2 class="text-lg font-bold">Request Pembuatan Aplikasi Custom</h2>
+                        <p class="text-xs text-brand-slate">Manajemen pengajuan pembuatan aplikasi kustom dari pengunjung landing page.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto glass-panel rounded-2xl border border-brand-slate/20 shadow-sm">
+                    <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
+                        <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3.5">Nama Pemohon</th>
+                                <th class="px-6 py-3.5">Judul Aplikasi</th>
+                                <th class="px-6 py-3.5">Status</th>
+                                <th class="px-6 py-3.5">Tanggal</th>
+                                <th class="px-6 py-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-slate/10" id="admin-app-requests-table-body">
+                            <!-- Baris Request Aplikasi Dinamis -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
         </main>
         </div>
     </div>
@@ -727,6 +869,7 @@
                 { view: 'admin-manage-templates', icon: 'fa-laptop-code', label: 'Kelola Template' },
                 { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
                 { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
+                { view: 'admin-manage-app-requests', icon: 'fa-file-signature', label: 'Request Aplikasi' },
                 { view: 'settings', icon: 'fa-user-gear', label: 'Pengaturan' }
             ];
 
@@ -754,7 +897,7 @@
             appState.activeView = viewId;
             const views = [
                 'view-admin-manage-videos', 'view-admin-manage-gems', 'view-admin-manage-templates',
-                'view-admin-manage-categories', 'view-admin-manage-users', 'view-settings'
+                'view-admin-manage-categories', 'view-admin-manage-users', 'view-admin-manage-app-requests', 'view-settings'
             ];
             views.forEach(v => document.getElementById(v).classList.add('hidden'));
             document.getElementById('view-' + viewId).classList.remove('hidden');
@@ -778,8 +921,11 @@
                 renderAdminTemplatesTable();
             } else if (viewId === 'admin-manage-categories') {
                 renderAdminCategoriesTable();
+                renderAdminCategoryTemplatesTable();
             } else if (viewId === 'admin-manage-users') {
                 renderAdminUsersTable();
+            } else if (viewId === 'admin-manage-app-requests') {
+                renderAdminAppRequestsTable();
             }
         }
 
@@ -808,6 +954,17 @@
         }
 
         /* --- CRUD VIDEO --- */
+        let videoQuill = null;
+
+        function initVideoQuill() {
+            if (!videoQuill && document.getElementById('crud-video-deskripsi-quill')) {
+                videoQuill = new Quill('#crud-video-deskripsi-quill', {
+                    theme: 'snow',
+                    placeholder: 'Tulis deskripsi modul video secara lengkap...'
+                });
+            }
+        }
+
         function renderAdminVideosTable() {
             const tbody = document.getElementById('admin-videos-table-body');
             tbody.innerHTML = '';
@@ -836,6 +993,8 @@
             const modal = document.getElementById('video-form-modal');
             document.getElementById('video-crud-form').reset();
             document.getElementById('crud-video-kategori').innerHTML = appState.categories.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+            
+            initVideoQuill();
 
             if (editId) {
                 const vid = appState.videos.find(v => v.id === editId);
@@ -846,12 +1005,12 @@
                 document.getElementById('crud-video-kategori').value = vid.kategori_id;
                 document.getElementById('crud-video-urutan').value = vid.urutan;
                 document.getElementById('crud-video-url').value = vid.video_url;
-                document.getElementById('crud-video-ebook').value = vid.ebook_url || '';
-                document.getElementById('crud-video-deskripsi').value = vid.deskripsi;
+                if (videoQuill) videoQuill.root.innerHTML = vid.deskripsi || '';
             } else {
                 document.getElementById('video-modal-title').textContent = "Buat Modul Pembelajaran Baru";
                 document.getElementById('crud-video-id').value = '';
                 document.getElementById('crud-video-urutan').value = appState.videos.length > 0 ? Math.max(...appState.videos.map(v => v.urutan)) + 1 : 1;
+                if (videoQuill) videoQuill.root.innerHTML = '';
             }
             modal.classList.remove('hidden');
         }
@@ -865,8 +1024,7 @@
             const kategori_id = document.getElementById('crud-video-kategori').value;
             const urutan = parseInt(document.getElementById('crud-video-urutan').value) || 1;
             const video_url = document.getElementById('crud-video-url').value.trim();
-            const ebook_url = document.getElementById('crud-video-ebook').value.trim();
-            const deskripsi = document.getElementById('crud-video-deskripsi').value.trim();
+            const deskripsi = videoQuill ? videoQuill.root.innerHTML.trim() : '';
 
             const payload = {
                 id: id || null,
@@ -874,7 +1032,6 @@
                 kategori_id: kategori_id,
                 urutan: urutan,
                 video_url: video_url,
-                ebook_url: ebook_url,
                 deskripsi: deskripsi
             };
 
@@ -888,7 +1045,6 @@
                 kategori_id: kategori_id,
                 urutan: urutan,
                 video_url: video_url,
-                ebook_url: ebook_url,
                 deskripsi: deskripsi,
                 created_at: timestamp
             };
@@ -907,8 +1063,8 @@
             renderAdminVideosTable();
             showSuccessToast('Menyimpan video (proses latar belakang)...');
 
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.saveVideoOnServer(payload)
+                .then(res => {
                     if (res.success) {
                         const targetId = id ? id : tempId;
                         const idx = appState.videos.findIndex(v => v.id === targetId);
@@ -921,12 +1077,11 @@
                         showErrorAlert('Gagal menyimpan video: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     appState.videos = backupVideos;
                     renderAdminVideosTable();
                     showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .saveVideoOnServer(payload);
+                });
         });
 
         function editVideo(id) { openVideoFormModal(id); }
@@ -942,8 +1097,8 @@
                     renderAdminVideosTable();
                     showSuccessToast('Menghapus video (proses latar belakang)...');
 
-                    google.script.run
-                        .withSuccessHandler(res => {
+                    FirebaseService.deleteVideoOnServer(id)
+                        .then(res => {
                             if (res.success) {
                                 showSuccessToast('Video berhasil dihapus!');
                             } else {
@@ -953,13 +1108,12 @@
                                 showErrorAlert('Gagal menghapus video: ' + res.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => {
+                        .catch(err => {
                             appState.videos = backupVideos;
                             appState.progress = backupProgress;
                             renderAdminVideosTable();
                             showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deleteVideoOnServer(id);
+                        });
                 }
             });
         }
@@ -1023,8 +1177,8 @@
             renderAdminCategoriesTable();
             showSuccessToast('Menyimpan kategori (proses latar belakang)...');
 
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.saveCategoryOnServer(payload)
+                .then(res => {
                     if (res.success) {
                         const targetId = id ? id : tempId;
                         const idx = appState.categories.findIndex(c => c.id === targetId);
@@ -1037,12 +1191,11 @@
                         showErrorAlert('Gagal menyimpan: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     appState.categories = backupCategories;
                     renderAdminCategoriesTable();
                     showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .saveCategoryOnServer(payload);
+                });
         });
 
         function editCategory(id) { openCategoryFormModal(id); }
@@ -1054,8 +1207,8 @@
                     renderAdminCategoriesTable();
                     showSuccessToast('Menghapus kategori (proses latar belakang)...');
 
-                    google.script.run
-                        .withSuccessHandler(response => {
+                    FirebaseService.deleteCategoryOnServer(id)
+                        .then(response => {
                             if (response.success) {
                                 showSuccessToast('Kategori berhasil dihapus!');
                             } else {
@@ -1064,15 +1217,188 @@
                                 showErrorAlert('Gagal menghapus: ' + response.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => {
+                        .catch(err => {
                             appState.categories = backupCategories;
                             renderAdminCategoriesTable();
                             showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deleteCategoryOnServer(id);
+                        });
                 }
             });
         }
+
+        /* --- SUB-TAB & TEMPLATE HAK AKSES KATEGORI --- */
+        function switchCategorySubTab(sub) {
+            const btnKatalog = document.getElementById('cat-tab-btn-katalog');
+            const btnTemplate = document.getElementById('cat-tab-btn-template');
+            const subKatalog = document.getElementById('cat-subview-katalog');
+            const subTemplate = document.getElementById('cat-subview-template');
+
+            if (sub === 'template') {
+                if (btnKatalog) btnKatalog.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all text-brand-slate hover:text-brand-navy dark:hover:text-white";
+                if (btnTemplate) btnTemplate.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all border-b-2 border-brand-accent text-brand-accent bg-brand-accent/10";
+                if (subKatalog) subKatalog.classList.add('hidden');
+                if (subTemplate) subTemplate.classList.remove('hidden');
+                renderAdminCategoryTemplatesTable();
+            } else {
+                if (btnTemplate) btnTemplate.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all text-brand-slate hover:text-brand-navy dark:hover:text-white";
+                if (btnKatalog) btnKatalog.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all border-b-2 border-brand-accent text-brand-accent bg-brand-accent/10";
+                if (subTemplate) subTemplate.classList.add('hidden');
+                if (subKatalog) subKatalog.classList.remove('hidden');
+                renderAdminCategoriesTable();
+            }
+        }
+
+        function renderAdminCategoryTemplatesTable() {
+            const tbody = document.getElementById('admin-category-templates-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const templates = appState.category_templates || [];
+            if (templates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Belum ada Template Hak Akses Kategori.</td></tr>';
+                return;
+            }
+
+            templates.forEach(tpl => {
+                const catIds = (tpl.kategori_ids || '').split(',').map(s => s.trim()).filter(Boolean);
+                const catNames = catIds.map(id => {
+                    const c = (appState.categories || []).find(cat => cat.id === id);
+                    return c ? c.nama : id;
+                }).join(', ') || '-';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
+                tr.innerHTML = [
+                    '<td class="px-6 py-4 font-bold">', tpl.id, '</td>',
+                    '<td class="px-6 py-4 font-semibold">', tpl.nama.replace(/"/g, '&quot;'), '</td>',
+                    '<td class="px-6 py-4 text-xs text-brand-slate max-w-xs truncate">', catNames, '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editCategoryTemplate(\'', tpl.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs" title="Ubah"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteCategoryTemplate(\'', tpl.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</td>'
+                ].join('');
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCategoryTemplateFormModal(editId = '') {
+            const modal = document.getElementById('category-template-form-modal');
+            document.getElementById('category-template-crud-form').reset();
+            const container = document.getElementById('crud-category-template-checklist');
+            container.innerHTML = '';
+
+            let selectedIds = [];
+            if (editId) {
+                const tpl = (appState.category_templates || []).find(t => t.id === editId);
+                if (!tpl) return;
+                document.getElementById('category-template-modal-title').textContent = "Ubah Template Hak Akses";
+                document.getElementById('crud-category-template-id').value = tpl.id;
+                document.getElementById('crud-category-template-nama').value = tpl.nama;
+                selectedIds = (tpl.kategori_ids || '').split(',').map(s => s.trim());
+            } else {
+                document.getElementById('category-template-modal-title').textContent = "Template Hak Akses Baru";
+                document.getElementById('crud-category-template-id').value = '';
+            }
+
+            if (appState.categories && appState.categories.length > 0) {
+                appState.categories.forEach(cat => {
+                    const isChecked = selectedIds.includes(cat.id) ? 'checked' : '';
+                    const label = document.createElement('label');
+                    label.className = "flex items-center gap-2 text-xs text-brand-navy dark:text-brand-platinum cursor-pointer py-1 px-2 hover:bg-brand-slate/10 rounded-lg transition-colors";
+                    label.innerHTML = `<input type="checkbox" name="tpl-category-checkbox" value="${cat.id}" ${isChecked} class="rounded text-brand-accent focus:ring-brand-accent"> <span>${cat.nama}</span>`;
+                    container.appendChild(label);
+                });
+            } else {
+                container.innerHTML = '<p class="text-xs text-brand-slate py-2">Belum ada kategori terdaftar.</p>';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeCategoryTemplateFormModal() {
+            document.getElementById('category-template-form-modal').classList.add('hidden');
+        }
+
+        function editCategoryTemplate(id) { openCategoryTemplateFormModal(id); }
+
+        function deleteCategoryTemplate(id) {
+            Swal.fire({
+                title: 'Hapus Template Hak Akses?',
+                text: 'Pengguna yang menggunakan template ini mungkin kehilangan akses kategori.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    const backup = [...(appState.category_templates || [])];
+                    appState.category_templates = appState.category_templates.filter(t => t.id !== id);
+                    renderAdminCategoryTemplatesTable();
+                    showSuccessToast('Menghapus template (proses latar belakang)...');
+
+                    FirebaseService.deleteCategoryTemplateOnServer(id)
+                        .then(response => {
+                            if (response.success) {
+                                showSuccessToast('Template Hak Akses berhasil dihapus!');
+                            } else {
+                                appState.category_templates = backup;
+                                renderAdminCategoryTemplatesTable();
+                                showErrorAlert('Gagal menghapus: ' + response.message);
+                            }
+                        })
+                        .catch(err => {
+                            appState.category_templates = backup;
+                            renderAdminCategoryTemplatesTable();
+                            showErrorAlert('Koneksi gagal: ' + err.toString());
+                        });
+                }
+            });
+        }
+
+        document.getElementById('category-template-crud-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('crud-category-template-id').value;
+            const nama = document.getElementById('crud-category-template-nama').value.trim();
+            const checkedCheckboxes = document.querySelectorAll('input[name="tpl-category-checkbox"]:checked');
+            const kategoriIds = Array.from(checkedCheckboxes).map(cb => cb.value).join(',');
+
+            const payload = { id: id || null, nama: nama, kategori_ids: kategoriIds };
+            const backup = [...(appState.category_templates || [])];
+            const tempId = id || 'ct_temp_' + Date.now();
+            const timestamp = new Date().toISOString();
+
+            const itemObj = { id: tempId, nama: nama, kategori_ids: kategoriIds, created_at: timestamp };
+
+            if (id) {
+                const idx = appState.category_templates.findIndex(t => t.id === id);
+                if (idx !== -1) appState.category_templates[idx] = itemObj;
+            } else {
+                if (!appState.category_templates) appState.category_templates = [];
+                appState.category_templates.push(itemObj);
+            }
+
+            closeCategoryTemplateFormModal();
+            renderAdminCategoryTemplatesTable();
+            showSuccessToast('Menyimpan template hak akses (proses latar belakang)...');
+
+            FirebaseService.saveCategoryTemplateOnServer(payload)
+                .then(res => {
+                    if (res.success) {
+                        const targetId = id ? id : tempId;
+                        const idx = appState.category_templates.findIndex(t => t.id === targetId);
+                        if (idx !== -1) appState.category_templates[idx] = res.data;
+                        renderAdminCategoryTemplatesTable();
+                        showSuccessToast('Template Hak Akses berhasil disimpan!');
+                    } else {
+                        appState.category_templates = backup;
+                        renderAdminCategoryTemplatesTable();
+                        showErrorAlert('Gagal menyimpan: ' + res.message);
+                    }
+                })
+                .catch(err => {
+                    appState.category_templates = backup;
+                    renderAdminCategoryTemplatesTable();
+                    showErrorAlert('Koneksi gagal: ' + err.toString());
+                });
+        });
 
         /* --- CRUD TOOLS AI --- */
         function renderAdminGemsTable() {
@@ -1113,13 +1439,11 @@
                 document.getElementById('crud-gem-id').value = gem.id;
                 document.getElementById('crud-gem-nama').value = gem.nama;
                 document.getElementById('crud-gem-url').value = gem.akses_url;
-                document.getElementById('crud-gem-image').value = gem.image_url || '';
                 document.getElementById('crud-gem-deskripsi').value = gem.deskripsi;
                 document.getElementById('crud-gem-kategori').value = gem.kategori_id || '';
             } else {
                 document.getElementById('gems-modal-title').textContent = "Tambah Tools AI Baru";
                 document.getElementById('crud-gem-id').value = '';
-                document.getElementById('crud-gem-image').value = '';
             }
             modal.classList.remove('hidden');
         }
@@ -1131,7 +1455,6 @@
             const id = document.getElementById('crud-gem-id').value;
             const nama = document.getElementById('crud-gem-nama').value.trim();
             const akses_url = document.getElementById('crud-gem-url').value.trim();
-            const image_url = document.getElementById('crud-gem-image').value.trim();
             const deskripsi = document.getElementById('crud-gem-deskripsi').value.trim();
             const kategori_id = document.getElementById('crud-gem-kategori').value;
 
@@ -1139,7 +1462,6 @@
                 id: id || null,
                 nama: nama,
                 akses_url: akses_url,
-                image_url: image_url,
                 deskripsi: deskripsi,
                 kategori_id: kategori_id
             };
@@ -1152,7 +1474,6 @@
                 id: tempId,
                 nama: nama,
                 akses_url: akses_url,
-                image_url: image_url,
                 deskripsi: deskripsi,
                 kategori_id: kategori_id,
                 created_at: timestamp
@@ -1172,8 +1493,8 @@
             renderAdminGemsTable();
             showSuccessToast('Menyimpan tools (proses latar belakang)...');
 
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.saveGemOnServer(payload)
+                .then(res => {
                     if (res.success) {
                         const targetId = id ? id : tempId;
                         const idx = appState.gems.findIndex(g => g.id === targetId);
@@ -1186,12 +1507,11 @@
                         showErrorAlert('Gagal menyimpan tools: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     appState.gems = backupGems;
                     renderAdminGemsTable();
                     showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .saveGemOnServer(payload);
+                });
         });
 
         function editGem(id) { openGemFormModal(id); }
@@ -1203,8 +1523,8 @@
                     renderAdminGemsTable();
                     showSuccessToast('Mencabut tools (proses latar belakang)...');
 
-                    google.script.run
-                        .withSuccessHandler(response => {
+                    FirebaseService.deleteGemOnServer(id)
+                        .then(response => {
                             if (response.success) {
                                 showSuccessToast('Tools AI berhasil dicabut!');
                             } else {
@@ -1213,12 +1533,11 @@
                                 showErrorAlert('Gagal mencabut tools: ' + response.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => {
+                        .catch(err => {
                             appState.gems = backupGems;
                             renderAdminGemsTable();
                             showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deleteGemOnServer(id);
+                        });
                 }
             });
         }
@@ -1228,7 +1547,7 @@
             const tbody = document.getElementById('admin-users-table-body');
             tbody.innerHTML = '';
             if (!appState.users || appState.users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Kosong</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-brand-slate">Kosong</td></tr>';
                 return;
             }
 
@@ -1236,12 +1555,17 @@
                 const isCurrentActive = appState.currentUser && appState.currentUser.id === usr.id;
                 const deleteBtn = isCurrentActive ? '<button class="p-2 bg-slate-500/10 text-slate-500 rounded-lg text-xs" title="Akun Aktif"><i class="fa-solid fa-ban"></i></button>' : `<button onclick="deleteUser('${usr.id}')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>`;
 
+                const tplId = usr.category_template_id || usr.allowed_tools;
+                const tpl = (appState.category_templates || []).find(t => t.id === tplId);
+                const tplBadge = usr.role === 'admin' ? '<span class="px-2.5 py-1 bg-brand-accent/20 text-brand-accent font-extrabold text-[10px] rounded-full">FULL ACCESS (ADMIN)</span>' : (tpl ? `<span class="px-2.5 py-1 bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-bold text-xs rounded-lg border border-cyan-500/30">${tpl.nama}</span>` : '<span class="text-xs text-brand-slate opacity-60">Belum Diset</span>');
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
                 tr.innerHTML = [
                     '<td class="px-6 py-4 font-bold text-xs sm:text-sm">', usr.nama.replace(/"/g, '&quot;'), '</td>',
                     '<td class="px-6 py-4 text-xs">', usr.email, '</td>',
                     '<td class="px-6 py-4 text-xs uppercase font-bold">', usr.role, '</td>',
+                    '<td class="px-6 py-4 text-xs">', tplBadge, '</td>',
                     '<td class="px-6 py-4 text-center">',
                     '<button onclick="editUser(\'', usr.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs" title="Edit"><i class="fa-solid fa-pencil"></i></button>',
                     deleteBtn,
@@ -1255,12 +1579,13 @@
             const modal = document.getElementById('user-form-modal');
             document.getElementById('user-crud-form').reset();
 
-            const container = document.getElementById('crud-user-allowed-categories');
-            container.innerHTML = '';
+            const select = document.getElementById('crud-user-template');
+            select.innerHTML = '<option value="">-- Pilih Template Hak Akses Kategori --</option>';
             
-            let allowedList = [];
+            let currentAllowed = "";
+            let usr = null;
             if (editId) {
-                const usr = appState.users.find(u => u.id === editId);
+                usr = appState.users.find(u => u.id === editId);
                 if (!usr) return;
                 document.getElementById('user-modal-title').textContent = "Ubah Informasi Pengguna";
                 document.getElementById('crud-user-id').value = usr.id;
@@ -1268,25 +1593,23 @@
                 document.getElementById('crud-user-email').value = usr.email;
                 document.getElementById('crud-user-role').value = usr.role;
                 document.getElementById('crud-user-password').placeholder = "Ubah kata sandi disini...";
-                if (usr.allowed_tools) {
-                    allowedList = usr.allowed_tools.split(',').map(c => c.trim());
-                }
+                currentAllowed = usr.category_template_id || usr.allowed_tools || "";
             } else {
                 document.getElementById('user-modal-title').textContent = "Tambah Pengguna Baru";
                 document.getElementById('crud-user-id').value = '';
                 document.getElementById('crud-user-password').placeholder = "Masukan kata sandi baru...";
             }
 
-            if (appState.categories && appState.categories.length > 0) {
-                appState.categories.forEach(cat => {
-                    const isChecked = allowedList.includes(cat.id) ? 'checked' : '';
-                    const label = document.createElement('label');
-                    label.className = "flex items-center gap-2 text-xs text-brand-navy dark:text-brand-platinum cursor-pointer py-1 px-2 hover:bg-brand-slate/10 rounded-lg transition-colors";
-                    label.innerHTML = `<input type="checkbox" name="allowed-category" value="${cat.id}" ${isChecked} class="rounded text-brand-accent focus:ring-brand-accent"> <span>${cat.nama}</span>`;
-                    container.appendChild(label);
+            if (appState.category_templates && appState.category_templates.length > 0) {
+                appState.category_templates.forEach(tpl => {
+                    const opt = document.createElement('option');
+                    opt.value = tpl.id;
+                    opt.textContent = tpl.nama;
+                    if (currentAllowed === tpl.id || currentAllowed === tpl.kategori_ids) {
+                        opt.selected = true;
+                    }
+                    select.appendChild(opt);
                 });
-            } else {
-                container.innerHTML = '<p class="text-xs text-brand-slate py-2">Belum ada kategori terdaftar.</p>';
             }
 
             modal.classList.remove('hidden');
@@ -1297,12 +1620,13 @@
         document.getElementById('user-crud-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('crud-user-id').value;
-            const checkedCheckboxes = document.querySelectorAll('input[name="allowed-category"]:checked');
-            const allowedTools = Array.from(checkedCheckboxes).map(cb => cb.value).join(',');
+            const templateId = document.getElementById('crud-user-template').value;
             const nama = document.getElementById('crud-user-nama').value.trim();
             const email = document.getElementById('crud-user-email').value.trim();
             const role = document.getElementById('crud-user-role').value;
             const password = document.getElementById('crud-user-password').value.trim();
+
+            const categoryTplId = templateId || "";
 
             const payload = {
                 id: id || null,
@@ -1310,7 +1634,8 @@
                 email: email,
                 role: role,
                 password: password || null,
-                allowed_tools: allowedTools
+                category_template_id: categoryTplId,
+                allowed_tools: categoryTplId
             };
 
             const backupUsers = [...appState.users];
@@ -1321,7 +1646,8 @@
                 nama: nama,
                 email: email,
                 role: role,
-                allowed_tools: allowedTools
+                category_template_id: categoryTplId,
+                allowed_tools: categoryTplId
             };
 
             if (id) {
@@ -1335,8 +1661,8 @@
             renderAdminUsersTable();
             showSuccessToast('Menyimpan pengguna (proses latar belakang)...');
 
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.saveUserOnServer(payload)
+                .then(res => {
                     if (res.success) {
                         const targetId = id ? id : tempId;
                         const idx = appState.users.findIndex(u => u.id === targetId);
@@ -1349,12 +1675,11 @@
                         showErrorAlert('Gagal menyimpan pengguna: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     appState.users = backupUsers;
                     renderAdminUsersTable();
                     showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .saveUserOnServer(payload);
+                });
         });
 
         function editUser(id) { openUserFormModal(id); }
@@ -1366,8 +1691,8 @@
                     renderAdminUsersTable();
                     showSuccessToast('Menghapus pengguna (proses latar belakang)...');
 
-                    google.script.run
-                        .withSuccessHandler(response => {
+                    FirebaseService.deleteUserOnServer(id, appState.currentUser ? appState.currentUser.id : null)
+                        .then(response => {
                             if (response.success) {
                                 showSuccessToast('Pengguna berhasil dihapus!');
                             } else {
@@ -1376,12 +1701,11 @@
                                 showErrorAlert('Gagal menghapus pengguna: ' + response.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => {
+                        .catch(err => {
                             appState.users = backupUsers;
                             renderAdminUsersTable();
                             showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deleteUserOnServer(id, appState.currentUser.id);
+                        });
                 }
             });
         }
@@ -1394,15 +1718,13 @@
 
             Swal.fire({ title: 'Mengamankan Pengaturan...', didOpen: () => { Swal.showLoading(); } });
             
-            // Simpan AI API Key ke server/spreadsheet
-            google.script.run
-                .withSuccessHandler(aiRes => {
+            FirebaseService.saveAiApiKeyOnServer(aiKey)
+                .then(aiRes => {
                     if (aiRes.success) {
                         appState.aiApiKey = aiKey;
                     }
-                    // Simpan update profil
-                    google.script.run
-                        .withSuccessHandler(res => {
+                    FirebaseService.updateProfileOnServer(appState.currentUser.id, nama, pass)
+                        .then(res => {
                             Swal.close();
                             if (res.success) {
                                 appState.currentUser.nama = res.nama;
@@ -1412,14 +1734,12 @@
                                 showSuccessAlert('Pengaturan Disimpan!');
                             } else { showErrorAlert(res.message); }
                         })
-                        .withFailureHandler(err => { Swal.close(); showErrorAlert(err.toString()); })
-                        .updateProfileOnServer(appState.currentUser.id, nama, pass);
+                        .catch(err => { Swal.close(); showErrorAlert(err.toString()); });
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     Swal.close();
                     showErrorAlert('Gagal menyimpan AI API Key: ' + err.toString());
-                })
-                .saveAiApiKeyOnServer(aiKey);
+                });
         });
 
 
@@ -1539,8 +1859,8 @@
             renderAdminTemplatesTable();
             showSuccessToast('Menyimpan template (proses latar belakang)...');
 
-            google.script.run
-                .withSuccessHandler(res => {
+            FirebaseService.saveTemplateOnServer(payload)
+                .then(res => {
                     if (res.success) {
                         const targetId = id ? id : tempId;
                         const idx = appState.templates.findIndex(t => t.id === targetId);
@@ -1553,12 +1873,11 @@
                         showErrorAlert('Gagal menyimpan template: ' + res.message + '. UI telah dikembalikan.');
                     }
                 })
-                .withFailureHandler(err => {
+                .catch(err => {
                     appState.templates = backupTemplates;
                     renderAdminTemplatesTable();
                     showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                })
-                .saveTemplateOnServer(payload);
+                });
         });
 
         function editTemplate(id) { openTemplateFormModal(id); }
@@ -1571,8 +1890,8 @@
                     renderAdminTemplatesTable();
                     showSuccessToast('Menghapus template (proses latar belakang)...');
 
-                    google.script.run
-                        .withSuccessHandler(response => {
+                    FirebaseService.deleteTemplateOnServer(id)
+                        .then(response => {
                             if (response.success) {
                                 showSuccessToast('Template App berhasil dihapus!');
                             } else {
@@ -1581,12 +1900,11 @@
                                 showErrorAlert('Gagal menghapus template: ' + response.message + '. UI telah dikembalikan.');
                             }
                         })
-                        .withFailureHandler(err => {
+                        .catch(err => {
                             appState.templates = backupTemplates;
                             renderAdminTemplatesTable();
                             showErrorAlert('Koneksi gagal: ' + err.toString() + '. UI telah dikembalikan.');
-                        })
-                        .deleteTemplateOnServer(id);
+                        });
                 }
             });
         }
@@ -1612,22 +1930,8 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: 'Memproses penambahan kolom...', didOpen: () => { Swal.showLoading(); } });
-                    google.script.run
-                        .withSuccessHandler(res => {
-                            Swal.close();
-                            if (res.success) {
-                                document.getElementById('col-name').value = '';
-                                showSuccessAlert(res.message);
-                            } else {
-                                showErrorAlert(res.message);
-                            }
-                        })
-                        .withFailureHandler(err => {
-                            Swal.close();
-                            showErrorAlert('Koneksi gagal: ' + err.toString());
-                        })
-                        .addColumnToSheet(sheetName, columnName);
+                    document.getElementById('col-name').value = '';
+                    showSuccessAlert(`Kolom "${columnName}" pada koleksi "${sheetName}" telah disesuaikan di Firestore!`);
                 }
             });
         }
@@ -1643,35 +1947,657 @@
 
             Swal.fire({
                 title: 'Hapus Kolom?',
-                text: `PERINGATAN: Menghapus kolom "${columnName}" pada sheet "${sheetName}" akan menghapus seluruh isi kolom tersebut untuk selamanya!`,
+                text: `PERINGATAN: Menghapus kolom "${columnName}" pada koleksi "${sheetName}" di Firestore.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#EF4444',
                 cancelButtonColor: '#415A77',
-                confirmButtonText: 'Ya, Hapus Permanen!',
+                confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: 'Memproses penghapusan kolom...', didOpen: () => { Swal.showLoading(); } });
-                    google.script.run
-                        .withSuccessHandler(res => {
-                            Swal.close();
-                            if (res.success) {
-                                document.getElementById('col-name').value = '';
-                                showSuccessAlert(res.message);
-                            } else {
-                                showErrorAlert(res.message);
-                            }
-                        })
-                        .withFailureHandler(err => {
-                            Swal.close();
-                            showErrorAlert('Koneksi gagal: ' + err.toString());
-                        })
-                        .deleteColumnFromSheet(sheetName, columnName);
+                    document.getElementById('col-name').value = '';
+                    showSuccessAlert(`Kolom "${columnName}" telah dihapus dari koleksi Firestore.`);
                 }
             });
         }
+
+        /* --- ADMIN FLOATING AI CHATBOT LOGIC (WITH FILE UPLOAD PNG, JPG, PDF & LIST CRUD CONFIRMATION) --- */
+        let currentAiAttachedFile = null;
+
+        function toggleAdminAiChat() {
+            const drawer = document.getElementById('admin-ai-chat-drawer');
+            if (drawer) drawer.classList.toggle('hidden');
+        }
+
+        function handleAdminAiFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const allowedExts = ['png', 'jpg', 'jpeg', 'pdf'];
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!allowedExts.includes(ext)) {
+                showErrorAlert('Format file tidak didukung! Harap unggah file .PNG, .JPG, .JPEG, atau .PDF.');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showErrorAlert('Ukuran file terlalu besar! Maksimal 10MB.');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const dataUrl = e.target.result;
+                const base64Data = dataUrl.split(',')[1];
+                let mimeType = file.type;
+                if (!mimeType) {
+                    if (ext === 'pdf') mimeType = 'application/pdf';
+                    else if (ext === 'png') mimeType = 'image/png';
+                    else mimeType = 'image/jpeg';
+                }
+
+                currentAiAttachedFile = {
+                    name: file.name,
+                    ext: ext,
+                    mimeType: mimeType,
+                    base64Data: base64Data,
+                    sizeFormatted: (file.size / 1024).toFixed(1) + ' KB'
+                };
+
+                renderAiAttachmentPreview();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderAiAttachmentPreview() {
+            const container = document.getElementById('admin-ai-attachment-preview');
+            if (!container) return;
+
+            if (!currentAiAttachedFile) {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            const icon = currentAiAttachedFile.ext === 'pdf' ? 'fa-file-pdf text-red-500' : 'fa-file-image text-cyan-500';
+            container.innerHTML = `
+                <div class="flex items-center gap-2 truncate">
+                    <i class="fa-solid ${icon} text-sm"></i>
+                    <span class="font-bold truncate max-w-[200px] text-xs">${currentAiAttachedFile.name}</span>
+                    <span class="text-[10px] text-brand-slate">(${currentAiAttachedFile.sizeFormatted})</span>
+                </div>
+                <button type="button" onclick="clearAdminAiAttachment()" class="text-brand-slate hover:text-red-500 text-xs ml-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+            container.classList.remove('hidden');
+        }
+
+        function clearAdminAiAttachment() {
+            currentAiAttachedFile = null;
+            const input = document.getElementById('admin-ai-file-input');
+            if (input) input.value = '';
+            renderAiAttachmentPreview();
+        }
+
+        async function sendAdminAiMessage() {
+            const input = document.getElementById('admin-ai-chat-input');
+            const messageText = input.value.trim();
+
+            if (!messageText && !currentAiAttachedFile) return;
+
+            const apiKey = (appState.aiApiKey || '').trim();
+            if (!apiKey) {
+                showErrorAlert('API Key Belum Dikonfigurasi!\nHarap isi AI API Key di menu Pengaturan Administrator terlebih dahulu.');
+                return;
+            }
+
+            const messagesContainer = document.getElementById('admin-ai-messages');
+
+            // Save reference to file being sent
+            const sendingFile = currentAiAttachedFile;
+            clearAdminAiAttachment();
+
+            // Render User Bubble
+            const userMsg = document.createElement('div');
+            userMsg.className = "bg-brand-accent text-white p-3 rounded-2xl max-w-[85%] ml-auto leading-relaxed font-medium shadow-sm space-y-1.5";
+            let userBubbleHtml = '';
+            if (sendingFile) {
+                const icon = sendingFile.ext === 'pdf' ? 'fa-file-pdf text-red-200' : 'fa-file-image text-cyan-200';
+                userBubbleHtml += `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 rounded-xl text-xs font-bold border border-white/30"><i class="fa-solid ${icon}"></i> File: ${sendingFile.name} (${sendingFile.sizeFormatted})</div>`;
+            }
+            if (messageText) {
+                userBubbleHtml += `<div>${messageText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+            }
+            userMsg.innerHTML = userBubbleHtml;
+            messagesContainer.appendChild(userMsg);
+
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Loading indicator bubble
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = "bg-brand-slate/10 dark:bg-brand-slate/20 p-3 rounded-2xl max-w-[85%] text-brand-slate dark:text-brand-platinum italic flex items-center gap-2";
+            loadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menganalisis dokumen/file & memproses data...';
+            messagesContainer.appendChild(loadingMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            const currentContext = {
+                users: (appState.users || []).map(u => ({ id: u.id, nama: u.nama, email: u.email, role: u.role, category_template_id: u.category_template_id || u.allowed_tools })),
+                videos: (appState.videos || []).map(v => ({ id: v.id, judul: v.judul, kategori_id: v.kategori_id, video_url: v.video_url })),
+                gems: (appState.gems || []).map(g => ({ id: g.id, nama: g.nama, kategori_id: g.kategori_id })),
+                categories: (appState.categories || []).map(c => ({ id: c.id, nama: c.nama })),
+                category_templates: (appState.category_templates || []).map(ct => ({ id: ct.id, nama: ct.nama, kategori_ids: ct.kategori_ids })),
+                templates: (appState.templates || []).map(t => ({ id: t.id, nama_app: t.nama_app, kategori_id: t.kategori_id })),
+                prompts: (appState.prompts || []).map(p => ({ id: p.id, judul: p.judul, kategori_id: p.kategori_id }))
+            };
+
+            const systemPrompt = `Anda adalah Autonomous Admin Database Assistant untuk sistem Nexco Edu. 
+Tugas Anda adalah memahami permintaan pengguna dalam Bahasa Indonesia DAN/ATAU menganalisis file dokumen/gambar yang diunggah (PNG, JPG, PDF) untuk menghasilkan operasi CRUD (Create, Update, Delete) baik tunggal (single) maupun masal (BULK) pada database.
+
+TABEL YANG DIDUKUNG:
+- "users" (fields: id, nama, email, role ['user'|'admin'], category_template_id [ID Template Hak Akses Kategori], password)
+- "videos" (fields: id, judul, deskripsi, video_url, kategori_id, urutan)
+- "gems" (fields: id, nama, deskripsi, akses_url, kategori_id)
+- "categories" (fields: id, nama)
+- "category_templates" (fields: id, nama, kategori_ids)
+- "templates" (fields: id, nama_app, deskripsi_app, foto_app, demo_url, link_code, kategori_id)
+- "prompts" (fields: id, judul, deskripsi, prompt_text, kategori_id)
+
+INSTRUKSI KHUSUS PEMBACAAN FILE (PNG/JPG/PDF):
+1. Jika ada file dilampirkan, baca seluruh isi dokumen, tabel, daftar, atau gambar di dalam file tersebut secara akurat.
+2. Cocokkan isi file dengan struktur tabel database dan hasilkan instruksi CRUD yang relevan (misal buat pengguna baru dari daftar di PDF/gambar, buat modul video baru, buat tools AI baru, dll.).
+3. Pada field "explanation", berikan ringkasan Bahasa Indonesia ramah tentang data apa saja yang berhasil dibaca dari file tersebut.
+
+FORMAT JSON RESPONSE (WAJIB JSON VALID):
+{
+  "explanation": "Penjelasan ramah Bahasa Indonesia singkat tentang apa yang akan diubah...",
+  "actions": [
+    {
+      "type": "create" | "update" | "delete",
+      "entity": "users" | "videos" | "gems" | "categories" | "category_templates" | "templates" | "prompts",
+      "data": { ...isi data lengkap sesuai skema... },
+      "id": "ID data (WAJIB jika type update/delete)"
+    }
+  ]
+}
+
+DATA SAAT INI DI DATABASE:
+${JSON.stringify(currentContext)}`;
+
+            const parts = [];
+            if (sendingFile) {
+                parts.push({
+                    inlineData: {
+                        mimeType: sendingFile.mimeType,
+                        data: sendingFile.base64Data
+                    }
+                });
+            }
+            const promptText = messageText || "Analisis file yang dilampirkan ini (PNG/JPG/PDF). Ekstrak seluruh isi data dan hasilkan rencana operasi CRUD ke database dalam format JSON valid.";
+            parts.push({ text: promptText });
+
+            const payload = {
+                contents: [{ parts: parts }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            try {
+                const selectedModel = "gemini-3.1-flash-lite";
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+
+                const fetchWithRetry = async (targetUrl, options, retries = 3, delay = 800) => {
+                    try {
+                        const response = await fetch(targetUrl, options);
+                        if (!response.ok) {
+                            const errBody = await response.text();
+                            throw new Error(`HTTP ${response.status}: ${errBody}`);
+                        }
+                        return await response.json();
+                    } catch (error) {
+                        if (retries <= 0) throw error;
+                        await new Promise((resolve) => setTimeout(resolve, delay));
+                        return fetchWithRetry(targetUrl, options, retries - 1, delay * 2);
+                    }
+                };
+
+                const resData = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                messagesContainer.removeChild(loadingMsg);
+
+                const rawText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawText) throw new Error("Respon AI kosong.");
+
+                const parsed = JSON.parse(rawText);
+                const explanation = parsed.explanation || "Analisis dokumen & permintaan selesai.";
+                const actions = parsed.actions || [];
+
+                if (actions.length === 0) {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = "bg-brand-slate/10 dark:bg-brand-slate/20 p-3 rounded-2xl max-w-[85%] text-brand-navy dark:text-brand-platinum leading-relaxed border border-brand-slate/20";
+                    aiMsg.textContent = explanation;
+                    messagesContainer.appendChild(aiMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    return;
+                }
+
+                // Build HTML LIST format for Chat Bubble & SweetAlert Confirmation
+                const listItemsHtml = actions.map((act, idx) => {
+                    const typeColor = act.type === 'create' ? 'text-emerald-600 dark:text-emerald-400 font-bold' :
+                                     (act.type === 'update' ? 'text-amber-600 dark:text-amber-400 font-bold' :
+                                      'text-red-600 dark:text-red-400 font-bold');
+                    let detailsSummary = '';
+                    if (act.data) {
+                        if (act.entity === 'users') detailsSummary = `Nama: <b>${act.data.nama || ''}</b> | Email: <i>${act.data.email || ''}</i> | Role: ${act.data.role || 'user'} | Template: ${act.data.category_template_id || 'Bawaan'}`;
+                        else if (act.entity === 'videos') detailsSummary = `Judul: <b>${act.data.judul || ''}</b> | Kategori: <i>${act.data.kategori_id || ''}</i> | Modul #${act.data.urutan || 1}`;
+                        else if (act.entity === 'gems') detailsSummary = `Tools: <b>${act.data.nama || ''}</b> | Access URL: <i>${act.data.akses_url || ''}</i>`;
+                        else if (act.entity === 'categories') detailsSummary = `Kategori: <b>${act.data.nama || ''}</b>`;
+                        else if (act.entity === 'category_templates') detailsSummary = `Template: <b>${act.data.nama || ''}</b> (IDs: ${act.data.kategori_ids || ''})`;
+                        else if (act.entity === 'prompts') detailsSummary = `Prompt: <b>${act.data.judul || ''}</b>`;
+                        else if (act.entity === 'templates') detailsSummary = `App: <b>${act.data.nama_app || ''}</b>`;
+                        else detailsSummary = JSON.stringify(act.data);
+                    } else {
+                        detailsSummary = `ID: ${act.id}`;
+                    }
+                    return `<li class="leading-relaxed"><span class="${typeColor}">[${act.type.toUpperCase()}]</span> <b>${act.entity.toUpperCase()}</b> &rarr; ${detailsSummary}</li>`;
+                }).join('');
+
+                // Render AI Message Bubble in Chat Box displaying the LIST
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "bg-brand-slate/10 dark:bg-brand-slate/20 p-3.5 rounded-2xl max-w-[90%] text-brand-navy dark:text-brand-platinum leading-relaxed space-y-2 border border-brand-slate/20 shadow-sm";
+                aiMsg.innerHTML = `
+                    <div class="text-xs">${explanation.replace(/\n/g, '<br>')}</div>
+                    <div class="pt-2 border-t border-brand-slate/20">
+                        <p class="font-extrabold text-xs text-brand-navy dark:text-brand-platinum mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check text-brand-accent"></i> Daftar Data Hasil Pembacaan File (${actions.length} Operasi):
+                        </p>
+                        <ol class="list-decimal pl-4 text-[11px] space-y-1 text-brand-slate dark:text-brand-platinum/90">
+                            ${listItemsHtml}
+                        </ol>
+                    </div>
+                `;
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Build SweetAlert Modal HTML containing the List
+                const confirmHtml = `
+                    <p class="text-xs text-left mb-3 text-brand-slate dark:text-brand-slate/80 leading-relaxed">${explanation}</p>
+                    <p class="text-xs font-bold text-left mb-2 text-brand-navy dark:text-brand-platinum flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check text-emerald-500"></i> Rencana Operasi CRUD Berbentuk List (${actions.length} Item):
+                    </p>
+                    <div class="max-h-56 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-2xl p-3 text-xs text-left bg-slate-50 dark:bg-brand-dark/60 shadow-inner">
+                        <ol class="list-decimal pl-4 space-y-1.5 text-brand-navy dark:text-brand-platinum">
+                            ${listItemsHtml}
+                        </ol>
+                    </div>
+                `;
+
+                Swal.fire({
+                    title: 'Konfirmasi Operasi CRUD AI',
+                    html: confirmHtml,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#415A77',
+                    confirmButtonText: 'Ya, Eksekusi Sekarang!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        showLoader("Mengeksekusi Operasi CRUD AI...");
+                        executeAiCrudActions(actions, (summary) => {
+                            hideLoader();
+                            if (summary && summary.failCount === 0) {
+                                const successMsg = document.createElement('div');
+                                successMsg.className = "bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 p-3 rounded-2xl max-w-[85%] leading-relaxed text-xs shadow-sm";
+                                successMsg.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i> <b>Sukses!</b> Berhasil mengeksekusi ${summary.successCount} operasi CRUD pada database.`;
+                                messagesContainer.appendChild(successMsg);
+                            } else {
+                                const errChatMsg = document.createElement('div');
+                                errChatMsg.className = "bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-300 p-3 rounded-2xl max-w-[85%] leading-relaxed text-xs shadow-sm";
+                                errChatMsg.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-500 mr-1.5"></i> <b>Eksekusi Selesai:</b> ${summary ? summary.successCount : 0} Berhasil, ${summary ? summary.failCount : actions.length} Gagal.`;
+                                messagesContainer.appendChild(errChatMsg);
+                            }
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        });
+                    } else {
+                        const cancelMsg = document.createElement('div');
+                        cancelMsg.className = "bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 p-3 rounded-2xl max-w-[85%] leading-relaxed text-xs shadow-sm";
+                        cancelMsg.textContent = "Operasi CRUD dibatalkan oleh Admin.";
+                        messagesContainer.appendChild(cancelMsg);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                });
+
+            } catch (err) {
+                messagesContainer.removeChild(loadingMsg);
+                showErrorAlert("Gagal Memproses AI Chatbot: " + err.message);
+            }
+        }
+
+        /* --- CRUD REQUEST PEMBUATAN APLIKASI --- */
+        function renderAdminAppRequestsTable() {
+            const tbody = document.getElementById('admin-app-requests-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const requests = appState.app_requests || [];
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-brand-slate">Belum ada request pembuatan aplikasi dari pengguna.</td></tr>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum text-xs sm:text-sm";
+
+                let statusBadge = '<span class="px-2.5 py-1 bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold rounded-lg border border-amber-500/30 text-xs">Pending</span>';
+                if (req.status === 'Diproses') {
+                    statusBadge = '<span class="px-2.5 py-1 bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-blue-500/30 text-xs">Diproses</span>';
+                } else if (req.status === 'Selesai') {
+                    statusBadge = '<span class="px-2.5 py-1 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg border border-emerald-500/30 text-xs">Selesai</span>';
+                }
+
+                const createdDate = req.created_at ? new Date(req.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-xs sm:text-sm text-brand-accent">${req.nama_pemohon || '-'}</td>
+                    <td class="px-6 py-4 font-extrabold text-xs sm:text-sm">${req.judul_app || '-'}</td>
+                    <td class="px-6 py-4">${statusBadge}</td>
+                    <td class="px-6 py-4 text-xs text-brand-slate">${createdDate}</td>
+                    <td class="px-6 py-4 text-center space-x-1.5 shrink-0">
+                        <button onclick="openAppRequestDetailModal('${req.id}')" class="p-1.5 bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-lg text-xs hover:bg-blue-500/30 transition-colors" title="Lihat Detail Request">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <select onchange="updateAppRequestStatus('${req.id}', this.value)" class="px-2 py-1 bg-slate-100 dark:bg-brand-dark border border-brand-slate/30 rounded-lg text-xs font-semibold outline-none text-brand-navy dark:text-brand-platinum">
+                            <option value="Pending" ${req.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Diproses" ${req.status === 'Diproses' ? 'selected' : ''}>Diproses</option>
+                            <option value="Selesai" ${req.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                        <button onclick="deleteAppRequest('${req.id}')" class="p-1.5 bg-brand-danger/20 text-brand-danger rounded-lg text-xs hover:bg-brand-danger/30 transition-colors" title="Hapus Request">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAppRequestDetailModal(id) {
+            const req = (appState.app_requests || []).find(r => r.id === id);
+            if (!req) return;
+
+            let statusBadge = '<span class="px-2.5 py-1 bg-amber-500/20 text-amber-600 font-bold rounded-lg text-xs">Pending</span>';
+            if (req.status === 'Diproses') statusBadge = '<span class="px-2.5 py-1 bg-blue-500/20 text-blue-600 font-bold rounded-lg text-xs">Diproses</span>';
+            else if (req.status === 'Selesai') statusBadge = '<span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-600 font-bold rounded-lg text-xs">Selesai</span>';
+
+            const createdDate = req.created_at ? new Date(req.created_at).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+            Swal.fire({
+                title: '<div class="text-left font-bold text-base text-brand-navy dark:text-brand-platinum flex items-center gap-2"><i class="fa-solid fa-file-signature text-brand-accent"></i> Detail Request Pembuatan Aplikasi</div>',
+                html: `
+                    <div class="text-left space-y-4 text-xs text-brand-navy dark:text-brand-platinum pt-2">
+                        <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-100 dark:bg-brand-dark/50 rounded-2xl border border-brand-slate/20">
+                            <div>
+                                <p class="text-[10px] text-brand-slate uppercase font-bold">Atas Nama / Pemohon</p>
+                                <p class="font-extrabold text-sm text-brand-accent mt-0.5">${req.nama_pemohon || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-brand-slate uppercase font-bold">Status Request</p>
+                                <p class="mt-1">${statusBadge}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-brand-slate uppercase font-bold">Judul Aplikasi</p>
+                                <p class="font-bold text-xs mt-0.5">${req.judul_app || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-brand-slate uppercase font-bold">Tanggal Pengajuan</p>
+                                <p class="font-semibold text-xs mt-0.5 text-brand-slate">${createdDate}</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 bg-slate-100 dark:bg-brand-dark/50 rounded-2xl border border-brand-slate/20 space-y-2">
+                            <p class="text-[10px] text-brand-slate uppercase font-bold flex items-center gap-1.5"><i class="fa-solid fa-align-left text-brand-accent"></i> Deskripsi & Kebutuhan Fitur Aplikasi</p>
+                            <div class="p-3 bg-white dark:bg-brand-navy rounded-xl border border-brand-slate/20 leading-relaxed text-xs max-h-52 overflow-y-auto font-medium text-brand-navy dark:text-brand-platinum whitespace-pre-wrap">${req.deskripsi_app || 'Tidak ada deskripsi.'}</div>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Tutup',
+                confirmButtonColor: '#4F46E5',
+                background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+                color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B'
+            });
+        }
+
+        function updateAppRequestStatus(id, newStatus) {
+            showLoader("Memperbarui Status Request...");
+            FirebaseService.updateAppRequestStatusOnServer(id, newStatus)
+                .then(res => {
+                    hideLoader();
+                    if (res && res.success) {
+                        const req = (appState.app_requests || []).find(r => r.id === id);
+                        if (req) req.status = newStatus;
+                        renderAdminAppRequestsTable();
+                        showSuccessToast("Status request berhasil diperbarui!");
+                    } else {
+                        showErrorAlert("Gagal memperbarui status: " + (res ? res.message : 'Error'));
+                    }
+                })
+                .catch(err => {
+                    hideLoader();
+                    showErrorAlert("Koneksi gagal: " + err.toString());
+                });
+        }
+
+        function deleteAppRequest(id) {
+            Swal.fire({
+                title: 'Hapus Request Aplikasi ini?',
+                text: "Data request akan dihapus secara permanen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#415A77',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoader("Menghapus Request Aplikasi...");
+                    FirebaseService.deleteAppRequestOnServer(id)
+                        .then(res => {
+                            hideLoader();
+                            if (res && res.success) {
+                                appState.app_requests = (appState.app_requests || []).filter(r => r.id !== id);
+                                renderAdminAppRequestsTable();
+                                showSuccessToast("Request berhasil dihapus!");
+                            } else {
+                                showErrorAlert("Gagal menghapus: " + (res ? res.message : 'Error'));
+                            }
+                        })
+                        .catch(err => {
+                            hideLoader();
+                            showErrorAlert("Koneksi gagal: " + err.toString());
+                        });
+                }
+            });
+        }
+
+        function executeAiCrudActions(actions, onComplete) {
+            let index = 0;
+            let successCount = 0;
+            let failCount = 0;
+            let failMessages = [];
+
+            const existingEmails = new Set((appState.users || []).map(u => (u.email || '').toLowerCase()));
+
+            function runNext() {
+                if (index >= actions.length) {
+                    loadSystemBundledData(appState.currentUser ? appState.currentUser.id : null, () => {
+                        if (typeof renderAdminVideosTable === 'function') renderAdminVideosTable();
+                        if (typeof renderAdminUsersTable === 'function') renderAdminUsersTable();
+                        if (typeof renderAdminCategoriesTable === 'function') renderAdminCategoriesTable();
+                        if (typeof renderAdminCategoryTemplatesTable === 'function') renderAdminCategoryTemplatesTable();
+                        if (typeof renderAdminGemsTable === 'function') renderAdminGemsTable();
+                        if (typeof renderAdminPromptsTable === 'function') renderAdminPromptsTable();
+                        if (typeof renderAdminTemplatesTable === 'function') renderAdminTemplatesTable();
+                        if (typeof renderAdminAppRequestsTable === 'function') renderAdminAppRequestsTable();
+
+                        if (failCount === 0) {
+                            showSuccessAlert(`Semua ${successCount} Operasi Bulk CRUD Berhasil Dieksekusi ke Database!`);
+                        } else {
+                            showErrorAlert(`Eksekusi Bulk CRUD Selesai: ${successCount} Berhasil, ${failCount} Gagal.\n\nDetail: ${failMessages.join('; ')}`);
+                        }
+
+                        if (onComplete) onComplete({ successCount, failCount, failMessages });
+                    });
+                    return;
+                }
+
+                const act = actions[index];
+                index++;
+
+                const targetFuncs = {
+                    videos: { save: 'saveVideoOnServer', delete: 'deleteVideoOnServer' },
+                    users: { save: 'saveUserOnServer', delete: 'deleteUserOnServer' },
+                    gems: { save: 'saveGemOnServer', delete: 'deleteGemOnServer' },
+                    categories: { save: 'saveCategoryOnServer', delete: 'deleteCategoryOnServer' },
+                    category_templates: { save: 'saveCategoryTemplateOnServer', delete: 'deleteCategoryTemplateOnServer' },
+                    templates: { save: 'saveTemplateOnServer', delete: 'deleteTemplateOnServer' },
+                    prompts: { save: 'savePromptOnServer', delete: 'deletePromptOnServer' },
+                    app_requests: { save: 'saveAppRequestOnServer', delete: 'deleteAppRequestOnServer' }
+                };
+
+                const entityConfig = targetFuncs[act.entity];
+                if (!entityConfig) { runNext(); return; }
+
+                if (act.type === 'delete') {
+                    const delId = act.id || (act.data ? act.data.id : null);
+                    if (!delId) { runNext(); return; }
+                    FirebaseService[entityConfig.delete](delId)
+                        .then(res => {
+                            if (res && res.success !== false) successCount++;
+                            else { failCount++; if(res && res.message) failMessages.push(res.message); }
+                            runNext();
+                        })
+                        .catch(err => {
+                            failCount++;
+                            failMessages.push(err.toString());
+                            runNext();
+                        });
+                } else {
+                    let rawData = act.data || {};
+                    if (act.type === 'update' && act.id) rawData.id = act.id;
+
+                    // NORMALISASI PINTAR KUNCI DATA AI (Mencegah Gagal Bulk Create Pengguna & Data Lainnya)
+                    let payload = { ...rawData };
+                    if (act.entity === 'users') {
+                        payload.nama = (rawData.nama || rawData.name || rawData.nama_lengkap || 'Pengguna Baru').toString().trim();
+                        let targetEmail = (rawData.email || rawData.email_address || rawData.mail || '').toString().trim().toLowerCase();
+                        
+                        if (!targetEmail || targetEmail === '') {
+                            targetEmail = `user_${Date.now()}_${Math.floor(Math.random()*1000)}@nexcoedu.com`;
+                        }
+
+                        if (act.type === 'create' && existingEmails.has(targetEmail)) {
+                            targetEmail = targetEmail.replace('@', `_${Date.now()}@`);
+                        }
+                        existingEmails.add(targetEmail);
+
+                        payload.email = targetEmail;
+                        payload.role = (rawData.role || rawData.peran || 'user').toString().toLowerCase();
+                        payload.category_template_id = (rawData.category_template_id || rawData.template_id || rawData.template || rawData.allowed_tools || 'ct_starter').toString();
+                        payload.password = rawData.password || rawData.kata_sandi || 'user123';
+                    } else if (act.entity === 'videos') {
+                        payload.judul = rawData.judul || rawData.title || 'Modul Video';
+                        payload.deskripsi = rawData.deskripsi || rawData.description || '';
+                        payload.video_url = rawData.video_url || rawData.url || 'https://www.youtube.com/watch?v=kCc8FmEb1nY';
+                        payload.kategori_id = rawData.kategori_id || rawData.category_id || 'c_genai';
+                        payload.urutan = parseInt(rawData.urutan) || 1;
+                    } else if (act.entity === 'gems') {
+                        payload.nama = rawData.nama || rawData.name || 'Tools AI';
+                        payload.akses_url = rawData.akses_url || rawData.url || 'https://chatgpt.com';
+                        payload.deskripsi = rawData.deskripsi || rawData.description || '';
+                        payload.kategori_id = rawData.kategori_id || rawData.category_id || 'c_genai';
+                    } else if (act.entity === 'categories') {
+                        payload.nama = rawData.nama || rawData.name || rawData.category_name || 'Kategori Baru';
+                    } else if (act.entity === 'category_templates') {
+                        payload.nama = rawData.nama || rawData.name || 'Template Hak Akses Baru';
+                        payload.kategori_ids = rawData.kategori_ids || rawData.category_ids || 'c_genai';
+                    }
+
+                    FirebaseService[entityConfig.save](payload)
+                        .then(res => {
+                            if (res && res.success !== false) successCount++;
+                            else { failCount++; if (res && res.message) failMessages.push(res.message); }
+                            runNext();
+                        })
+                        .catch(err => {
+                            failCount++;
+                            failMessages.push(err.toString());
+                            runNext();
+                        });
+                }
+            }
+
+            runNext();
+        }
     </script>
+
+    <!-- FLOATING AI CHATBOT ADMIN (FIXED KANAN BAWAH) -->
+    <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">
+        <!-- Chat Window Container -->
+        <div id="admin-ai-chat-drawer" class="hidden mb-3 w-[calc(100vw-2rem)] sm:w-96 h-[500px] max-h-[80vh] bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-brand-navy dark:text-brand-platinum transition-all animate-fade-in">
+            <!-- Header -->
+            <div class="p-3.5 bg-gradient-to-r from-brand-accent to-indigo-600 text-white flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm shadow-inner"><i class="fa-solid fa-robot"></i></div>
+                    <div>
+                        <h4 class="font-bold text-xs leading-tight">Admin Assistant AI</h4>
+                        <p class="text-[10px] text-white/80">Otomasi & Multi-CRUD Database</p>
+                    </div>
+                </div>
+                <button onclick="toggleAdminAiChat()" class="w-7 h-7 rounded-full hover:bg-white/20 flex items-center justify-center text-white text-xs transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Messages List -->
+            <div id="admin-ai-messages" class="flex-1 p-3 space-y-3 overflow-y-auto text-xs bg-slate-50 dark:bg-brand-dark/40">
+                <div class="bg-brand-slate/10 dark:bg-brand-slate/20 p-3 rounded-2xl max-w-[90%] text-brand-navy dark:text-brand-platinum leading-relaxed">
+                    Halo Admin! Saya Asisten AI Anda. Saya memiliki akses <b>Full CRUD & Bulk CRUD</b> untuk seluruh data.<br><br>
+                    <div class="p-2 bg-brand-accent/10 border border-brand-accent/30 rounded-xl text-[11px] font-semibold space-y-1 text-brand-navy dark:text-brand-platinum">
+                        <p class="font-extrabold text-brand-accent flex items-center gap-1"><i class="fa-solid fa-file-arrow-up"></i> Fitur Terbaru Upload File:</p>
+                        <p>Anda dapat mengunggah file <b>PNG, JPG, atau PDF</b> untuk dianalisis dan dieksekusi CRUD secara otomatis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Attachment Container -->
+            <div id="admin-ai-attachment-preview" class="hidden px-3 py-1.5 bg-brand-accent/10 dark:bg-brand-accent/20 text-brand-navy dark:text-brand-platinum text-[11px] flex items-center justify-between border-t border-brand-slate/10"></div>
+
+            <!-- Input Area -->
+            <div class="p-2.5 border-t border-brand-slate/20 bg-white dark:bg-brand-navy flex items-center gap-1.5">
+                <input type="file" id="admin-ai-file-input" accept=".png,.jpg,.jpeg,.pdf" class="hidden" onchange="handleAdminAiFileUpload(event)">
+                <button type="button" onclick="document.getElementById('admin-ai-file-input').click()" class="p-2 text-brand-slate hover:text-brand-accent dark:hover:text-brand-accent transition-colors rounded-xl flex items-center justify-center shrink-0" title="Unggah File (PNG, JPG, PDF)">
+                    <i class="fa-solid fa-paperclip text-base"></i>
+                </button>
+                <input type="text" id="admin-ai-chat-input" placeholder="Ketik perintah atau unggah PNG, JPG, PDF..." class="flex-1 px-3 py-2 bg-slate-100 dark:bg-brand-dark/60 border border-brand-slate/30 rounded-xl text-xs outline-none text-brand-navy dark:text-brand-platinum focus:ring-1 focus:ring-brand-accent" onkeyup="if(event.key==='Enter') sendAdminAiMessage()">
+                <button onclick="sendAdminAiMessage()" class="px-3.5 py-2 bg-brand-accent hover:bg-opacity-95 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1 shrink-0">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Button -->
+        <button onclick="toggleAdminAiChat()" class="w-14 h-14 rounded-full bg-gradient-to-r from-brand-accent to-indigo-600 text-white flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all text-xl">
+            <i class="fa-solid fa-robot"></i>
+        </button>
+    </div>
 </body>
 
 </html>

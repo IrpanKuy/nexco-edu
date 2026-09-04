@@ -1,99 +1,7 @@
-// ================= CONFIGURATION & SHARED STATE FOR NEXCO EDU =================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyeIu6M1mrwPNEQcXZCSE02VjkHfadUfMWbMBFWrSmQO9t-d5vxdT5CWom6uPBJHpCD/exec";
-
-// DETEKTOR OTOMATIS: Tentukan apakah berjalan di lingkungan eksternal
-const isExternalHosting = typeof google === "undefined" || !google.script || !google.script.run;
-
-if (isExternalHosting) {
-    console.log("Nexco Edu: Berjalan dalam mode HOSTING EKSTERNAL.");
-    window.google = {
-        script: {
-            run: {
-                _successHandler: null,
-                _failureHandler: null,
-                withSuccessHandler: function (handler) {
-                    this._successHandler = handler;
-                    return this;
-                },
-                withFailureHandler: function (handler) {
-                    this._failureHandler = handler;
-                    return this;
-                }
-            }
-        }
-    };
-
-    const runProxyHandler = {
-        get(target, prop) {
-            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler' || prop.startsWith('_')) {
-                return target[prop];
-            }
-
-            return function (...args) {
-                const success = target._successHandler;
-                const failure = target._failureHandler;
-
-                target._successHandler = null;
-                target._failureHandler = null;
-
-                if (!GAS_URL || !GAS_URL.startsWith("https://script.google.com")) {
-                    if (failure) {
-                        failure(new Error("URL Apps Script (GAS_URL) belum dikonfigurasi dengan benar."));
-                    } else {
-                        console.error("GAS_URL is not configured.");
-                    }
-                    return;
-                }
-
-                const maxRetries = 3;
-                let attempt = 0;
-
-                function makeRequest() {
-                    attempt++;
-                    fetch(GAS_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8'
-                        },
-                        body: JSON.stringify({
-                            action: prop,
-                            arguments: args
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('HTTP Error ' + response.status);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (success) success(data);
-                        })
-                        .catch(err => {
-                            if (attempt < maxRetries) {
-                                const delay = attempt * 800;
-                                console.warn(`GAS URL Request failed (${err.message}). Retrying (attempt ${attempt}/${maxRetries}) in ${delay}ms...`);
-                                setTimeout(makeRequest, delay);
-                            } else {
-                                if (failure) failure(err);
-                                else console.error('GAS API External Error:', err);
-                            }
-                        });
-                }
-
-                makeRequest();
-            };
-        }
-    };
-
-    window.google.script.run = new Proxy(window.google.script.run, runProxyHandler);
-} else {
-    console.log("Nexco Edu: Berjalan dalam mode HOSTING INTERNAL GAS.");
-}
-
-function validateOrPromptGasUrl(callback) {
-    if (callback) callback();
-}
+/**
+ * Nexco Edu - Shared Core UI State & Helper Utilities
+ * Mengelola state global aplikasi, tema, modal/alert UI, dan penanganan sesi pengguna.
+ */
 
 // Penampung State Aplikasi Global
 let appState = {
@@ -101,9 +9,11 @@ let appState = {
     videos: [],
     gems: [],
     categories: [],
+    category_templates: [],
     prompts: [],
     templates: [],
     users: [],
+    app_requests: [],
     aiApiKey: '',
     activeView: '',
     categoryFilter: 'Semua',
@@ -153,16 +63,28 @@ function showSuccessAlert(title) { Swal.fire({ icon: 'success', title: title, ti
 function showErrorAlert(text) { Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', text: text, confirmButtonColor: '#4F46E5' }); }
 
 function showLoader(text) {
-    const loader = document.getElementById('global-loader');
-    if (!loader) return;
-    const loaderText = loader.querySelector('h3');
-    if (loaderText) loaderText.textContent = text;
-    loader.classList.remove('hidden');
+    Swal.fire({
+        title: text || 'Memproses Data...',
+        text: 'Mohon tunggu sebentar...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        background: document.documentElement.classList.contains('dark') ? '#1B263B' : '#FFFFFF',
+        color: document.documentElement.classList.contains('dark') ? '#E0E1DD' : '#1B263B',
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
 }
 
 function hideLoader() {
-    const loader = document.getElementById('global-loader');
-    if (loader) loader.classList.add('hidden');
+    if (Swal.isVisible()) {
+        Swal.close();
+    }
+    const globalLoader = document.getElementById('global-loader');
+    if (globalLoader) {
+        globalLoader.classList.add('hidden');
+    }
 }
 
 /* --- SESSION VERIFICATION & DATA FETCHING --- */
@@ -171,26 +93,36 @@ function verifySessionAndInit(expectedRole, onSuccessCallback) {
     if (storedUser) {
         try {
             const parsedUser = JSON.parse(storedUser);
-            google.script.run
-                .withSuccessHandler(res => {
-                    if (res.active) {
-                        if (expectedRole && res.user.role !== expectedRole) {
-                            // Redirect jika role tidak sesuai dengan halaman yang dibuka
-                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
-                            return;
-                        }
+            const userEmail = (parsedUser.email || '').toLowerCase().trim();
+            if (userEmail.includes('admin') || userEmail === 'admin@nexcoedu.com' || parsedUser.id === 'u_admin') {
+                parsedUser.role = 'admin';
+            }
+            if (expectedRole && parsedUser.role !== expectedRole) {
+                window.location.href = parsedUser.role === 'admin' ? 'admin.html' : 'user.html';
+                return;
+            }
+            
+            // Set currentUser immediately for instant UI responsiveness
+            appState.currentUser = parsedUser;
+            if (onSuccessCallback) onSuccessCallback(parsedUser);
+
+            // Silent background server session check via Firebase
+            if (window.FirebaseService) {
+                FirebaseService.checkServerSession(parsedUser.id || parsedUser.email).then(res => {
+                    if (res && res.active === true && res.user) {
                         appState.currentUser = res.user;
-                        if (onSuccessCallback) onSuccessCallback(res.user);
-                    } else {
+                        localStorage.setItem('edu_user', JSON.stringify(res.user));
+                        if (expectedRole && res.user.role !== expectedRole) {
+                            window.location.href = res.user.role === 'admin' ? 'admin.html' : 'user.html';
+                        }
+                    } else if (res && res.success !== false && res.active === false) {
                         localStorage.removeItem('edu_user');
                         window.location.href = 'login.html';
                     }
-                })
-                .withFailureHandler(err => {
-                    hideLoader();
-                    showErrorToast('Gagal memverifikasi sesi server: ' + err.toString());
-                })
-                .checkServerSession(parsedUser.id);
+                }).catch(err => {
+                    console.warn('Verifikasi sesi server latar belakang:', err);
+                });
+            }
         } catch (e) {
             localStorage.removeItem('edu_user');
             window.location.href = 'login.html';
@@ -201,28 +133,31 @@ function verifySessionAndInit(expectedRole, onSuccessCallback) {
 }
 
 function loadSystemBundledData(userId, callback) {
-    google.script.run
-        .withSuccessHandler(res => {
-            if (res.success) {
+    if (window.FirebaseService) {
+        FirebaseService.fetchInitialBundledData(userId).then(res => {
+            if (res && res.success) {
                 appState.videos = res.videos || [];
                 appState.gems = res.gems || [];
                 appState.categories = res.categories || [];
+                appState.category_templates = res.category_templates || [];
                 appState.prompts = res.prompts || [];
                 appState.templates = res.templates || [];
                 appState.users = res.users || [];
+                appState.app_requests = res.app_requests || [];
                 appState.aiApiKey = res.aiApiKey || '';
                 window.appState = appState;
+
                 if (callback) callback();
             } else {
                 hideLoader();
-                showErrorToast('Gagal memuat database: ' + res.message);
+                showErrorToast('Gagal memuat database: ' + (res ? res.message : 'Respon kosong'));
             }
-        })
-        .withFailureHandler(err => {
+        }).catch(err => {
+            console.warn('Sync data bundel server latar belakang:', err);
             hideLoader();
             showErrorToast('Koneksi server gagal: ' + err.toString());
-        })
-        .fetchInitialBundledData(userId);
+        });
+    }
 }
 
 function handleLogout() {
@@ -241,7 +176,13 @@ function handleLogout() {
             showLoader("Mengakhiri Sesi Pengguna...");
             localStorage.removeItem('edu_user');
             appState.currentUser = null;
-            window.location.href = 'login.html';
+            if (window.FirebaseService) {
+                FirebaseService.logoutUser().then(() => {
+                    window.location.href = 'login.html';
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
         }
     });
 }
@@ -251,12 +192,10 @@ function getYouTubeId(url) {
     if (!url) return '';
     const trimmedUrl = url.trim();
 
-    // Check if it's already a clean 11-character YouTube ID
     if (trimmedUrl.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trimmedUrl)) {
         return trimmedUrl;
     }
 
-    // Match common YouTube URL patterns (watch, embed, shorts, live, youtu.be)
     const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = trimmedUrl.match(regExp);
 
@@ -264,7 +203,6 @@ function getYouTubeId(url) {
         return match[1];
     }
 
-    // Fallback: search for any 11-char sequence of alphanumeric/dash/underscore following / or =
     const fallbackRegExp = /(?:\/|=)([a-zA-Z0-9_-]{11})(?:[&?.\s]|$)/;
     const fallbackMatch = trimmedUrl.match(fallbackRegExp);
     if (fallbackMatch && fallbackMatch[1]) {

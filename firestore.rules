@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Collection Rules
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if true;
+      allow delete: if isAdmin();
+      allow update: if isAdmin() || isOwner(userId);
+    }
+    
+    match /categories/{catId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /category_templates/{tplId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /videos/{videoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /gems/{gemId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /prompts/{promptId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /templates/{templateId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /app_requests/{reqId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
