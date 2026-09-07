@@ -1261,12 +1261,14 @@
                 return (appState.categories || []).map(c => c.id);
             }
             const val = (appState.currentUser.category_template_id || appState.currentUser.allowed_tools || '').trim();
-            if (!val) return [];
+            if (!val) {
+                // Default fallback jika belum di-set paket khusus
+                return (appState.categories || []).map(c => c.id);
+            }
             
-            // Check if val matches a category_template ID or template's kategori_ids
             const tpl = (appState.category_templates || []).find(t => t.id === val);
-            if (tpl) {
-                return (tpl.kategori_ids || '').split(',').map(c => c.trim()).filter(Boolean);
+            if (tpl && tpl.kategori_ids) {
+                return tpl.kategori_ids.split(',').map(c => c.trim()).filter(Boolean);
             }
             return val.split(',').map(c => c.trim()).filter(Boolean);
         }
@@ -1777,7 +1779,7 @@
                     const name = (role.newFeatureName || role.newFeature || "").trim();
                     const desc = (role.newFeatureDesc || "").trim();
                     if (name) {
-                        role.features.push({ name: name, description: desc });
+                        role.features.push({ name: name, description: desc || `Akses dan kelola fitur ${name}` });
                         role.newFeatureName = "";
                         role.newFeatureDesc = "";
                         role.newFeature = "";
@@ -1824,11 +1826,15 @@
                         str += `### 2. STRUKTUR ROLE & HAK AKSES MENU\n`;
                         roles.value.forEach((role, idx) => {
                             str += `${idx + 1}. **Role: ${sanitizeAIWord(role.name)}**\n`;
+                            if (activeTab.value === "ai" && role.aiAssistant) {
+                                str += `   - *AI Assistant*: Terintegrasi (Widget percakapan asisten cerdas aktif)\n`;
+                            }
                             role.features.forEach((feat, fIdx) => {
                                 const name = typeof feat === 'object' ? feat.name : feat;
-                                const desc = typeof feat === 'object' ? feat.description : "";
-                                const descText = desc ? ` (Deskripsi: ${sanitizeAIWord(desc)})` : "";
-                                str += `   - Menu ${fIdx + 1}: ${sanitizeAIWord(name)}${descText}\n`;
+                                const desc = (typeof feat === 'object' && feat.description) ? feat.description : "";
+                                const cleanName = sanitizeAIWord(name) || `Menu ${fIdx + 1}`;
+                                const cleanDesc = sanitizeAIWord(desc) || `Fitur dan pengelolaan operasional untuk ${cleanName}`;
+                                str += `   - Menu ${fIdx + 1}: **${cleanName}** (Deskripsi: ${cleanDesc})\n`;
                             });
                             str += `\n`;
                         });
@@ -1915,7 +1921,16 @@
                     const currentState = {
                         appName: appName.value,
                         appDescription: appDescription.value,
-                        roles: roles.value,
+                        roles: roles.value.map(r => ({
+                            name: r.name,
+                            features: (r.features || []).map(f => {
+                                if (typeof f === 'object' && f !== null) {
+                                    return { name: f.name || "", description: f.description || "" };
+                                }
+                                return { name: String(f), description: "" };
+                            }),
+                            aiAssistant: !!r.aiAssistant
+                        })),
                         sections: sections.value,
                         design: design.value,
                         isMobileFocus: isMobileFocus.value,
@@ -1932,6 +1947,7 @@ ATURAN PERANCANGAN STRUKTUR ROLE & FITUR KHUSUS:
 2. Analisis Perintah Pengguna: Pikirkan secara cermat jenis aplikasi yang diminta. Analisis berapa jumlah role yang paling ideal, relevan, dan logis untuk aplikasi tersebut (contoh: apakah cukup 1 role personal, 2 role seperti Pengelola & Pembeli, atau 3 role seperti Manajer, Kasir, & Pelanggan).
 3. Perancangan Fitur Spesifik: Jangan gunakan nama fitur generik. Buat daftar fitur dalam Bahasa Indonesia yang sangat cocok, spesifik, dan realistis sesuai alur kerja bisnis nyata aplikasi yang diminta pengguna.
 4. Keselarasan Kontekstual: Pastikan seluruh nama role dan fitur yang dihasilkan 100% cocok dan saling mendukung sesuai skenario penggunaan aplikasi oleh pengguna.
+5. WAJIB STRUKTUR NAMA & DESKRIPSI MENU: Setiap menu/fitur pada properti 'features' dalam role WAJIB berupa objek dengan dua field: 'name' (nama menu yang jelas) dan 'description' (deskripsi mendalam, jelas, dan spesifik mengenai fungsi, aksi, dan tujuan operasional menu tersebut). DILARANG KERAS mengosongkan deskripsi menu atau hanya membuat string biasa!
 
 STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
 {
@@ -1940,7 +1956,12 @@ STRUKTUR OUTPUT HARUS BERUPA JSON VALID:
   "roles": [ 
     { 
       "name": "string (Nama Role WAJIB Bahasa Indonesia, contoh: Pengelola Toko, Manajer Gudang, Pembeli)", 
-      "features": ["string (Daftar menu/fitur spesifik & realistis dalam Bahasa Indonesia)"], 
+      "features": [
+        {
+          "name": "string (Nama menu/fitur spesifik & realistis dalam Bahasa Indonesia, contoh: Manajemen Stok Barang)",
+          "description": "string (Deskripsi lengkap dan mendalam fungsi menu ini dalam Bahasa Indonesia, contoh: Mengelola input barang masuk, pembaruan stok realtime, dan peringatan stok menipis)"
+        }
+      ], 
       "aiAssistant": boolean 
     } 
   ],
@@ -1987,12 +2008,34 @@ KONFIGURASI SAAT INI: ${JSON.stringify(currentState)}`;
                             if (parsed.roles && (activeTab.value === 'webapp' || activeTab.value === 'ai')) {
                                 roles.value = parsed.roles.map((r, i) => ({
                                     id: i + 1,
-                                    name: sanitizeAIWord(r.name),
+                                    name: sanitizeAIWord(r.name) || `Role #${i + 1}`,
                                     features: (r.features || []).map(f => {
                                         if (typeof f === 'object' && f !== null) {
-                                            return { name: sanitizeAIWord(f.name || f.nama || ""), description: sanitizeAIWord(f.description || f.deskripsi || "") };
+                                            const fName = sanitizeAIWord(f.name || f.nama || f.title || f.judul || "");
+                                            let fDesc = sanitizeAIWord(f.description || f.deskripsi || f.desc || f.keterangan || "");
+                                            if (!fDesc && fName) {
+                                                fDesc = `Fitur kelola dan operasional untuk ${fName}`;
+                                            }
+                                            return { name: fName, description: fDesc };
                                         }
-                                        return { name: sanitizeAIWord(String(f)), description: "" };
+                                        const strF = String(f);
+                                        if (strF.includes(':')) {
+                                            const parts = strF.split(':');
+                                            return {
+                                                name: sanitizeAIWord(parts[0].trim()),
+                                                description: sanitizeAIWord(parts.slice(1).join(':').trim())
+                                            };
+                                        } else if (strF.includes(' - ')) {
+                                            const parts = strF.split(' - ');
+                                            return {
+                                                name: sanitizeAIWord(parts[0].trim()),
+                                                description: sanitizeAIWord(parts.slice(1).join(' - ').trim())
+                                            };
+                                        }
+                                        return {
+                                            name: sanitizeAIWord(strF),
+                                            description: `Fitur kelola dan operasional untuk ${sanitizeAIWord(strF)}`
+                                        };
                                     }),
                                     newFeatureName: "",
                                     newFeatureDesc: "",
