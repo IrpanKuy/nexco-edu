@@ -1288,8 +1288,14 @@
                 categoriesToRender = categoriesToRender.filter(c => allowedCatIds.includes(c.id));
             }
 
+            // Filter: Jangan tampilkan kategori jika video di dalamnya berjumlah 0
+            categoriesToRender = categoriesToRender.filter(cat => {
+                const count = (appState.videos || []).filter(v => v.kategori_id === cat.id).length;
+                return count > 0;
+            });
+
             if (categoriesToRender.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada kategori video yang dapat Anda akses saat ini.</p></div>';
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada kategori video yang memiliki materi pembelajaran saat ini.</p></div>';
                 return;
             }
 
@@ -1340,11 +1346,7 @@
             if (sidebarCount) sidebarCount.textContent = catVideos.length + ' Video';
 
             if (catVideos.length === 0) {
-                document.getElementById('user-video-player-container-70').innerHTML = '<div class="w-full h-full flex items-center justify-center text-brand-slate text-sm font-semibold">Belum ada video dalam kategori ini.</div>';
-                document.getElementById('user-video-title-70').textContent = 'Video Belum Tersedia';
-                document.getElementById('user-video-desc-70').textContent = 'Administrator belum menambahkan modul video ke kategori ini.';
-                document.getElementById('user-video-ebook-container-70').innerHTML = '';
-                document.getElementById('user-video-sidebar-list').innerHTML = '<p class="text-xs text-brand-slate text-center py-6">Tidak ada video.</p>';
+                backToVideoCategoryList();
                 return;
             }
 
