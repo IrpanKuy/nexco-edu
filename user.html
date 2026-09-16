@@ -1281,12 +1281,8 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            const allowedCatIds = getUserAllowedCategoryIds();
-            let categoriesToRender = appState.categories || [];
-            
-            if (appState.currentUser && appState.currentUser.role !== 'admin') {
-                categoriesToRender = categoriesToRender.filter(c => allowedCatIds.includes(c.id));
-            }
+            // Tampilkan SEMUA kategori video tanpa pembatasan hak akses apapun untuk semua user
+            let categoriesToRender = [...(appState.categories || [])];
 
             // Filter: Jangan tampilkan kategori jika video di dalamnya berjumlah 0
             categoriesToRender = categoriesToRender.filter(cat => {
@@ -1294,13 +1290,26 @@
                 return count > 0;
             });
 
+            // Pastikan jika ada video dengan kategori yang belum terdaftar/kosong tetap muncul
+            const knownCatIds = new Set(categoriesToRender.map(c => c.id));
+            const orphanVideos = (appState.videos || []).filter(v => !v.kategori_id || !knownCatIds.has(v.kategori_id));
+            if (orphanVideos.length > 0) {
+                categoriesToRender.push({ id: '__uncategorized__', nama: 'Materi Pembelajaran Umum' });
+            }
+
             if (categoriesToRender.length === 0) {
                 grid.innerHTML = '<div class="col-span-full py-12 text-center text-brand-slate"><i class="fa-solid fa-folder-open text-3xl mb-3 opacity-60"></i><p class="text-sm font-semibold">Tidak ada kategori video yang memiliki materi pembelajaran saat ini.</p></div>';
                 return;
             }
 
             categoriesToRender.forEach(cat => {
-                const catVideos = (appState.videos || []).filter(v => v.kategori_id === cat.id);
+                let catVideos;
+                if (cat.id === '__uncategorized__') {
+                    const existingCatIds = new Set((appState.categories || []).map(c => c.id));
+                    catVideos = (appState.videos || []).filter(v => !v.kategori_id || !existingCatIds.has(v.kategori_id));
+                } else {
+                    catVideos = (appState.videos || []).filter(v => v.kategori_id === cat.id);
+                }
                 const card = document.createElement('div');
                 card.className = "glass-panel p-6 rounded-3xl border border-brand-slate/20 hover:border-brand-accent/50 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer";
                 card.onclick = () => openCategoryDetailView(cat.id);
@@ -1334,14 +1343,24 @@
         }
 
         function openCategoryDetailView(catId) {
-            const cat = (appState.categories || []).find(c => c.id === catId);
+            let cat = (appState.categories || []).find(c => c.id === catId);
+            if (!cat && catId === '__uncategorized__') {
+                cat = { id: '__uncategorized__', nama: 'Materi Pembelajaran Umum' };
+            }
             if (!cat) return;
 
             document.getElementById('user-video-category-list-mode').classList.add('hidden');
             document.getElementById('user-video-detail-mode').classList.remove('hidden');
             document.getElementById('user-video-active-category-title').textContent = cat.nama;
 
-            const catVideos = (appState.videos || []).filter(v => v.kategori_id === catId).sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+            let catVideos;
+            if (catId === '__uncategorized__') {
+                const existingCatIds = new Set((appState.categories || []).map(c => c.id));
+                catVideos = (appState.videos || []).filter(v => !v.kategori_id || !existingCatIds.has(v.kategori_id));
+            } else {
+                catVideos = (appState.videos || []).filter(v => v.kategori_id === catId);
+            }
+            catVideos.sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
             const sidebarCount = document.getElementById('user-video-sidebar-count');
             if (sidebarCount) sidebarCount.textContent = catVideos.length + ' Video';
 
@@ -1360,7 +1379,16 @@
             if (!vid) return;
 
             const catId = vid.kategori_id;
-            const catVideos = videoListParam || (appState.videos || []).filter(v => v.kategori_id === catId).sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+            let catVideos = videoListParam;
+            if (!catVideos) {
+                if (!catId || !(appState.categories || []).some(c => c.id === catId)) {
+                    const existingCatIds = new Set((appState.categories || []).map(c => c.id));
+                    catVideos = (appState.videos || []).filter(v => !v.kategori_id || !existingCatIds.has(v.kategori_id));
+                } else {
+                    catVideos = (appState.videos || []).filter(v => v.kategori_id === catId);
+                }
+                catVideos.sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+            }
 
             // Update 70% Player
             const embedUrl = getYouTubeEmbedUrl(vid.video_url);

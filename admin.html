@@ -411,16 +411,16 @@
                 </div>
             </section>
 
-            <!-- ================= VIEW: ADMIN KELOLA TEMPLATE APP ================= -->
+            <!-- ================= VIEW: ADMIN KELOLA TEMPLATE & GALERI APP ================= -->
             <section id="view-admin-manage-templates" class="hidden space-y-6">
                 <div class="flex justify-between items-center py-2 border-b border-brand-slate/20">
                     <div>
-                        <h2 class="text-lg font-bold">Kelola Template App</h2>
-                        <p class="text-xs text-brand-slate">Tambah, ubah, dan hapus template aplikasi yang dapat dipelajari oleh siswa.</p>
+                        <h2 class="text-lg font-bold">Kelola Template & Galeri App</h2>
+                        <p class="text-xs text-brand-slate">Tambah, ubah, dan atur template aplikasi serta galeri showcase landing page (judul, kategori, gambar, url demo, deskripsi).</p>
                     </div>
                     <button onclick="openTemplateFormModal()"
                         class="px-4 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl shadow-lg transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Template Baru
+                        <i class="fa-solid fa-plus"></i> Tambah Aplikasi / Template
                     </button>
                 </div>
 
@@ -428,9 +428,10 @@
                     <table class="min-w-full divide-y divide-brand-slate/20 text-left text-xs sm:text-sm">
                         <thead class="bg-brand-navy/10 dark:bg-brand-navy/60 text-brand-slate dark:text-brand-slate/80 font-semibold uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-3.5">Nama App</th>
+                                <th class="px-6 py-3.5">Aplikasi</th>
                                 <th class="px-6 py-3.5">Kategori</th>
                                 <th class="px-6 py-3.5">Demo & Code</th>
+                                <th class="px-6 py-3.5 text-center">Galeri Landing</th>
                                 <th class="px-6 py-3.5 text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -444,7 +445,7 @@
                 <div id="templates-form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/95 backdrop-blur-md">
                     <div class="bg-white dark:bg-brand-navy border border-brand-slate/30 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-brand-navy dark:text-brand-platinum">
                         <div class="flex justify-between items-center p-4 border-b border-brand-slate/30">
-                            <h3 class="font-bold text-base" id="templates-modal-title">Konfigurasi Template App</h3>
+                            <h3 class="font-bold text-base" id="templates-modal-title">Konfigurasi Template & Galeri App</h3>
                             <button onclick="closeTemplateFormModal()" class="text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum transition-all text-xl">
                                 <i class="fa-solid fa-circle-xmark"></i>
                             </button>
@@ -452,43 +453,59 @@
                         <form id="templates-crud-form" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                             <input type="hidden" id="crud-template-id">
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Nama App</label>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Judul / Nama Aplikasi</label>
                                 <input type="text" id="crud-template-nama" required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
-                                    placeholder="misal: Nexco Portal">
+                                    placeholder="misal: Gas UMKM (WebApp Inventaris)">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori</label>
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Kategori Aplikasi</label>
                                     <select id="crud-template-kategori" required
                                         class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Link Code</label>
-                                    <input type="url" id="crud-template-code" placeholder="https://github.com/..." required
+                                    <label class="block text-xs font-semibold mb-2 text-brand-slate">Link Source Code (Opsional)</label>
+                                    <input type="url" id="crud-template-code" placeholder="https://github.com/... (opsional)"
                                         class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Demo URL (Opsional)</label>
-                                <input type="url" id="crud-template-demo" placeholder="https://example.com/demo"
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Demo / Link Aplikasi Web</label>
+                                <input type="url" id="crud-template-demo" placeholder="https://script.google.com/... atau https://example.com"
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Foto/Banner App</label>
-                                <input type="url" id="crud-template-foto" placeholder="https://images.unsplash.com/..." required
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">URL Gambar / Foto Banner Aplikasi</label>
+                                <input type="text" id="crud-template-foto" placeholder="https://... atau /demo image/inventaris.jpg" required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum">
+                                <p class="text-[10px] text-brand-slate mt-1">Bisa berupa URL gambar online (https://...) atau file lokal (/demo image/...).</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi App</label>
+                                <label class="block text-xs font-semibold mb-2 text-brand-slate">Deskripsi Aplikasi</label>
                                 <textarea id="crud-template-deskripsi" rows="3" required
                                     class="w-full px-4 py-2 bg-slate-100 dark:bg-brand-dark/50 border border-brand-slate/30 rounded-xl focus:ring-1 focus:ring-brand-accent focus:outline-none text-xs text-brand-navy dark:text-brand-platinum"
-                                    placeholder="Jelaskan mengenai kegunaan aplikasi ini..."></textarea>
+                                    placeholder="Jelaskan mengenai fitur, kegunaan, dan akun demo aplikasi ini..."></textarea>
                             </div>
+
+                            <!-- Toggle Masukkan ke Galeri Landing Page -->
+                            <div class="p-3.5 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-2xl border border-emerald-500/30 flex items-center justify-between gap-4">
+                                <div>
+                                    <label for="crud-template-gallery" class="text-xs font-bold text-brand-navy dark:text-brand-platinum cursor-pointer flex items-center gap-1.5">
+                                        <i class="fa-solid fa-store text-emerald-600 dark:text-emerald-400"></i> Tampilkan di Galeri Landing Page
+                                    </label>
+                                    <p class="text-[10px] text-brand-slate dark:text-brand-slate/80 mt-0.5">Aktifkan agar aplikasi ini dikirim & ditampilkan pada bagian Galeri Demos di landing page.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="crud-template-gallery" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                                </label>
+                            </div>
+
                             <div class="flex justify-end gap-3 pt-2">
                                 <button type="button" onclick="closeTemplateFormModal()" class="px-4 py-2 bg-brand-slate/20 text-brand-slate hover:text-brand-navy dark:hover:text-brand-platinum text-xs font-semibold rounded-xl">Batal</button>
-                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Template</button>
+                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-opacity-95 text-white text-xs font-semibold rounded-xl">Simpan Aplikasi</button>
                             </div>
                         </form>
                     </div>
@@ -866,7 +883,7 @@
             const items = [
                 { view: 'admin-manage-videos', icon: 'fa-video', label: 'Kelola Video' },
                 { view: 'admin-manage-gems', icon: 'fa-robot', label: 'Kelola Tools' },
-                { view: 'admin-manage-templates', icon: 'fa-laptop-code', label: 'Kelola Template' },
+                { view: 'admin-manage-templates', icon: 'fa-laptop-code', label: 'Template & Galeri' },
                 { view: 'admin-manage-categories', icon: 'fa-tags', label: 'Kategori' },
                 { view: 'admin-manage-users', icon: 'fa-users', label: 'Pengguna' },
                 { view: 'admin-manage-app-requests', icon: 'fa-file-signature', label: 'Request Aplikasi' },
@@ -1751,13 +1768,14 @@
             
             const templates = appState.templates || [];
             if (templates.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-brand-slate">Belum ada template app terdaftar.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-brand-slate">Belum ada template app terdaftar.</td></tr>';
                 return;
             }
 
             templates.forEach(tpl => {
                 const cat = appState.categories.find(c => c.id === tpl.kategori_id);
                 const catName = cat ? cat.nama : 'Umum';
+                const inGallery = tpl.is_in_gallery === true || tpl.is_in_gallery === 'true';
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-brand-slate/5 transition-all text-brand-navy dark:text-brand-platinum";
@@ -1768,15 +1786,45 @@
                     '</td>',
                     '<td class="px-6 py-4 text-xs font-semibold text-brand-slate dark:text-brand-platinum/80">', catName, '</td>',
                     '<td class="px-6 py-4 text-xs space-y-1">',
-                    tpl.demo_url ? `<div><a href="${tpl.demo_url}" target="_blank" class="text-brand-accent hover:underline font-semibold"><i class="fa-solid fa-up-right-from-square"></i> Demo App</a></div>` : '',
-                    `<div><a href="${tpl.link_code}" target="_blank" class="text-blue-500 hover:underline font-semibold"><i class="fa-solid fa-code"></i> Source Code</a></div>`,
+                    tpl.demo_url ? `<div><a href="${tpl.demo_url}" target="_blank" class="text-brand-accent hover:underline font-semibold"><i class="fa-solid fa-up-right-from-square"></i> Demo App</a></div>` : '<span class="text-[10px] text-slate-400 italic">Tanpa demo</span>',
+                    tpl.link_code ? `<div><a href="${tpl.link_code}" target="_blank" class="text-blue-500 hover:underline font-semibold"><i class="fa-solid fa-code"></i> Source Code</a></div>` : '',
                     '</td>',
                     '<td class="px-6 py-4 text-center">',
-                    '<button onclick="editTemplate(\'', tpl.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs"><i class="fa-solid fa-pencil"></i></button>',
-                    '<button onclick="deleteTemplate(\'', tpl.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>',
+                    `<button type="button" onclick="toggleTemplateGallery('${tpl.id}')" title="Klik untuk ubah status tampil di galeri landing page" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-sm ${inGallery ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 border border-slate-200 dark:border-slate-700'}">
+                        <i class="fa-solid ${inGallery ? 'fa-circle-check text-emerald-500' : 'fa-circle-xmark text-slate-400'}"></i>
+                        <span>${inGallery ? 'Tampil' : 'Nonaktif'}</span>
+                    </button>`,
+                    '</td>',
+                    '<td class="px-6 py-4 text-center">',
+                    '<button onclick="editTemplate(\'', tpl.id, '\')" class="p-2 mr-2 bg-yellow-500/20 text-yellow-600 rounded-lg text-xs" title="Ubah"><i class="fa-solid fa-pencil"></i></button>',
+                    '<button onclick="deleteTemplate(\'', tpl.id, '\')" class="p-2 bg-brand-danger/20 text-brand-danger rounded-lg text-xs" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>',
                     '</td>'
                 ].join('');
                 tbody.appendChild(tr);
+            });
+        }
+
+        function toggleTemplateGallery(id) {
+            const tpl = (appState.templates || []).find(t => t.id === id);
+            if (!tpl) return;
+            const current = tpl.is_in_gallery === true || tpl.is_in_gallery === 'true';
+            const nextVal = !current;
+            tpl.is_in_gallery = nextVal;
+            renderAdminTemplatesTable();
+
+            const payload = { ...tpl, is_in_gallery: nextVal };
+            FirebaseService.saveTemplateOnServer(payload).then(res => {
+                if (res && res.success) {
+                    showSuccessToast(nextVal ? 'Aplikasi ditampilkan di Galeri Landing Page!' : 'Aplikasi dinonaktifkan dari Galeri Landing Page!');
+                } else {
+                    tpl.is_in_gallery = current;
+                    renderAdminTemplatesTable();
+                    showErrorToast('Gagal memperbarui status galeri: ' + (res ? res.message : 'Error'));
+                }
+            }).catch(err => {
+                tpl.is_in_gallery = current;
+                renderAdminTemplatesTable();
+                showErrorToast('Koneksi gagal: ' + err.message);
             });
         }
 
@@ -1794,14 +1842,16 @@
                 document.getElementById('crud-template-id').value = tpl.id;
                 document.getElementById('crud-template-nama').value = tpl.nama_app;
                 document.getElementById('crud-template-kategori').value = tpl.kategori_id || '';
-                document.getElementById('crud-template-code').value = tpl.link_code;
+                document.getElementById('crud-template-code').value = tpl.link_code || '';
                 document.getElementById('crud-template-demo').value = tpl.demo_url || '';
                 document.getElementById('crud-template-foto').value = tpl.foto_app || '';
                 document.getElementById('crud-template-deskripsi').value = tpl.deskripsi_app;
+                document.getElementById('crud-template-gallery').checked = (tpl.is_in_gallery === true || tpl.is_in_gallery === 'true');
             } else {
                 document.getElementById('templates-modal-title').textContent = "Tambah Template App Baru";
                 document.getElementById('crud-template-id').value = '';
                 document.getElementById('crud-template-foto').value = '';
+                document.getElementById('crud-template-gallery').checked = true;
             }
             modal.classList.remove('hidden');
         }
@@ -1817,6 +1867,7 @@
             const demo_url = document.getElementById('crud-template-demo').value.trim();
             const foto_app = document.getElementById('crud-template-foto').value.trim();
             const deskripsi_app = document.getElementById('crud-template-deskripsi').value.trim();
+            const is_in_gallery = document.getElementById('crud-template-gallery').checked;
 
             const payload = {
                 id: id || null,
@@ -1825,7 +1876,8 @@
                 link_code: link_code,
                 demo_url: demo_url || null,
                 foto_app: foto_app || null,
-                deskripsi_app: deskripsi_app
+                deskripsi_app: deskripsi_app,
+                is_in_gallery: is_in_gallery
             };
 
             const backupTemplates = [...(appState.templates || [])];
@@ -1840,6 +1892,7 @@
                 demo_url: demo_url || null,
                 foto_app: foto_app || null,
                 deskripsi_app: deskripsi_app,
+                is_in_gallery: is_in_gallery,
                 created_at: timestamp
             };
 

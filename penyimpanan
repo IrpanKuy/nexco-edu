@@ -1247,95 +1247,55 @@
         });
       }
     }
-    // Data Default untuk Contoh Demo WebApp (Fallback jika database offline/belum terisi)
-    const defaultDemoData = [
+    // Data untuk Contoh Demo WebApp
+    const demoData = [
       {
         id: "crm",
-        name: "Gas UMKM",
+        name: "WebApp Inventaris Dengan Chatbot",
         badge: "WebApp + Chatbot",
-        title: "Gas UMKM (WebApp Inventaris)",
+        title: "Gas UMKM",
         description:
-          "Gas UMKM adalah solusi platform manajemen inventaris (webapp) berbasis digital yang dirancang khusus untuk meningkatkan efisiensi operasional dan akurasi tata kelola logistik usaha. Berbeda dengan sistem konvensional, platform ini mengintegrasikan Gas Gem AI Asisten (berbasis teknologi mutakhir Gemini 3.1 Flash-Lite) yang memungkinkan pengelolaan database dan analisis data dilakukan secara dinamis melalui antarmuka percakapan (chat-based interface).<br/><br/> Akun Login: <br/> Username: admin <br/> Password: admin123 <br/> Lalu ke pengaturan > Klik simpan Api Key agar Kalian bisa coba chatbotnya",
+          "Gas UMKM adalah solusi platform manajemen inventaris (webapp) berbasis digital yang dirancang khusus untuk meningkatkan efisiensi operasional dan akurasi tata kelola logistik usaha. Berbeda dengan sistem konvensional, platform ini mengintegrasikan Gas Gem AI Asisten (berbasis teknologi mutakhir Gemini 3.1 Flash-Lite) yang memungkinkan pengelolaan database dan analisis data dilakukan secara dinamis melalui antarmuka percakapan (chat-based interface).<br/><br/> Akun Login: <br/> Usename: admin <br/> Password: admin123 <br/> Lalu ke pengaturan > Klik simpan Api Key agar Kalian bisa coba chatbotnya",
         imageUrl: "/demo image/inventaris.jpg",
         browserUrl:
           "https://script.google.com/macros/s/AKfycbx88seLsCE3Unc7Gyvf5v2Asy1m080Y-10gsMpghw6HN7--fZJDGSfStsCSjCHY29ts/exec",
-        icon: "laptop",
       },
       {
         id: "tahfidz",
-        name: "TahfidzQ",
+        name: "WebApp Pencatatan Tahfidz",
         badge: "WebApp",
-        title: "TahfidzQ (Pencatatan Tahfidz)",
+        title: "TahfidzQ ",
         description:
-          "TahfidzQ adalah sebuah platform berbasis web responsif (webapp) yang dikembangkan untuk memodernisasi tata kelola dan pencatatan progres hafalan Al-Qur'an secara digital. Mengusung peran (role) khusus seperti Santri, aplikasi ini menyajikan transparansi data perkembangan interaksi ayat secara instan, akurat, dan dapat diakses kapan saja melalui perangkat seluler.<br/><br/> Akun Login: <br/> Username (pengajar): hanan <br/> Password: 123 <br/><br/> Username (santri): Yusuf  <br/> Password: 123 <br/>",
+          "TahfidzQ adalah sebuah platform berbasis web responsif (webapp) yang dikembangkan untuk memodernisasi tata kelola dan pencatatan progres hafalan Al-Qur'an secara digital. Mengusung peran (role) khusus seperti Santri, aplikasi ini menyajikan transparansi data perkembangan interaksi ayat secara instan, akurat, dan dapat diakses kapan saja melalui perangkat seluler.<br/><br/> Akun Login: <br/> Usename(pengajar): hanan <br/> Password: 123 <br/><br/> Usename(santri): Yusuf  <br/> Password: 123 <br/>",
         imageUrl: "/demo image/tahfidz.webp",
         browserUrl:
           "https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec",
-        icon: "book-open",
       },
       {
         id: "perpus",
-        name: "Pustaka Pro",
+        name: "WebApp Manajemen Perpustakaan",
         badge: "WebApp",
-        title: "Pustaka Pro (Manajemen Perpustakaan)",
+        title: "Pustaka Pro ",
         description:
-          "Pustaka Pro adalah platform web-based application (Administrator Console) yang dirancang khusus untuk digitalisasi, otomatisasi, dan optimalisasi tata kelola operasional perpustakaan atau pusat dokumentasi. Mengusung konsep dasbor terpadu (Dashboard Overview), sistem ini menyajikan metrik performa sirkulasi dan manajemen data secara transparan, akurat, dan real-time.<br/><br/> Akun Login: <br/> Username: admin <br/> Password: admin123 <br/>",
+          "Pustaka Pro adalah platform web-based application (Administrator Console) yang dirancang khusus untuk digitalisasi, otomatisasi, dan optimalisasi tata kelola operasional perpustakaan atau pusat dokumentasi. Mengusung konsep dasbor terpadu (Dashboard Overview), sistem ini menyajikan metrik performa sirkulasi dan manajemen data secara transparan, akurat, dan real-time.<br/><br/> Akun Login: <br/> Usename: admin <br/> Password: admin123 <br/>",
         imageUrl: "/demo image/perpus.webp",
         browserUrl:
           "https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec",
-        icon: "library",
       },
       {
         id: "uang",
-        name: "Dompet Pintar",
-        badge: "WebApp + Chatbot",
-        title: "Dompet Pintar (Manajemen Keuangan)",
+        name: "WebApp Manajemen Keuangan  + Chatbot",
+        badge: "wwebApp + Chatbot",
+        title: "Dompet Pintar ",
         description:
-          "Dompet Pintar adalah sebuah platform aplikasi seluler responsif (web-based mobile application) yang dikembangkan untuk memfasilitasi pencatatan, pelacakan, dan analisis tata kelola finansial pada skala personal secara digital. Sistem ini dirancang untuk mengatasi kompleksitas pengelolaan arus kas harian melalui penyajian agregasi data yang terstruktur, akurat, dan berbasis data (data-driven).<br/> Untuk coba Chatbot: ke pengaturan > Klik simpan Api Key, lalu kalian bisa Chat dengan Chatbotnya",
+          "Dompet Pintar adalah sebuah platform aplikasi seluler responsif (web-based mobile application) yang dikembangkan untuk memfasilitasi pencatatan, pelacakan, dan analisis tata kelola finansial pada skala personal secara digital. Sistem ini dirancang untuk mengatasi kompleksitas pengelolaan arus kas harian melalui penyajian agregasi data yang terstruktur, akurat, dan berbasis data (data-driven).<br/> untuk coba Chatbot, ke pengaturan > Klik simpan Api Key agar Kalian, lalu kalian bisa Chat dengan Chatbotnya",
         imageUrl: "/demo image/uang.webp",
         browserUrl:
           "https://script.google.com/macros/s/AKfycbwtFBCZ1tKT81yoRhHlo8113_S3Y_Bu1_gdoNBMsJc4EfH-ZA9rzCvEX9BXXrrNCE3m9w/exec",
-        icon: "wallet",
       },
     ];
 
-    let liveDemoData = [...defaultDemoData];
     let currentActiveTabId = "crm";
-
-    function syncDemoDataFromAppState() {
-      if (window.appState && Array.isArray(appState.templates) && appState.templates.length > 0) {
-        const categories = appState.categories || [];
-        // Filter HANYA template yang memiliki toggle is_in_gallery === true
-        const galleryTemplates = appState.templates.filter(tpl => tpl.is_in_gallery === true || tpl.is_in_gallery === 'true');
-
-        if (galleryTemplates.length > 0) {
-          liveDemoData = galleryTemplates.map((tpl, idx) => {
-            const cat = categories.find(c => c.id === tpl.kategori_id);
-            const catName = cat ? cat.nama : 'WebApp Showcase';
-            // PENTING: Hanya link demo yang disertakan, jangan pernah memberikan link source code (link_code)!
-            const demoUrl = (tpl.demo_url && typeof tpl.demo_url === 'string' && tpl.demo_url.trim()) ? tpl.demo_url.trim() : '';
-            return {
-              id: tpl.id || ('demo_' + idx),
-              name: tpl.nama_app || 'Aplikasi Web',
-              badge: catName,
-              title: tpl.nama_app || 'Aplikasi Web',
-              description: tpl.deskripsi_app || '',
-              imageUrl: tpl.foto_app || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600',
-              browserUrl: demoUrl,
-              icon: 'laptop'
-            };
-          });
-        } else {
-          // Ada data template di database, tapi tidak ada satupun yang diaktifkan untuk galeri landing page
-          liveDemoData = [];
-        }
-
-        if (!liveDemoData.some(item => item.id === currentActiveTabId)) {
-          currentActiveTabId = liveDemoData[0]?.id || '';
-        }
-      }
-      renderDemoShowcase();
-    }
 
     function renderDemoShowcase() {
       const tabsContainer = document.getElementById("demo-tabs-container");
@@ -1345,14 +1305,8 @@
 
       if (!tabsContainer || !detailsContainer) return;
 
-      if (!liveDemoData || liveDemoData.length === 0) {
-        tabsContainer.innerHTML = '<p class="text-xs text-slate-500 py-4">Belum ada contoh aplikasi di galeri.</p>';
-        detailsContainer.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 text-xs py-12">Belum ada aplikasi yang dipilih untuk ditampilkan di galeri landing page.</div>';
-        return;
-      }
-
       // 1. Render Left Column Tabs
-      tabsContainer.innerHTML = liveDemoData
+      tabsContainer.innerHTML = demoData
         .map((item) => {
           const isActive = item.id === currentActiveTabId;
           const activeClass = isActive
@@ -1365,7 +1319,7 @@
               class="${activeClass}"
             >
               <span class="flex items-center gap-2">
-                <i data-lucide="${item.icon || 'laptop'}" class="w-4 h-4"></i> ${item.name}
+                <i data-lucide="${item.icon}" class="w-4 h-4"></i> ${item.name}
               </span>
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
@@ -1375,33 +1329,28 @@
 
       // 2. Find Active Data
       const activeItem =
-        liveDemoData.find((item) => item.id === currentActiveTabId) ||
-        liveDemoData[0];
-
-      if (!activeItem) return;
-
-      const hasValidUrl = activeItem.browserUrl && activeItem.browserUrl !== '#' && activeItem.browserUrl.trim() !== '';
+        demoData.find((item) => item.id === currentActiveTabId) ||
+        demoData[0];
 
       // 3. Render Right Column Content
       detailsContainer.innerHTML = `
           <div class="w-full space-y-4">
             <!-- Thumbnail Image of WebApp (Diatas Judul) -->
             <div class="w-full bg-slate-200 rounded-xl border border-slate-200 overflow-hidden shadow-inner relative group">
-              <div class="absolute top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 flex items-center justify-end z-10">
-                <div class="flex gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-                  <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
-                  <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
-                </div>
-              </div>
-              
-              <img
-                src="${activeItem.imageUrl}"
-                alt="${activeItem.name} Demo"
-                class="w-full h-auto block hover:scale-105 transition-transform duration-500"
-                onerror="this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600'"
-              />
-            </div>
+  <div class="absolute top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 flex items-center justify-end z-10">
+    <div class="flex gap-1">
+      <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+    </div>
+  </div>
+  
+  <img
+    src="${activeItem.imageUrl}"
+    alt="${activeItem.name} Demo"
+    class="w-full h-auto block hover:scale-105 transition-transform duration-500"
+  />
+</div>
 
             <div class="pt-2 space-y-2">
               <span class="text-[10px] font-bold text-brand-blue uppercase tracking-wider block font-mono">${activeItem.badge}</span>
@@ -1410,24 +1359,21 @@
             </div>
           </div>
 
-          <!-- Card Footer Actions: Tombol Lihat Demo (Tanpa Teks Keunggulan Google Sheets) -->
-          <div class="border-t border-slate-200 pt-4 flex items-center justify-end gap-3 mt-4 w-full">
-            ${hasValidUrl ? `
-              <a target="_blank"
-                href="${activeItem.browserUrl}"
-                class="inline-flex items-center justify-center gap-1.5 bg-brand-blue hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl shadow-md text-xs font-bold hover:-translate-y-0.5 transition-all duration-200 shrink-0"
-              >
-                Lihat Demo
-                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-              </a>
-            ` : `
-              <span class="text-xs text-slate-400 italic">URL Demo belum diset</span>
-            `}
+          <!-- Card Footer Actions: Tombol Lihat Demo -->
+          <div class="border-t border-slate-200 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 w-full">
+            <span class="text-xs text-slate-500 font-medium">Keunggulan utama: Terkoneksi Google Sheets secara asinkron dan bebas biaya server.</span>
+            <a target="_blank"
+              href="${activeItem.browserUrl}"
+              class="inline-flex items-center justify-center gap-1.5 bg-brand-blue hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl shadow-md text-xs font-bold hover:-translate-y-0.5 transition-all duration-200 shrink-0"
+            >
+              Lihat Demo
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
           </div>
         `;
 
       // Reinitialize Lucide Icons for Dynamically Created Elements
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
     }
 
     function switchCapTab(activeTabId) {
@@ -1436,25 +1382,8 @@
     }
 
     // Initialize Lucide Icons & Render Showcase
-    if (window.lucide) lucide.createIcons();
+    lucide.createIcons();
     renderDemoShowcase();
-
-    // Muat data dinamis dari Firebase Firestore untuk Galeri Showcase
-    window.addEventListener("load", () => {
-      if (typeof loadSystemBundledData === "function") {
-        loadSystemBundledData(null, () => {
-          syncDemoDataFromAppState();
-        });
-      } else if (window.FirebaseService) {
-        FirebaseService.fetchInitialBundledData(null).then(res => {
-          if (res && res.templates) {
-            appState.templates = res.templates;
-            appState.categories = res.categories || [];
-            syncDemoDataFromAppState();
-          }
-        }).catch(err => console.warn("Failed fetching showcase templates:", err));
-      }
-    });
 
     // Mobile Menu Interactions
     function toggleMobileMenu() {

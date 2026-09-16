@@ -319,7 +319,67 @@ const FirebaseService = {
             const videos = videosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const gems = gemsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const prompts = promptsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const templates = templatesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            let templates = templatesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // Jika templates di database masih kosong sama sekali, inisialisasi 4 template showcase awal
+            if (templates.length === 0) {
+                const now = new Date().toISOString();
+                const defaultAppTemplates = [
+                    {
+                        id: 't_inventaris',
+                        nama_app: 'Gas UMKM (WebApp Inventaris)',
+                        kategori_id: categories.length > 0 ? categories[0].id : 'c_genai',
+                        foto_app: '/demo image/inventaris.jpg',
+                        demo_url: 'https://script.google.com/macros/s/AKfycbx88seLsCE3Unc7Gyvf5v2Asy1m080Y-10gsMpghw6HN7--fZJDGSfStsCSjCHY29ts/exec',
+                        link_code: 'https://github.com/nexco/gas-umkm',
+                        deskripsi_app: 'Gas UMKM adalah solusi platform manajemen inventaris (webapp) berbasis digital yang dirancang khusus untuk meningkatkan efisiensi operasional dan akurasi tata kelola logistik usaha. Terintegrasi Gas Gem AI Asisten (Gemini 3.1 Flash-Lite) untuk pengelolaan database interaktif.<br/><br/>Akun Login:<br/>Username: admin<br/>Password: admin123<br/>Lalu ke pengaturan > Klik simpan Api Key agar Kalian bisa coba chatbotnya.',
+                        is_in_gallery: true,
+                        created_at: now
+                    },
+                    {
+                        id: 't_tahfidz',
+                        nama_app: 'TahfidzQ (Pencatatan Tahfidz)',
+                        kategori_id: categories.length > 1 ? categories[1].id : 'c_webdev',
+                        foto_app: '/demo image/tahfidz.webp',
+                        demo_url: 'https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec',
+                        link_code: 'https://github.com/nexco/tahfidzq',
+                        deskripsi_app: 'TahfidzQ adalah platform berbasis web responsif (webapp) untuk memodernisasi tata kelola dan pencatatan progres hafalan Al-Qur\'an secara digital dengan peran khusus santri dan pengajar.<br/><br/>Akun Login:<br/>Username (pengajar): hanan | Password: 123<br/>Username (santri): Yusuf | Password: 123',
+                        is_in_gallery: true,
+                        created_at: now
+                    },
+                    {
+                        id: 't_perpus',
+                        nama_app: 'Pustaka Pro (Manajemen Perpustakaan)',
+                        kategori_id: categories.length > 1 ? categories[1].id : 'c_webdev',
+                        foto_app: '/demo image/perpus.webp',
+                        demo_url: 'https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec',
+                        link_code: 'https://github.com/nexco/pustaka-pro',
+                        deskripsi_app: 'Pustaka Pro adalah platform web-based application (Administrator Console) untuk digitalisasi, otomatisasi, dan optimalisasi tata kelola operasional perpustakaan dan sirkulasi peminjaman secara transparan dan real-time.<br/><br/>Akun Login:<br/>Username: admin | Password: admin123',
+                        is_in_gallery: true,
+                        created_at: now
+                    },
+                    {
+                        id: 't_uang',
+                        nama_app: 'Dompet Pintar (Manajemen Keuangan)',
+                        kategori_id: categories.length > 0 ? categories[0].id : 'c_genai',
+                        foto_app: '/demo image/uang.webp',
+                        demo_url: 'https://script.google.com/macros/s/AKfycbwtFBCZ1tKT81yoRhHlo8113_S3Y_Bu1_gdoNBMsJc4EfH-ZA9rzCvEX9BXXrrNCE3m9w/exec',
+                        link_code: 'https://github.com/nexco/dompet-pintar',
+                        deskripsi_app: 'Dompet Pintar adalah platform aplikasi seluler responsif untuk pencatatan, pelacakan, dan analisis tata kelola finansial personal secara digital yang terintegrasi AI Chatbot.<br/>Untuk mencoba Chatbot: ke pengaturan > Klik simpan Api Key, lalu kalian bisa Chat dengan Chatbotnya.',
+                        is_in_gallery: true,
+                        created_at: now
+                    }
+                ];
+
+                templates = defaultAppTemplates;
+                try {
+                    const batch = firebaseDb.batch();
+                    defaultAppTemplates.forEach(item => batch.set(firebaseDb.collection('templates').doc(item.id), item));
+                    batch.commit().catch(e => console.warn("Seed default templates async warning:", e));
+                } catch(seedTplErr) {
+                    console.warn("Auto seed templates error:", seedTplErr);
+                }
+            }
             const app_requests = appRequestsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const aiApiKey = settingsSnap.exists ? (settingsSnap.data().ai_api_key || '') : '';
 
@@ -692,6 +752,7 @@ const FirebaseService = {
                 deskripsi_app: payload.deskripsi_app || '',
                 demo_url: payload.demo_url || '',
                 link_code: payload.link_code || '',
+                is_in_gallery: payload.is_in_gallery === true || payload.is_in_gallery === 'true',
                 updated_at: timestamp
             };
 
@@ -837,9 +898,52 @@ const FirebaseService = {
         ];
         prompts.forEach(item => batch.set(firebaseDb.collection('prompts').doc(item.id), item));
 
-        // 7. App Templates
+        // 7. App Templates & Showcase Apps
         const appTemplates = [
-            { id: 't_1', foto_app: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600', kategori_id: 'c_webdev', nama_app: 'Nexco Admin Portal', deskripsi_app: 'Dashboard administrator modern dengan grafik statistik interaktif.', demo_url: 'https://example.com/demo1', link_code: 'https://github.com/nexco/admin-portal', created_at: now }
+            {
+                id: 't_inventaris',
+                nama_app: 'Gas UMKM (WebApp Inventaris)',
+                kategori_id: 'c_genai',
+                foto_app: '/demo image/inventaris.jpg',
+                demo_url: 'https://script.google.com/macros/s/AKfycbx88seLsCE3Unc7Gyvf5v2Asy1m080Y-10gsMpghw6HN7--fZJDGSfStsCSjCHY29ts/exec',
+                link_code: 'https://github.com/nexco/gas-umkm',
+                deskripsi_app: 'Gas UMKM adalah solusi platform manajemen inventaris (webapp) berbasis digital yang dirancang khusus untuk meningkatkan efisiensi operasional dan akurasi tata kelola logistik usaha. Terintegrasi Gas Gem AI Asisten (Gemini 3.1 Flash-Lite) untuk pengelolaan database interaktif.<br/><br/>Akun Login:<br/>Username: admin<br/>Password: admin123<br/>Lalu ke pengaturan > Klik simpan Api Key agar Kalian bisa coba chatbotnya.',
+                is_in_gallery: true,
+                created_at: now
+            },
+            {
+                id: 't_tahfidz',
+                nama_app: 'TahfidzQ (Pencatatan Tahfidz)',
+                kategori_id: 'c_webdev',
+                foto_app: '/demo image/tahfidz.webp',
+                demo_url: 'https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec',
+                link_code: 'https://github.com/nexco/tahfidzq',
+                deskripsi_app: 'TahfidzQ adalah platform berbasis web responsif (webapp) untuk memodernisasi tata kelola dan pencatatan progres hafalan Al-Qur\'an secara digital dengan peran khusus santri dan pengajar.<br/><br/>Akun Login:<br/>Username (pengajar): hanan | Password: 123<br/>Username (santri): Yusuf | Password: 123',
+                is_in_gallery: true,
+                created_at: now
+            },
+            {
+                id: 't_perpus',
+                nama_app: 'Pustaka Pro (Manajemen Perpustakaan)',
+                kategori_id: 'c_webdev',
+                foto_app: '/demo image/perpus.webp',
+                demo_url: 'https://script.google.com/macros/s/AKfycbwNo_bVTcKmnLmLj7TYHkeS1gIV7KThjfbHPLwbxongpVigao2MRb7e6czuKQBcVW5f/exec',
+                link_code: 'https://github.com/nexco/pustaka-pro',
+                deskripsi_app: 'Pustaka Pro adalah platform web-based application (Administrator Console) untuk digitalisasi, otomatisasi, dan optimalisasi tata kelola operasional perpustakaan dan sirkulasi peminjaman secara transparan dan real-time.<br/><br/>Akun Login:<br/>Username: admin | Password: admin123',
+                is_in_gallery: true,
+                created_at: now
+            },
+            {
+                id: 't_uang',
+                nama_app: 'Dompet Pintar (Manajemen Keuangan)',
+                kategori_id: 'c_genai',
+                foto_app: '/demo image/uang.webp',
+                demo_url: 'https://script.google.com/macros/s/AKfycbwtFBCZ1tKT81yoRhHlo8113_S3Y_Bu1_gdoNBMsJc4EfH-ZA9rzCvEX9BXXrrNCE3m9w/exec',
+                link_code: 'https://github.com/nexco/dompet-pintar',
+                deskripsi_app: 'Dompet Pintar adalah platform aplikasi seluler responsif untuk pencatatan, pelacakan, dan analisis tata kelola finansial personal secara digital yang terintegrasi AI Chatbot.<br/>Untuk mencoba Chatbot: ke pengaturan > Klik simpan Api Key, lalu kalian bisa Chat dengan Chatbotnya.',
+                is_in_gallery: true,
+                created_at: now
+            }
         ];
         appTemplates.forEach(item => batch.set(firebaseDb.collection('templates').doc(item.id), item));
 

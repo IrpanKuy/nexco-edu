@@ -5,30 +5,17 @@
 
 const UserVideosModule = {
     getAllowedCategoryIds: function () {
-        const currentUser = window.appState.currentUser;
-        if (!currentUser) return [];
-        if (currentUser.role === 'admin') return ['all']; // Admin bisa akses semua
-
-        const tplId = currentUser.category_template_id || currentUser.allowed_tools || '';
-        if (!tplId) return [];
-
-        const tpl = (window.appState.category_templates || []).find(t => t.id === tplId);
-        if (!tpl || !tpl.kategori_ids) return [];
-
-        return tpl.kategori_ids.split(',').map(s => s.trim()).filter(Boolean);
+        // Tampilkan semua video tanpa pembatasan hak akses apapun untuk semua user
+        return ['all'];
     },
 
     renderVideos: function (filterCatId = 'Semua') {
         const container = document.getElementById('user-videos-grid');
         if (!container) return;
 
-        const allowedCats = this.getAllowedCategoryIds();
         let videos = window.appState.videos || [];
 
-        // Filter berdasar hak akses kategori user
-        if (!allowedCats.includes('all')) {
-            videos = videos.filter(v => allowedCats.includes(v.kategori_id));
-        }
+        // Semua video ditampilkan tanpa pembatasan hak akses kategori untuk semua user
 
         // Filter berdasar kategori yang dipilih di UI
         if (filterCatId !== 'Semua') {
